@@ -51,17 +51,7 @@ Contents
 .. toctree::
    :maxdepth: 1
 
-   overview
-   releases
-   workflow
-   data
-   model
-   formulations
-   implementation
-   mid_term
-   cases
-   dispaset
-
+  
 
 Indices and tables
 ------------------
