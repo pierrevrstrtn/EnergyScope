@@ -36,7 +36,7 @@ it::
 Include a figure:
 =================
 
-.. image:: /images/GA_these.png
+.. image:: /Documentation/source/images/GA_these.png
 
 Create a tables
 ===============
@@ -96,6 +96,6 @@ Internal links
 --------------
 
 The toolbox containing all the tips are given here: ..targetedlink..
-:doc:`/sections/Toolbox_sphinx`
-:doc:`with an hyper link </sections/Toolbox_sphinx>`
+:doc:`/Documentation/source/sections/Toolbox_sphinx`
+:doc:`with an hyper link </Documentation/source/sections/Toolbox_sphinx>`
 This is a link to whereever I want : :ref:`label_sec_toolbox`
