@@ -50,8 +50,6 @@ clean:
 	rm -rf $(BUILDDIR)/*
 
 html:
-#	$(SPHINXBUILD) -D pngmath_latex=latex -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
-#	$(SPHINXBUILD) -D imgmath_latex=latex -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	$(SPHINXBUILD) -b html $(ALLSPHINXOPTS) $(BUILDDIR)/html
 	@echo
 	@echo "Build finished. The HTML pages are in $(BUILDDIR)/html."
@@ -87,17 +85,17 @@ qthelp:
 	@echo
 	@echo "Build finished; now you can run "qcollectiongenerator" with the" \
 	      ".qhcp project file in $(BUILDDIR)/qthelp, like this:"
-	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/Dispa-SET.qhcp"
+	@echo "# qcollectiongenerator $(BUILDDIR)/qthelp/ReadtheDocsTemplate.qhcp"
 	@echo "To view the help file:"
-	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/Dispa-SET.qhc"
+	@echo "# assistant -collectionFile $(BUILDDIR)/qthelp/ReadtheDocsTemplate.qhc"
 
 devhelp:
 	$(SPHINXBUILD) -b devhelp $(ALLSPHINXOPTS) $(BUILDDIR)/devhelp
 	@echo
 	@echo "Build finished."
 	@echo "To view the help file:"
-	@echo "# mkdir -p $$HOME/.local/share/devhelp/Dispa-SET"
-	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/Dispa-SET"
+	@echo "# mkdir -p $$HOME/.local/share/devhelp/ReadtheDocsTemplate"
+	@echo "# ln -s $(BUILDDIR)/devhelp $$HOME/.local/share/devhelp/ReadtheDocsTemplate"
 	@echo "# devhelp"
 
 epub:

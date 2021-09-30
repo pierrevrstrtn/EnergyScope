@@ -47,7 +47,7 @@ if "%1" == "clean" (
 )
 
 
-%SPHINXBUILD% >NUL 2>NUL
+%SPHINXBUILD% 2> nul
 if errorlevel 9009 (
 	echo.
 	echo.The 'sphinx-build' command was not found. Make sure you have Sphinx
@@ -115,9 +115,9 @@ if "%1" == "qthelp" (
 	echo.
 	echo.Build finished; now you can run "qcollectiongenerator" with the ^
 .qhcp project file in %BUILDDIR%/qthelp, like this:
-	echo.^> qcollectiongenerator %BUILDDIR%\qthelp\Dispa-SET.qhcp
+	echo.^> qcollectiongenerator %BUILDDIR%\qthelp\complexity.qhcp
 	echo.To view the help file:
-	echo.^> assistant -collectionFile %BUILDDIR%\qthelp\Dispa-SET.ghc
+	echo.^> assistant -collectionFile %BUILDDIR%\qthelp\complexity.ghc
 	goto end
 )
 
