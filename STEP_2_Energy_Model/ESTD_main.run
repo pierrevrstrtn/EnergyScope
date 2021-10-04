@@ -7,12 +7,12 @@
 ################################################################################
 
 # Load standard model
-model ESTD_model.mod;
+model ../ESTD_model.mod;
 
 
 # Load standard data
-data ESTD_data.dat    # not TDs depending data
-data ESTD_12TD.dat; # TDs depending data
+data ../ESTD_data.dat    # not TDs depending data
+data ../ESTD_12TD.dat; # TDs depending data
 
 ################################################################################
 ################################################################################                                                    
@@ -28,24 +28,12 @@ option solver cplex;
 option show_stats 1; # show statistics
 
 option cplex_options  'mipdisplay 5 mipinterval 1000'; 
-option log_file 'log.txt';   #write the log in a .txt file. Create the file before running.
-
-# option cplex_options $cplex_options 'startbasis ./output/solution.bas '; # to read previously existing path
- option cplex_options $cplex_options 'endbasis ./output/solution.bas '; # to write how to solve
-
-# Saving and starting from last solution. Starting from last solution is not very efficient.
-# option cplex_options $cplex_options 'startsol ./output/solution.sol '; # to read previously existing file
-# option cplex_options $cplex_options 'endsol ./output/solution.sol '; # to write file 
-
+option cplex_options $cplex_options 'baropt predual=-1';
+#option cplex_options $cplex_options 'display=2';
+option log_file './log.txt';   #write the log in a .txt file. Create the file before running.
 option cplex_options $cplex_options 'mipgap 0.01 '; 
 option cplex_options $cplex_options 'timelimit 3600 '; 
 
-
-/*
-# Save pool of solutions
-option cplex_options "poolstub=PoolSol poolcapacity=10 \
-populate=1 poolintensity=4 poolreplace=2";
-*/
 
 ################################################################################
 ################################################################################                                                    
@@ -56,51 +44,28 @@ populate=1 poolintensity=4 poolreplace=2";
 ################################################################################
 
 
-param PathName symbolic default "output/";
+param PathName symbolic default "."; #place where outputs are print
 
 
-let f_min["PV"] := 3.846;
-let f_min["WIND_ONSHORE"] := 1.177;
-let f_min["WIND_OFFSHORE"] := 0.692;
-let f_min["HYDRO_RIVER"] := 0.11;
-let re_share_primary := 0.0;
+print PathName;
 
 
-## REF case (Section 1):
- # Unlimited PV
-##let solar_area := 3000;#
-##let f_max["PV"] := 1e9;#
- # No RE fuels imports
 
-let gwp_op["WASTE"] := 0;
-let gwp_op["WET_BIOMASS"] := 0;
-let gwp_op["WOOD"] := 0;
+option times 1; # show time
+option gentimes 1; # show time
 
-let gwp_limit := 1e7;
+solve;
 
+print "TotalCost", TotalCost;
+print "GWP_op", sum {i in RESOURCES} GWP_op [i];
 
-		print PathName;
+display solve_result;
+display solve_result_num;
+display _solve_elapsed_time;
 
-
-		
-		option times 1; # show time
-		option gentimes 1; # show time
-
-		solve;
-
-		display solve_result_num;
-		display _solve_elapsed_time;
-
-		## Saving sets and parameters to output file
-
-		option times 0; # show time
-		option gentimes 0; # show time
-
-		
-
-				if solve_result = "limit" # To avoid post treatment error
-		then print "TIME OUT"; 
-		else {			
+if solve_result = "limit" # To avoid post treatment error
+then print "TIME OUT"; 
+else {			
 			################################################################################
 			################################################################################                                                    
 			##																			  ##
@@ -342,7 +307,7 @@ let gwp_limit := 1e7;
 			## Generate CSV file to be used as input to Sankey diagram
 			# Notes:
 			# - Assuming that SNG and BioOil are used in boilers
-			printf "%s,%s,%s,%s,%s,%s\n", "source" , "target", "realValue", "layerID", "layerColor", "layerUnit" > (PathName & "sankey/input2sankey.csv");
+			printf "%s,%s,%s,%s,%s,%s\n", "source" , "target", "realValue", "layerID", "layerColor", "layerUnit" > (PathName & "/sankey/input2sankey.csv");
 			
 			#------------------------------------------
 			# SANKEY - RESOURCES
@@ -529,7 +494,7 @@ let gwp_limit := 1e7;
 					(PathName & "/sankey/input2sankey.csv");
 				}
 
-				}
+			
 				# HVC_TO_NED
 			if sum{t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]} (End_uses ["HVC", h, td]  ) > 10 then {
 				printf "%s,%s,%.2f,%s,%s,%s\n", "HVC" , "Non-energy demand", sum{t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]}
@@ -1042,7 +1007,3 @@ let gwp_limit := 1e7;
 			}
 
 		}# END SAVING
-			
-
-
-}}#End cartography loop

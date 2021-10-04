@@ -1,0 +1,13 @@
+
+.idea/
+
+energyscope.egg-info/
+
+energyscope/__pycache__/
+
+energyscope/misc/__pycache__/
+
+energyscope/preprocessing/__pycache__/
+
+*.log
+
