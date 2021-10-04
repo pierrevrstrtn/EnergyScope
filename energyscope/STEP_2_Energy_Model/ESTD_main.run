@@ -25,10 +25,10 @@ data ../ESTD_12TD.dat; # TDs depending data
 option solver cplex;
 
 
-option show_stats 1; # show statistics
+option show_stats 3; # show statistics
 
-option cplex_options  'mipdisplay 5 mipinterval 1000'; 
-option cplex_options $cplex_options 'baropt predual=-1';
+option cplex_options  'mipdisplay 5 mipinterval 10'; 
+option cplex_options $cplex_options 'baropt predual=-1 bardisplay=1 scale=1';
 #option cplex_options $cplex_options 'display=2';
 option log_file './log.txt';   #write the log in a .txt file. Create the file before running.
 option cplex_options $cplex_options 'mipgap 0.01 '; 
@@ -61,7 +61,11 @@ print "GWP_op", sum {i in RESOURCES} GWP_op [i];
 
 display solve_result;
 display solve_result_num;
+display _ampl_elapsed_time;
+display _ampl_time;
 display _solve_elapsed_time;
+display _total_solve_time;
+display _solve_time;
 
 if solve_result = "limit" # To avoid post treatment error
 then print "TIME OUT"; 
