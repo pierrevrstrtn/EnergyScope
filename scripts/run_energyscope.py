@@ -19,8 +19,8 @@ if __name__ == '__main__':
               'printing_td': True, # printing the time related data in ESTD_12TD.dat for the optimisaiton problem
               'GWP_limit': 150000,  # [ktCO2-eq./year]	# Minimum GWP reduction
               'data_folders':  ['..\\Data\\User_data', '..\\Data\\Developer_data'], # Folders containing the csv data files
-              'ES_path': '..\\STEP_2_Energy_Model', # Path to the energy model (.mod and .run files)
-              'step1_output': '..\\STEP_1_TD_selection\\TD_of_days.out', # OUtput of the step 1 selection of typical days
+              'ES_path': '..\\energyscope\\STEP_2_Energy_Model', # Path to the energy model (.mod and .run files)
+              'step1_output': '..\\energyscope\\STEP_1_TD_selection\\TD_of_days.out', # OUtput of the step 1 selection of typical days
               'all_data': dict(), # Dictionnary with the dataframes containing all the data in the form : {'Demand': eud, 'Resources': resources, 'Technologies': technologies, 'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out, 'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in, 'Storage_eff_out': storage_eff_out, 'Time_series': time_series}
               'Working_directory': os.getcwd()}
 

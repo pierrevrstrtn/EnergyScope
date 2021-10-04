@@ -7,11 +7,13 @@ Also contains functions to analyse input data
 
 @author: Paolo Thiran
 """
+import logging
 
 import numpy as np
 import pandas as pd
 import csv
 import os
+import shutil
 
 
 # Useful functions for printing in AMPL syntax #
@@ -87,11 +89,14 @@ def import_data(import_folders):
 
 # Function to print the ESTD_data.dat file #
 def print_data(config):
+    cs = '..\\case_studies\\'
+    make_dir(cs + config['case_study'])
 
     if config['printing']:
         # Prints the data into .dat file (out_path) with the right syntax for AMPL
         data = config['all_data']
-        out_path = config['ES_path'] + '/ESTD_data.dat'
+        out_path = cs + config['case_study'] + '\ESTD_data.dat'
+        #config['ES_path'] + '/ESTD_data.dat'
         gwp_limit = config['GWP_limit']
 
 
@@ -457,7 +462,7 @@ def print_data(config):
 #                   nbr_td=12):
     if config['printing_td']:
         timeseries = config['all_data']['Time_series']
-        out_path = config['ES_path']
+        out_path = cs + config['case_study'] #config['ES_path']
         step1_out = config['step1_output']
         nbr_td = 12 #TODO add that as an argument
 
@@ -644,18 +649,23 @@ def print_data(config):
 
 # Function to run ES from python
 def run_ES(config):
+    cs = '..\\case_studies\\'
     #TODO make the case_study folder containing all runs with input, model and outputs
-
+    shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_model.mod'),
+                    os.path.join(cs, config['case_study']+'\ESTD_model.mod'))
+    shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_main.run'),
+                    os.path.join(cs, config['case_study']+'\ESTD_main.run'))
     # creating output directory
-    make_dir(config['ES_path'] + '\output_' + config['case_study'])
-    make_dir(config['ES_path'] + '\output_' + config['case_study'] + '/hourly_data')
-    make_dir(config['ES_path'] + '\output_' + config['case_study'] + '/sankey')
-    os.chdir(config['ES_path'] + '\output_' + config['case_study'])
+    make_dir(cs + config['case_study']+'\output')
+    make_dir(cs + config['case_study']+'\output'+ '/hourly_data')
+    make_dir(cs + config['case_study']+'\output' + '/sankey')
+    os.chdir(cs + config['case_study']+'\output')
     # running ES
     os.system('cmd /c "ampl ../ESTD_main.run"')
     # go back to base directory
     os.chdir(config['Working_directory'])
 
+    logging.info('End of run')
     return
 
 # Function to compute the annual average emission factors of each resource from the outputs #
