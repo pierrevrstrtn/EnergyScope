@@ -14,6 +14,7 @@ import pandas as pd
 import csv
 import os
 import shutil
+from subprocess import call
 
 
 # Useful functions for printing in AMPL syntax #
@@ -668,8 +669,7 @@ def run_ES(config):
     os.chdir(cs + config['case_study']+'/output')
     # running ES
     logging.info('Running EnergyScope')
-    os.system('cmd /c "ampl ../ESTD_main.run"')
-    # go back to base directory
+    call('ampl ../ESTD_main.run', shell=True)
     os.chdir(config['Working_directory'])
 
     logging.info('End of run')
