@@ -10,6 +10,7 @@ You are welcome to report any bugs related to the code to the following:
  moret.stefano@gmail.com or gauthierLimpens@gmail.com  
  
 # Content #
+Modified version for course LMECA2675 at UCLouvain
 This folder contains the third release (v2_1, hourly LP) of the EnergyScope model adapted to the Belgian case.  
 More recent releases are available @ the EnergyScope project repository: https://github.com/energyscope/EnergyScope   
 This version of the model corresponds to the one in [4].  
