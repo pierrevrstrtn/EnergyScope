@@ -60,20 +60,20 @@ def print_param(name, param, comment, out_path):
 
 # Function to import the data from the CSV data files #
 def import_data(import_folders):
+    logging.info('Importing data files')
     # Reading CSV #
-
     # Reading User CSV to build dataframes
-    eud = pd.read_csv(import_folders[0] + '\\Demand.csv', sep=';', index_col=2, header=0)
-    resources = pd.read_csv(import_folders[0] + '\\Resources.csv', sep=';', index_col=2, header=2)
-    technologies = pd.read_csv(import_folders[0] + '\\Technologies.csv', sep=';', index_col=3, header=0)
+    eud = pd.read_csv(import_folders[0] + '/Demand.csv', sep=';', index_col=2, header=0)
+    resources = pd.read_csv(import_folders[0] + '/Resources.csv', sep=';', index_col=2, header=2)
+    technologies = pd.read_csv(import_folders[0] + '/Technologies.csv', sep=';', index_col=3, header=0)
 
     # Reading Developer CSV to build dataframes
-    end_uses_categories = pd.read_csv(import_folders[1] + '\\END_USES_CATEGORIES.csv', sep=';')
-    layers_in_out = pd.read_csv(import_folders[1] + '\\Layers_in_out.csv', sep=';', index_col=0)
-    storage_characteristics = pd.read_csv(import_folders[1] + '\\Storage_Characteristics.csv', sep=';', index_col=0)
-    storage_eff_in = pd.read_csv(import_folders[1] + '\\Storage_eff_in.csv', sep=';', index_col=0)
-    storage_eff_out = pd.read_csv(import_folders[1] + '\\Storage_eff_out.csv', sep=';', index_col=0)
-    time_series = pd.read_csv(import_folders[1] + '\\Time_Series.csv', sep=';', header=0, index_col=0)
+    end_uses_categories = pd.read_csv(import_folders[1] + '/END_USES_CATEGORIES.csv', sep=';')
+    layers_in_out = pd.read_csv(import_folders[1] + '/Layers_in_out.csv', sep=';', index_col=0)
+    storage_characteristics = pd.read_csv(import_folders[1] + '/Storage_Characteristics.csv', sep=';', index_col=0)
+    storage_eff_in = pd.read_csv(import_folders[1] + '/Storage_eff_in.csv', sep=';', index_col=0)
+    storage_eff_out = pd.read_csv(import_folders[1] + '/Storage_eff_out.csv', sep=';', index_col=0)
+    time_series = pd.read_csv(import_folders[1] + '/Time_Series.csv', sep=';', header=0, index_col=0)
 
     # Pre-processing #
     resources.drop(columns=['Comment'], inplace=True)
@@ -89,13 +89,16 @@ def import_data(import_folders):
 
 # Function to print the ESTD_data.dat file #
 def print_data(config):
-    cs = '..\\case_studies\\'
+    cs = '../case_studies/'
+    make_dir(cs)
     make_dir(cs + config['case_study'])
 
     if config['printing']:
+        logging.info('Printing ESTD_data.dat')
+
         # Prints the data into .dat file (out_path) with the right syntax for AMPL
         data = config['all_data']
-        out_path = cs + config['case_study'] + '\ESTD_data.dat'
+        out_path = cs + config['case_study'] + '/ESTD_data.dat'
         #config['ES_path'] + '/ESTD_data.dat'
         gwp_limit = config['GWP_limit']
 
@@ -458,13 +461,16 @@ def print_data(config):
 #
 #
 # # Function to print the ESTD_12TD.dat file from timeseries and STEP1 results #
-# def print_td_data(timeseries, out_path='STEP_2_Energy_Model', step1_out='STEP_1_TD_selection\\TD_of_days.out',
+# def print_td_data(timeseries, out_path='STEP_2_Energy_Model', step1_out='STEP_1_TD_selection/TD_of_days.out',
 #                   nbr_td=12):
     if config['printing_td']:
+
         timeseries = config['all_data']['Time_series']
         out_path = cs + config['case_study'] #config['ES_path']
         step1_out = config['step1_output']
         nbr_td = 12 #TODO add that as an argument
+
+        logging.info('Printing ESTD_'+str(nbr_td)+'TD.dat')
 
         # DICTIONARIES TO TRANSLATE NAMES INTO AMPL SYNTAX #
         # for EUD timeseries
@@ -649,18 +655,19 @@ def print_data(config):
 
 # Function to run ES from python
 def run_ES(config):
-    cs = '..\\case_studies\\'
+    cs = '../case_studies/'
     #TODO make the case_study folder containing all runs with input, model and outputs
     shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_model.mod'),
-                    os.path.join(cs, config['case_study']+'\ESTD_model.mod'))
+                    os.path.join(cs, config['case_study']+'/ESTD_model.mod'))
     shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_main.run'),
-                    os.path.join(cs, config['case_study']+'\ESTD_main.run'))
+                    os.path.join(cs, config['case_study']+'/ESTD_main.run'))
     # creating output directory
-    make_dir(cs + config['case_study']+'\output')
-    make_dir(cs + config['case_study']+'\output'+ '/hourly_data')
-    make_dir(cs + config['case_study']+'\output' + '/sankey')
-    os.chdir(cs + config['case_study']+'\output')
+    make_dir(cs + config['case_study']+'/output')
+    make_dir(cs + config['case_study']+'/output'+ '/hourly_data')
+    make_dir(cs + config['case_study']+'/output' + '/sankey')
+    os.chdir(cs + config['case_study']+'/output')
     # running ES
+    logging.info('Running EnergyScope')
     os.system('cmd /c "ampl ../ESTD_main.run"')
     # go back to base directory
     os.chdir(config['Working_directory'])
@@ -671,8 +678,8 @@ def run_ES(config):
 # Function to compute the annual average emission factors of each resource from the outputs #
 def compute_gwp_op(import_folders, out_path='STEP_2_Energy_Model'):
     # import data and model outputs
-    resources = pd.read_csv(import_folders[0] + '\\Resources.csv', sep=';', index_col=2, header=2)
-    yb = pd.read_csv(out_path + '\\output\\year_balance.txt', sep='\t', index_col=0)
+    resources = pd.read_csv(import_folders[0] + '/Resources.csv', sep=';', index_col=2, header=2)
+    yb = pd.read_csv(out_path + '/output/year_balance.txt', sep='\t', index_col=0)
 
     # clean df and get useful data
     yb.rename(columns=lambda x: x.strip(), inplace=True)
