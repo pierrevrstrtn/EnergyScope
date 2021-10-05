@@ -14,10 +14,11 @@ import energyscope as es
 if __name__ == '__main__':
 
     # specify the configuration
-    config = {'case_study': 'test', # Name of the case study. The outputs will be printed into : config['ES_path']+'\output_'+config['case_study']
+    config = {'case_study': 'test2', # Name of the case study. The outputs will be printed into : config['ES_path']+'\output_'+config['case_study']
               'printing': True, # printing the data in ETSD_data.dat file for the optimisation problem
               'printing_td': True, # printing the time related data in ESTD_12TD.dat for the optimisaiton problem
-              'GWP_limit': 150000,  # [ktCO2-eq./year]	# Minimum GWP reduction
+              'GWP_limit': 1e+7,  # [ktCO2-eq./year]	# Minimum GWP reduction
+              'import_capacity': 4.5, # [GW] Electrical interconnections with neighbouring countries
               'data_folders':  ['../Data/User_data', '../Data/Developer_data'], # Folders containing the csv data files
               'ES_path': '../energyscope/STEP_2_Energy_Model', # Path to the energy model (.mod and .run files)
               'step1_output': '../energyscope/STEP_1_TD_selection/TD_of_days.out', # OUtput of the step 1 selection of typical days
