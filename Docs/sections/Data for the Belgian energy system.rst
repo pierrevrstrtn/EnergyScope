@@ -47,7 +47,7 @@ The following table summarise all the input data for the resources (update of Ta
 
 
 .. csv-table:: Resources prices:  
-    :header: Resource, availability,  price, global warming potential
+    :header: Resource, availability,  global warming potential, price
     :widths: 15 10 30 10
 
     ,``avail``,``gwp_op``,``c_op``
@@ -85,7 +85,7 @@ These new technologies have no restriction of deployment.
 Bibliography:
 -------------
 
-[limpens2021generating] Limpens, G. (2021). Generating energy transition pathways: application to Belgium (Doctoral dissertation, UCL-Université Catholique de Louvain).
-[rixhon2021comprehensive] Rixhon, Xavier and Colla, Martin and Verleysen, Kevin and Tonelli, Davide and Limpens, Gauthier. Comprehensive integration of the non-energy demand within a whole-energy system : Towards a defossilisation of the chemical industry in Belgium. Proceedings ECOS2021.
-[Brynolf] Brynolf, S., Taljegard, M., Grahn, M., & Hansson, J. (2018). Electrofuels for the transport sector: A review of production costs. Renewable and Sustainable Energy Reviews, 81, 1887-1905. 
-[H2coalitie] Hydrogen Import Coalition. Shipping sun and wind to Belgium is key in climate neutral economy. 2020
+- [1] Limpens, G. (2021). Generating energy transition pathways: application to Belgium (Doctoral dissertation, UCL-Université Catholique de Louvain).
+- [2] Rixhon, Xavier and Colla, Martin and Verleysen, Kevin and Tonelli, Davide and Limpens, Gauthier. Comprehensive integration of the non-energy demand within a whole-energy system : Towards a defossilisation of the chemical industry in Belgium. Proceedings ECOS2021.
+- [3] Brynolf, S., Taljegard, M., Grahn, M., & Hansson, J. (2018). Electrofuels for the transport sector: A review of production costs. Renewable and Sustainable Energy Reviews, 81, 1887-1905. 
+- [4] Hydrogen Import Coalition. Shipping sun and wind to Belgium is key in climate neutral economy. 2020
