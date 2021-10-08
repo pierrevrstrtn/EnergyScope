@@ -15,7 +15,7 @@ This folder contains the third release (v2_1, hourly LP) of the EnergyScope mode
 More recent releases are available @ the EnergyScope project repository: https://github.com/energyscope/EnergyScope   
 This version of the model is an extension of the one in [4].  
 The data and formulation are available here:
- https://energyscope-docs.readthedocs.io/en/latest
+	https://energyscope-docs.readthedocs.io/en/es_meca2675/
 
 Do refer to the documentation for:
 - Model formulation
@@ -23,13 +23,6 @@ Do refer to the documentation for:
 - License
 - Get started
 - Previous versions
-
-# License:  # 
-
-
-# How to run the model #
-
-# Previous versions and Authors: #  
 
 
 # References:  #  

@@ -71,10 +71,10 @@ def import_data(import_folders):
     # Reading Developer CSV to build dataframes
     end_uses_categories = pd.read_csv(import_folders[1] + '/END_USES_CATEGORIES.csv', sep=';')
     layers_in_out = pd.read_csv(import_folders[1] + '/Layers_in_out.csv', sep=';', index_col=0)
-    storage_characteristics = pd.read_csv(import_folders[1] + '/Storage_Characteristics.csv', sep=';', index_col=0)
+    storage_characteristics = pd.read_csv(import_folders[1] + '/Storage_characteristics.csv', sep=';', index_col=0)
     storage_eff_in = pd.read_csv(import_folders[1] + '/Storage_eff_in.csv', sep=';', index_col=0)
     storage_eff_out = pd.read_csv(import_folders[1] + '/Storage_eff_out.csv', sep=';', index_col=0)
-    time_series = pd.read_csv(import_folders[1] + '/Time_Series.csv', sep=';', header=0, index_col=0)
+    time_series = pd.read_csv(import_folders[1] + '/Time_series.csv', sep=';', header=0, index_col=0)
 
     # Pre-processing #
     resources.drop(columns=['Comment'], inplace=True)

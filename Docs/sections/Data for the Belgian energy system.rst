@@ -21,7 +21,7 @@ Hereafter, we detail the characteristics for each technologies:
 .. image:: /images/NED_v2.2.png
 
 In 2015, the NED (in TWh) was split in 77.9% of HVC, 19.2% of ammonia and 2.9% of methanol. We suppose these shares to be constant during the transition.
-The Non-energy demand in 2035 for the NED is 53 109 TWh
+The Non-energy demand in 2035 for the NED is 53 109 GWh
 
 
 Resources updated:
