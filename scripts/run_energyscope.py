@@ -14,7 +14,7 @@ import energyscope as es
 if __name__ == '__main__':
 
     # specify the configuration
-    config = {'case_study': 'test2', # Name of the case study. The outputs will be printed into : config['ES_path']+'\output_'+config['case_study']
+    config = {'case_study': 'test', # Name of the case study. The outputs will be printed into : config['ES_path']+'\output_'+config['case_study']
               'printing': True, # printing the data in ETSD_data.dat file for the optimisation problem
               'printing_td': True, # printing the time related data in ESTD_12TD.dat for the optimisaiton problem
               'GWP_limit': 1e+7,  # [ktCO2-eq./year]	# Minimum GWP reduction
@@ -38,3 +38,7 @@ if __name__ == '__main__':
     es.print_data(config)
     # Running EnergyScope
     es.run_ES(config)
+
+    # Example to print the sankey from this script
+    # sankey_path = '../case_studies/'+config['case_study']+'/output/sankey'
+    # es.drawSankey(path=sankey_path)

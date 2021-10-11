@@ -13,3 +13,7 @@ energyscope/preprocessing/__pycache__/
 
 
 case_studies/
+
+energyscope/postprocessing/__pycache__/
+
+energyscope/postprocessing/draw_sankey/__pycache__/

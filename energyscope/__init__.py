@@ -67,3 +67,4 @@ except Exception:
 
 from .preprocessing.usefull_functions import compute_gwp_op, print_data, import_data, run_ES, print_param, \
     newline, print_df, print_set, ampl_syntax, make_dir
+from .postprocessing.draw_sankey.ESSankey import drawSankey
