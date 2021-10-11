@@ -40,5 +40,5 @@ if __name__ == '__main__':
     es.run_ES(config)
 
     # Example to print the sankey from this script
-    # sankey_path = '../case_studies/'+config['case_study']+'/output/sankey'
-    # es.drawSankey(path=sankey_path)
+    sankey_path = '../case_studies/'+config['case_study']+'/output/sankey'
+    es.drawSankey(path=sankey_path)
