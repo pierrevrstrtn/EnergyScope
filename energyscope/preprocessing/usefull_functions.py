@@ -22,6 +22,7 @@ def make_dir(path):
     if not os.path.isdir(path):
         os.mkdir(path)
 
+
 def ampl_syntax(df, comment):
     # adds ampl syntax to df
     df2 = df.copy()
@@ -66,7 +67,7 @@ def import_data(import_folders):
     # Reading User CSV to build dataframes
     eud = pd.read_csv(import_folders[0] + '/Demand.csv', sep=';', index_col=2, header=0)
     resources = pd.read_csv(import_folders[0] + '/Resources.csv', sep=';', index_col=2, header=2)
-    technologies = pd.read_csv(import_folders[0] + '/Technologies.csv', sep=';', index_col=3, header=0)
+    technologies = pd.read_csv(import_folders[0] + '/Technologies.csv', sep=';', index_col=3, header=0, skiprows=[1])
 
     # Reading Developer CSV to build dataframes
     end_uses_categories = pd.read_csv(import_folders[1] + '/END_USES_CATEGORIES.csv', sep=';')
@@ -84,14 +85,14 @@ def import_data(import_folders):
     # cleaning indices and columns
 
     all_df = {'Demand': eud, 'Resources': resources, 'Technologies': technologies,
-            'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out,
-            'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in,
-            'Storage_eff_out': storage_eff_out, 'Time_series': time_series}
+              'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out,
+              'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in,
+              'Storage_eff_out': storage_eff_out, 'Time_series': time_series}
 
     for key in all_df:
-        if type(all_df[key].index[0])==str:
+        if type(all_df[key].index[0]) == str:
             all_df[key].index = all_df[key].index.str.strip()
-        if type(all_df[key].columns[0])==str:
+        if type(all_df[key].columns[0]) == str:
             all_df[key].columns = all_df[key].columns.str.strip()
 
     return all_df
@@ -103,27 +104,26 @@ def print_data(config):
     make_dir(cs)
     make_dir(cs + config['case_study'])
 
+    data = config['all_data']
+
+    eud = data['Demand']
+    resources = data['Resources']
+    technologies = data['Technologies']
+    end_uses_categories = data['End_uses_categories']
+    layers_in_out = data['Layers_in_out']
+    storage_characteristics = data['Storage_characteristics']
+    storage_eff_in = data['Storage_eff_in']
+    storage_eff_out = data['Storage_eff_out']
+    time_series = data['Time_series']
+
     if config['printing']:
         logging.info('Printing ESTD_data.dat')
 
         # Prints the data into .dat file (out_path) with the right syntax for AMPL
-        data = config['all_data']
         out_path = cs + config['case_study'] + '/ESTD_data.dat'
-        #config['ES_path'] + '/ESTD_data.dat'
+        # config['ES_path'] + '/ESTD_data.dat'
         gwp_limit = config['GWP_limit']
         import_capacity = config['import_capacity']  # [GW] Maximum power of electrical interconnections
-
-
-
-        eud = data['Demand']
-        resources = data['Resources']
-        technologies = data['Technologies']
-        end_uses_categories = data['End_uses_categories']
-        layers_in_out = data['Layers_in_out']
-        storage_characteristics = data['Storage_characteristics']
-        storage_eff_in = data['Storage_eff_in']
-        storage_eff_out = data['Storage_eff_out']
-        time_series = data['Time_series']
 
         # Pre-processing df #
 
@@ -143,7 +143,7 @@ def print_data(config):
         # Developer defined parameters #
         # Economical inputs
 
-        #TODO put everything into a config file so that we can modify it from outside the function
+        # TODO put everything into a config file so that we can modify it from outside the function
         i_rate = 0.015  # [-]
         # Political inputs
         re_share_primary = 0  # [-] Minimum RE share in primary consumption
@@ -179,16 +179,17 @@ def print_data(config):
         c_grid_extra = 367.8  # cost to reinforce the grid due to intermittent renewable energy penetration. See 2.2.2
 
         # Storage daily
-        STORAGE_DAILY = ['TS_DEC_HP_ELEC', 'TS_DEC_THHP_GAS', 'TS_DEC_COGEN_GAS', 'TS_DEC_COGEN_OIL', 'TS_DEC_ADVCOGEN_GAS',
+        STORAGE_DAILY = ['TS_DEC_HP_ELEC', 'TS_DEC_THHP_GAS', 'TS_DEC_COGEN_GAS', 'TS_DEC_COGEN_OIL',
+                         'TS_DEC_ADVCOGEN_GAS',
                          'TS_DEC_ADVCOGEN_H2', 'TS_DEC_BOILER_GAS', 'TS_DEC_BOILER_WOOD', 'TS_DEC_BOILER_OIL',
-                         'TS_DEC_DIRECT_ELEC', 'TS_DHN_DAILY', 'BATT_LI', 'TS_HIGH_TEMP'] #TODO automatise
+                         'TS_DEC_DIRECT_ELEC', 'TS_DHN_DAILY', 'BATT_LI', 'TS_HIGH_TEMP']  # TODO automatise
 
         # Building SETS from data #
         SECTORS = list(eud_simple.columns)
         END_USES_INPUT = list(eud_simple.index)
         END_USES_CATEGORIES = list(end_uses_categories.loc[:, 'END_USES_CATEGORIES'].unique())
         RESOURCES = list(resources_simple.index)
-        RES_IMPORT_CONSTANT = ['GAS', 'GAS_RE', 'H2_RE', 'H2']     #TODO automatise
+        RES_IMPORT_CONSTANT = ['GAS', 'GAS_RE', 'H2_RE', 'H2']  # TODO automatise
         BIOFUELS = list(resources[resources.loc[:, 'Subcategory'] == 'Biofuel'].index)
         RE_RESOURCES = list(
             resources.loc[(resources['Category'] == 'Renewable'), :].index)
@@ -199,7 +200,6 @@ def print_data(config):
             li = list(end_uses_categories.loc[
                           end_uses_categories.loc[:, 'END_USES_CATEGORIES'] == i, 'END_USES_TYPES_OF_CATEGORY'])
             END_USES_TYPES_OF_CATEGORY.append(li)
-
 
         # TECHNOLOGIES_OF_END_USES_TYPE -> # METHOD 2 (uses layer_in_out to determine the END_USES_TYPE)
         END_USES_TYPES = list(end_uses_categories.loc[:, 'END_USES_TYPES_OF_CATEGORY'])
@@ -269,9 +269,9 @@ def print_data(config):
         share_ned = ampl_syntax(share_ned, '')
         layers_in_out = ampl_syntax(layers_in_out, '')
         technologies_simple = ampl_syntax(technologies_simple, '')
-        technologies_simple[technologies_simple>1e+14] = 'Infinity'
+        technologies_simple[technologies_simple > 1e+14] = 'Infinity'
         resources_simple = ampl_syntax(resources_simple, '')
-        resources_simple[resources_simple>1e+14] = 'Infinity'
+        resources_simple[resources_simple > 1e+14] = 'Infinity'
         storage_eff_in = ampl_syntax(storage_eff_in, '')
         storage_eff_out = ampl_syntax(storage_eff_out, '')
         storage_characteristics = ampl_syntax(storage_characteristics, '')
@@ -287,8 +287,9 @@ def print_data(config):
             writer.writerow(['#	EnergyScope TD is an open-source energy model suitable for country scale analysis.'
                              ' It is a simplified representation of an urban or national energy system accounting for the'
                              ' energy flows'])
-            writer.writerow(['#	within its boundaries. Based on a hourly resolution, it optimises the design and operation '
-                             'of the energy system while minimizing the cost of the system.'])
+            writer.writerow(
+                ['#	within its boundaries. Based on a hourly resolution, it optimises the design and operation '
+                 'of the energy system while minimizing the cost of the system.'])
             writer.writerow(['#	'])
             writer.writerow(['#	Copyright (C) <2018-2019> <Ecole Polytechnique Fédérale de Lausanne (EPFL), '
                              'Switzerland and Université catholique de Louvain (UCLouvain), Belgium>'])
@@ -307,13 +308,15 @@ def print_data(config):
             writer.writerow(['#	limitations under the License.'])
             writer.writerow(['#	'])
             writer.writerow(['#	Description and complete License: see LICENSE file.'])
-            writer.writerow(['# -------------------------------------------------------------------------------------------'
-                             '------------------------------	'])
+            writer.writerow(
+                ['# -------------------------------------------------------------------------------------------'
+                 '------------------------------	'])
             writer.writerow(['	'])
             writer.writerow(['# UNIT MEASURES:'])
             writer.writerow(['# Unless otherwise specified units are:'])
             writer.writerow(
-                ['# Energy [GWh], Power [GW], Cost [Meuro], Time [h], Passenger transport [Mpkm], Freight Transport [Mtkm]'])
+                [
+                    '# Energy [GWh], Power [GW], Cost [Meuro], Time [h], Passenger transport [Mpkm], Freight Transport [Mtkm]'])
             writer.writerow(['	'])
             writer.writerow(['# References based on Supplementary material'])
             writer.writerow(['# --------------------------	'])
@@ -393,7 +396,8 @@ def print_data(config):
         print_param('re_share_primary', re_share_primary, 'Minimum RE share in primary consumption', out_path)
         print_param('gwp_limit', gwp_limit, 'gwp_limit [ktCO2-eq./year]: maximum GWP emissions', out_path)
         print_param('solar_area', solar_area, '', out_path)
-        print_param('power_density_pv', power_density_pv, 'PV : 1 kW/4.22m2   => 0.2367 kW/m2 => 0.2367 GW/km2', out_path)
+        print_param('power_density_pv', power_density_pv, 'PV : 1 kW/4.22m2   => 0.2367 kW/m2 => 0.2367 GW/km2',
+                    out_path)
         print_param('power_density_solar_thermal', power_density_solar_thermal,
                     'Solar thermal : 1 kW/3.5m2 => 0.2857 kW/m2 => 0.2857 GW/km2', out_path)
         newline(out_path)
@@ -468,20 +472,19 @@ def print_data(config):
             writer.writerow(['# [A.6]'])
         print_df('param loss_network ', loss_network_df, out_path)
 
-#     return
-#
-#
-# # Function to print the ESTD_12TD.dat file from timeseries and STEP1 results #
-# def print_td_data(timeseries, out_path='STEP_2_Energy_Model', step1_out='STEP_1_TD_selection/TD_of_days.out',
-#                   nbr_td=12):
+    #     return
+    #
+    #
+    # # Function to print the ESTD_12TD.dat file from timeseries and STEP1 results #
+    # def print_td_data(timeseries, out_path='STEP_2_Energy_Model', step1_out='STEP_1_TD_selection/TD_of_days.out',
+    #                   nbr_td=12):
     if config['printing_td']:
 
-        timeseries = config['all_data']['Time_series']
-        out_path = cs + config['case_study'] #config['ES_path']
+        out_path = cs + config['case_study']  # config['ES_path']
         step1_out = config['step1_output']
-        nbr_td = 12 #TODO add that as an argument
+        nbr_td = 12  # TODO add that as an argument
 
-        logging.info('Printing ESTD_'+str(nbr_td)+'TD.dat')
+        logging.info('Printing ESTD_' + str(nbr_td) + 'TD.dat')
 
         # DICTIONARIES TO TRANSLATE NAMES INTO AMPL SYNTAX #
         # for EUD timeseries
@@ -528,7 +531,7 @@ def print_data(config):
         t_h_td = t_h_td[['par_g', 'H_of_Y', 'comma1', 'H_of_D', 'comma2', 'TD_of_day', 'par_d']]
 
         # COMPUTING THE NORM OVER THE YEAR ##
-        norm = timeseries.sum(axis=0)
+        norm = time_series.sum(axis=0)
         norm.index.rename('Category', inplace=True)
         norm.name = 'Norm'
 
@@ -540,10 +543,10 @@ def print_data(config):
             day_and_hour_array[i * 24:(i + 1) * 24, 1] = np.arange(1, 25, 1)
         day_and_hour = pd.DataFrame(day_and_hour_array, index=np.arange(1, 8761, 1), columns=['D_of_H', 'H_of_D'])
         day_and_hour = day_and_hour.astype('int64')
-        timeseries = timeseries.merge(day_and_hour, left_index=True, right_index=True)
+        time_series = time_series.merge(day_and_hour, left_index=True, right_index=True)
 
         # selecting time series of TD only
-        td_ts = timeseries[timeseries['D_of_H'].isin(sorted_td['TD_of_days'])]
+        td_ts = time_series[time_series['D_of_H'].isin(sorted_td['TD_of_days'])]
 
         # COMPUTING THE NORM_TD OVER THE YEAR FOR CORRECTION #
         # computing the sum of ts over each TD
@@ -563,7 +566,7 @@ def print_data(config):
 
         # COMPUTE peak_sh_factor #
         max_sh_td = td_ts.loc[:, 'Space Heating (%_sh)'].max()
-        max_sh_all = timeseries.loc[:, 'Space Heating (%_sh)'].max()
+        max_sh_all = time_series.loc[:, 'Space Heating (%_sh)'].max()
         peak_sh_factor = max_sh_all / max_sh_td
 
         # PRINTING #
@@ -667,16 +670,16 @@ def print_data(config):
 # Function to run ES from python
 def run_ES(config):
     cs = '../case_studies/'
-    #TODO make the case_study folder containing all runs with input, model and outputs
+    # TODO make the case_study folder containing all runs with input, model and outputs
     shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_model.mod'),
-                    os.path.join(cs, config['case_study']+'/ESTD_model.mod'))
+                    os.path.join(cs, config['case_study'] + '/ESTD_model.mod'))
     shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_main.run'),
-                    os.path.join(cs, config['case_study']+'/ESTD_main.run'))
+                    os.path.join(cs, config['case_study'] + '/ESTD_main.run'))
     # creating output directory
-    make_dir(cs + config['case_study']+'/output')
-    make_dir(cs + config['case_study']+'/output'+ '/hourly_data')
-    make_dir(cs + config['case_study']+'/output' + '/sankey')
-    os.chdir(cs + config['case_study']+'/output')
+    make_dir(cs + config['case_study'] + '/output')
+    make_dir(cs + config['case_study'] + '/output' + '/hourly_data')
+    make_dir(cs + config['case_study'] + '/output' + '/sankey')
+    os.chdir(cs + config['case_study'] + '/output')
     # running ES
     logging.info('Running EnergyScope')
     call('ampl ../ESTD_main.run', shell=True)
@@ -684,6 +687,7 @@ def run_ES(config):
 
     logging.info('End of run')
     return
+
 
 # Function to compute the annual average emission factors of each resource from the outputs #
 def compute_gwp_op(import_folders, out_path='STEP_2_Energy_Model'):
@@ -738,28 +742,199 @@ def compute_gwp_op(import_folders, out_path='STEP_2_Energy_Model'):
 
 
 def transcript_uncertainties(uncer_params, config):
+    #TODO update with *=
 
     # update all_data with ref values
     config['all_data'] = import_data(config['data_folders'])
 
     # to fill the undefined uncertainty parameters
-    up= {'avail_elec' : 0}
-    for keys in uncer_params:
-        up[keys] = uncer_params
+    up = {'avail_elec': 27567.3,
+          'avail_WASTE': 17800,
+          'avail_coal': 33355,
+          'avail_biomass': 1,
+          'c_op_ELECTRICITY': 0.08433,
+          'c_op_coal': 0.017657892,
+          'c_op_biomass': 1,
+          'c_op_biofuels': 1,
+          'c_op_syn_fuels': 1,
+          'c_op_hydro': 1,
+          'gwp_op_ELECTRICITY': 0.206485714,
+          'c_inv_PV': 870,
+          'c_inv_WIND_ONSHORE': 1040,
+          'c_inv_WIND_OFFSHORE': 4975,
+          'c_inv_DHN_HP_ELEC': 344.76,
+          'c_inv_DEC_HP_ELEC': 492,
+          'c_inv_H2_ELECTROLYSIS': 696,
+          'f_max_nuc': 0,
+          'f_max_PV': 59.2,
+          'f_max_windON': 10,
+          'f_max_windOFF': 6,
+          'f_max_GeoElec': 0,
+          'f_max_GeoDHN': 0,
+          'elec_extra': 1,
+          'ht_extra': 1,
+          'sh_extra': 1,
+          'ned_extra': 1,
+          'freight_extra': 1,
+          'passenger_extra': 1,
+          'c_inv_bus': 1.0,
+          'c_inv_car': 1.0,
+          'c_inv_truck': 1.0,
+          'c_inv_ic_prop': 1.0,
+          'c_inv_e_prop': 1.0,
+          'c_inv_fc_prop': 1.0,
+          'cpt_PV': 1.0,
+          'cpt_winds': 1.0,
+          }
+    for key in uncer_params:
+        up[key] = uncer_params[key]
 
     # changing absolute value
-    config['all_data']['Resources'].loc['ELECTRICITY','avail'] = up['avail_elec']
+    config['all_data']['Resources'].loc['ELECTRICITY', 'avail'] = up['avail_elec']
+    config['all_data']['Resources'].loc['WASTE', 'avail'] = up['avail_WASTE']
+    config['all_data']['Resources'].loc['COAL', 'avail'] = up['avail_coal']
+    config['all_data']['Resources'].loc['WOOD', 'avail'] = config['all_data']['Resources'].loc['WOOD', 'avail'] * up[
+        'avail_biomass']
+    config['all_data']['Resources'].loc['WET_BIOMASS', 'avail'] = config['all_data']['Resources'].loc[
+                                                                      'WET_BIOMASS', 'avail'] * up['avail_biomass']
 
-    # multiply by param
-    config['all_data']['Resources'].loc['WOOD','c_op'] = config['all_data']['Resources'].loc['WOOD','c_op'] \
-                                                         * uncer_params['c_op_biomass']
+    # Changing cost of operating:
+    config['all_data']['Resources'].loc['ELECTRICITY', 'c_op'] = up['c_op_ELECTRICITY']
+    config['all_data']['Resources'].loc['COAL', 'c_op'] = up['c_op_coal']
+    # c_op biomass
+    config['all_data']['Resources'].loc['WOOD', 'c_op'] = config['all_data']['Resources'].loc['WOOD', 'c_op'] * up[
+        'c_op_biomass']
+    config['all_data']['Resources'].loc['WET_BIOMASS', 'c_op'] = config['all_data']['Resources'].loc[
+                                                                     'WET_BIOMASS', 'c_op'] * up['c_op_biomass']
+    # c_op_biofuels
+    config['all_data']['Resources'].loc['BIODIESEL', 'c_op'] = config['all_data']['Resources'].loc[
+                                                                   'BIODIESEL', 'c_op'] * up['c_op_biofuels']
+    config['all_data']['Resources'].loc['BIOETHANOL', 'c_op'] = config['all_data']['Resources'].loc[
+                                                                    'BIOETHANOL', 'c_op'] * up['c_op_biofuels']
+    # c_op_syn_fuels
+    config['all_data']['Resources'].loc['H2_RE', 'c_op'] = config['all_data']['Resources'].loc['H2_RE', 'c_op'] * up[
+        'c_op_syn_fuels']
+    config['all_data']['Resources'].loc['GAS_RE', 'c_op'] = config['all_data']['Resources'].loc['GAS_RE', 'c_op'] * up[
+        'c_op_syn_fuels']
+    config['all_data']['Resources'].loc['METHANOL_RE', 'c_op'] = config['all_data']['Resources'].loc[
+                                                                     'METHANOL_RE', 'c_op'] * up['c_op_syn_fuels']
+    config['all_data']['Resources'].loc['AMMONIA_RE', 'c_op'] = config['all_data']['Resources'].loc[
+                                                                    'AMMONIA_RE', 'c_op'] * up['c_op_syn_fuels']
+    # c_op_ hydrocarbons
+    config['all_data']['Resources'].loc['GASOLINE', 'c_op'] = config['all_data']['Resources'].loc['GASOLINE', 'c_op'] * \
+                                                              up['c_op_hydro']
+    config['all_data']['Resources'].loc['DIESEL', 'c_op'] = config['all_data']['Resources'].loc['DIESEL', 'c_op'] * up[
+        'c_op_hydro']
+    config['all_data']['Resources'].loc['H2', 'c_op'] = config['all_data']['Resources'].loc['H2', 'c_op'] * up[
+        'c_op_hydro']
+    config['all_data']['Resources'].loc['GAS', 'c_op'] = config['all_data']['Resources'].loc['GAS', 'c_op'] * up[
+        'c_op_hydro']
+    config['all_data']['Resources'].loc['METHANOL', 'c_op'] = config['all_data']['Resources'].loc['METHANOL', 'c_op'] * \
+                                                              up['c_op_hydro']
+    config['all_data']['Resources'].loc['AMMONIA', 'c_op'] = config['all_data']['Resources'].loc['AMMONIA', 'c_op'] * \
+                                                             up['c_op_hydro']
 
-    # multiply time series
-    config['all_data']['Time_series'].loc[:,'Wind_onshore'] = config['all_data']['Time_series'].loc[:,'Wind_onshore'] \
-                                                              * uncer_params['cpf_winds']
+    config['all_data']['Resources'].loc['ELECTRICITY', 'gwp_op'] = up['gwp_op_ELECTRICITY']
 
-    # update investment cost
-    config['all_data']['Technologie'].loc['BUS_COACH_DIESEL','c_inv'] = config['all_data']['Technologie'].loc['BUS_COACH_DIESEL','c_inv'] \
-                                                                        * uncer_params['c_inv_bus'] * uncer_params['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['PV', 'c_inv'] = up['c_inv_PV']
+    config['all_data']['Technologies'].loc['WIND_ONSHORE', 'c_inv'] = up['c_inv_WIND_ONSHORE']
+    config['all_data']['Technologies'].loc['WIND_OFFSHORE', 'c_inv'] = up['c_inv_WIND_OFFSHORE']
+    config['all_data']['Technologies'].loc['DHN_HP_ELEC', 'c_inv'] = up['c_inv_DHN_HP_ELEC']
+    config['all_data']['Technologies'].loc['DEC_HP_ELEC', 'c_inv'] = up['c_inv_DEC_HP_ELEC']
 
-    return config
+    config['all_data']['Technologies'].loc['H2_ELECTROLYSIS', 'c_inv'] = up['c_inv_H2_ELECTROLYSIS']
+
+    config['all_data']['Technologies'].loc['NUCLEAR', 'f_max'] = up['f_max_nuc']
+    config['all_data']['Technologies'].loc['PV', 'f_max'] = up['f_max_PV']
+    config['all_data']['Technologies'].loc['WIND_ONSHORE', 'f_max'] = up['f_max_windON']
+    config['all_data']['Technologies'].loc['WIND_OFFSHORE', 'f_max'] = up['f_max_windOFF']
+    config['all_data']['Technologies'].loc['GEOTHERMAL', 'f_max'] = up['f_max_GeoElec']
+    config['all_data']['Technologies'].loc['DHN_DEEP_GEO', 'f_max'] = up['f_max_GeoDHN']
+
+    # demand
+    config['all_data']['Demand'].loc[
+        'ELECTRICITY', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'elec_extra']
+    config['all_data']['Demand'].loc[
+        'LIGHTING', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'elec_extra']
+    config['all_data']['Demand'].loc[
+        'HEAT_HIGH_T', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'ht_extra']
+    config['all_data']['Demand'].loc[
+        'HEAT_LOW_T_SH', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'sh_extra']
+    config['all_data']['Demand'].loc[
+        'MOBILITY_PASSENGER', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'passenger_extra']
+    config['all_data']['Demand'].loc[
+        'MOBILITY_FREIGHT', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'freight_extra']
+    config['all_data']['Demand'].loc[
+        'NON_ENERGY', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up['ned_extra']
+
+    # hourly capacity factors of RE
+    config['all_data']['Time_series'].loc[:, 'PV'] *= up['cpt_PV']
+    config['all_data']['Time_series'].loc[:, 'Wind_onshore'] *= up['cpt_winds']
+    config['all_data']['Time_series'].loc[:, 'Wind_offshore'] *= up['cpt_winds']
+
+    # update mobility costs
+    config['all_data']['Technologies'].loc['BUS_COACH_DIESEL', 'c_inv'] *= up['c_inv_bus'] * up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['BUS_COACH_HYDIESEL', 'c_inv'] *= up['c_inv_bus'] * 0.5 * (
+                up['c_inv_ic_prop'] + up['c_inv_e_prop'])
+    config['all_data']['Technologies'].loc['BUS_COACH_CNG_STOICH', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                                  'BUS_COACH_CNG_STOICH', 'c_inv'] * up[
+                                                                                  'c_inv_bus'] * up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['BUS_COACH_FC_HYBRIDH2', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                                   'BUS_COACH_FC_HYBRIDH2', 'c_inv'] * \
+                                                                               up['c_inv_bus'] * up['c_inv_fc_prop']
+
+    config['all_data']['Technologies'].loc['CAR_GASOLINE', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                          'CAR_GASOLINE', 'c_inv'] * up['c_inv_car'] * \
+                                                                      up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['CAR_DIESEL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                        'CAR_DIESEL', 'c_inv'] * up['c_inv_car'] * up[
+                                                                        'c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['CAR_NG', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                    'CAR_NG', 'c_inv'] * up['c_inv_car'] * up[
+                                                                    'c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['CAR_METHANOL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                          'CAR_METHANOL', 'c_inv'] * up['c_inv_car'] * \
+                                                                      up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['CAR_HEV', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                     'CAR_HEV', 'c_inv'] * up['c_inv_car'] * 0.5 * (
+                                                                         up['c_inv_ic_prop'] + up['c_inv_e_prop'])
+    config['all_data']['Technologies'].loc['CAR_PHEV', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                      'CAR_PHEV', 'c_inv'] * up['c_inv_car'] * 0.5 * (
+                                                                          up['c_inv_ic_prop'] + up['c_inv_e_prop'])
+    config['all_data']['Technologies'].loc['CAR_BEV', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                     'CAR_BEV', 'c_inv'] * up['c_inv_car'] * up[
+                                                                     'c_inv_e_prop']
+    config['all_data']['Technologies'].loc['CAR_FUEL_CELL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                           'CAR_FUEL_CELL', 'c_inv'] * up['c_inv_car'] * \
+                                                                       up['c_inv_fc_prop']
+
+    config['all_data']['Technologies'].loc['BOAT_FREIGHT_DIESEL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                                 'BOAT_FREIGHT_DIESEL', 'c_inv'] * up[
+                                                                                 'c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['BOAT_FREIGHT_NG', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                             'BOAT_FREIGHT_NG', 'c_inv'] * up[
+                                                                             'c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['BOAT_FREIGHT_METHANOL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                                   'BOAT_FREIGHT_METHANOL', 'c_inv'] * \
+                                                                               up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['TRUCK_DIESEL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                          'TRUCK_DIESEL', 'c_inv'] * up['c_inv_truck'] * \
+                                                                      up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['TRUCK_FUEL_CELL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                             'TRUCK_FUEL_CELL', 'c_inv'] * up[
+                                                                             'c_inv_truck'] * up['c_inv_fc_prop']
+    config['all_data']['Technologies'].loc['TRUCK_ELEC', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                        'TRUCK_ELEC', 'c_inv'] * up['c_inv_truck'] * up[
+                                                                        'c_inv_e_prop']
+    config['all_data']['Technologies'].loc['TRUCK_NG', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                      'TRUCK_NG', 'c_inv'] * up['c_inv_truck'] * up[
+                                                                      'c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['TRUCK_METHANOL', 'c_inv'] *= up['c_inv_truck'] * up['c_inv_ic_prop']
+
+    return config['all_data']
