@@ -735,3 +735,31 @@ def compute_gwp_op(import_folders, out_path='STEP_2_Energy_Model'):
     gwp_op_final = gwp_op_new[res_names_red]
 
     return gwp_op_final.combine_first(gwp_op_data)
+
+
+def transcript_uncertainties(uncer_params, config):
+
+    # update all_data with ref values
+    config['all_data'] = import_data(config['data_folders'])
+
+    # to fill the undefined uncertainty parameters
+    up= {'avail_elec' : 0}
+    for keys in uncer_params:
+        up[keys] = uncer_params
+
+    # changing absolute value
+    config['all_data']['Resources'].loc['ELECTRICITY','avail'] = up['avail_elec']
+
+    # multiply by param
+    config['all_data']['Resources'].loc['WOOD','c_op'] = config['all_data']['Resources'].loc['WOOD','c_op'] \
+                                                         * uncer_params['c_op_biomass']
+
+    # multiply time series
+    config['all_data']['Time_series'].loc[:,'Wind_onshore'] = config['all_data']['Time_series'].loc[:,'Wind_onshore'] \
+                                                              * uncer_params['cpf_winds']
+
+    # update investment cost
+    config['all_data']['Technologie'].loc['BUS_COACH_DIESEL','c_inv'] = config['all_data']['Technologie'].loc['BUS_COACH_DIESEL','c_inv'] \
+                                                                        * uncer_params['c_inv_bus'] * uncer_params['c_inv_ic_prop']
+
+    return config
