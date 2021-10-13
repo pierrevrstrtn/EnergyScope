@@ -749,28 +749,28 @@ def transcript_uncertainties(uncer_params, config):
 
     # to fill the undefined uncertainty parameters
     up = {'avail_elec': 27567.3,
-          'avail_WASTE': 17800,
+          'avail_waste': 17800,
           'avail_coal': 33355,
           'avail_biomass': 1,
-          'c_op_ELECTRICITY': 0.08433,
+          'c_op_electricity': 0.08433,
           'c_op_coal': 0.017657892,
           'c_op_biomass': 1,
           'c_op_biofuels': 1,
           'c_op_syn_fuels': 1,
-          'c_op_hydro': 1,
+          'c_op_hydrocarbons': 1,
           'gwp_op_ELECTRICITY': 0.206485714,
-          'c_inv_PV': 870,
-          'c_inv_WIND_ONSHORE': 1040,
-          'c_inv_WIND_OFFSHORE': 4975,
-          'c_inv_DHN_HP_ELEC': 344.76,
-          'c_inv_DEC_HP_ELEC': 492,
-          'c_inv_H2_ELECTROLYSIS': 696,
+          'c_inv_pv': 870,
+          'c_inv_wind_onshore': 1040,
+          'c_inv_wind_offshore': 4975,
+          'c_inv_dhn_hp_elec': 344.76,
+          'c_inv_dec_hp_elec': 492,
+          'c_inv_h2_electrolysis': 696,
           'f_max_nuc': 0,
-          'f_max_PV': 59.2,
-          'f_max_windON': 10,
-          'f_max_windOFF': 6,
-          'f_max_GeoElec': 0,
-          'f_max_GeoDHN': 0,
+          'f_max_pv': 59.2,
+          'f_max_windon': 10,
+          'f_max_windoff': 6,
+          'f_max_geoelec': 0,
+          'f_max_geodhn': 0,
           'elec_extra': 1,
           'ht_extra': 1,
           'sh_extra': 1,
@@ -783,7 +783,7 @@ def transcript_uncertainties(uncer_params, config):
           'c_inv_ic_prop': 1.0,
           'c_inv_e_prop': 1.0,
           'c_inv_fc_prop': 1.0,
-          'cpt_PV': 1.0,
+          'cpt_pv': 1.0,
           'cpt_winds': 1.0,
           }
     for key in uncer_params:
@@ -791,7 +791,7 @@ def transcript_uncertainties(uncer_params, config):
 
     # changing absolute value
     config['all_data']['Resources'].loc['ELECTRICITY', 'avail'] = up['avail_elec']
-    config['all_data']['Resources'].loc['WASTE', 'avail'] = up['avail_WASTE']
+    config['all_data']['Resources'].loc['WASTE', 'avail'] = up['avail_waste']
     config['all_data']['Resources'].loc['COAL', 'avail'] = up['avail_coal']
     config['all_data']['Resources'].loc['WOOD', 'avail'] = config['all_data']['Resources'].loc['WOOD', 'avail'] * up[
         'avail_biomass']
@@ -799,7 +799,7 @@ def transcript_uncertainties(uncer_params, config):
                                                                       'WET_BIOMASS', 'avail'] * up['avail_biomass']
 
     # Changing cost of operating:
-    config['all_data']['Resources'].loc['ELECTRICITY', 'c_op'] = up['c_op_ELECTRICITY']
+    config['all_data']['Resources'].loc['ELECTRICITY', 'c_op'] = up['c_op_electricity']
     config['all_data']['Resources'].loc['COAL', 'c_op'] = up['c_op_coal']
     # c_op biomass
     config['all_data']['Resources'].loc['WOOD', 'c_op'] = config['all_data']['Resources'].loc['WOOD', 'c_op'] * up[
@@ -822,34 +822,34 @@ def transcript_uncertainties(uncer_params, config):
                                                                     'AMMONIA_RE', 'c_op'] * up['c_op_syn_fuels']
     # c_op_ hydrocarbons
     config['all_data']['Resources'].loc['GASOLINE', 'c_op'] = config['all_data']['Resources'].loc['GASOLINE', 'c_op'] * \
-                                                              up['c_op_hydro']
+                                                              up['c_op_hydrocarbons']
     config['all_data']['Resources'].loc['DIESEL', 'c_op'] = config['all_data']['Resources'].loc['DIESEL', 'c_op'] * up[
-        'c_op_hydro']
+        'c_op_hydrocarbons']
     config['all_data']['Resources'].loc['H2', 'c_op'] = config['all_data']['Resources'].loc['H2', 'c_op'] * up[
-        'c_op_hydro']
+        'c_op_hydrocarbons']
     config['all_data']['Resources'].loc['GAS', 'c_op'] = config['all_data']['Resources'].loc['GAS', 'c_op'] * up[
-        'c_op_hydro']
+        'c_op_hydrocarbons']
     config['all_data']['Resources'].loc['METHANOL', 'c_op'] = config['all_data']['Resources'].loc['METHANOL', 'c_op'] * \
-                                                              up['c_op_hydro']
+                                                              up['c_op_hydrocarbons']
     config['all_data']['Resources'].loc['AMMONIA', 'c_op'] = config['all_data']['Resources'].loc['AMMONIA', 'c_op'] * \
-                                                             up['c_op_hydro']
+                                                             up['c_op_hydrocarbons']
 
     config['all_data']['Resources'].loc['ELECTRICITY', 'gwp_op'] = up['gwp_op_ELECTRICITY']
 
-    config['all_data']['Technologies'].loc['PV', 'c_inv'] = up['c_inv_PV']
-    config['all_data']['Technologies'].loc['WIND_ONSHORE', 'c_inv'] = up['c_inv_WIND_ONSHORE']
-    config['all_data']['Technologies'].loc['WIND_OFFSHORE', 'c_inv'] = up['c_inv_WIND_OFFSHORE']
-    config['all_data']['Technologies'].loc['DHN_HP_ELEC', 'c_inv'] = up['c_inv_DHN_HP_ELEC']
-    config['all_data']['Technologies'].loc['DEC_HP_ELEC', 'c_inv'] = up['c_inv_DEC_HP_ELEC']
+    config['all_data']['Technologies'].loc['PV', 'c_inv'] = up['c_inv_pv']
+    config['all_data']['Technologies'].loc['WIND_ONSHORE', 'c_inv'] = up['c_inv_wind_onshore']
+    config['all_data']['Technologies'].loc['WIND_OFFSHORE', 'c_inv'] = up['c_inv_wind_offshore']
+    config['all_data']['Technologies'].loc['DHN_HP_ELEC', 'c_inv'] = up['c_inv_dhn_hp_elec']
+    config['all_data']['Technologies'].loc['DEC_HP_ELEC', 'c_inv'] = up['c_inv_dec_hp_elec']
 
-    config['all_data']['Technologies'].loc['H2_ELECTROLYSIS', 'c_inv'] = up['c_inv_H2_ELECTROLYSIS']
+    config['all_data']['Technologies'].loc['H2_ELECTROLYSIS', 'c_inv'] = up['c_inv_h2_electrolysis']
 
     config['all_data']['Technologies'].loc['NUCLEAR', 'f_max'] = up['f_max_nuc']
-    config['all_data']['Technologies'].loc['PV', 'f_max'] = up['f_max_PV']
-    config['all_data']['Technologies'].loc['WIND_ONSHORE', 'f_max'] = up['f_max_windON']
-    config['all_data']['Technologies'].loc['WIND_OFFSHORE', 'f_max'] = up['f_max_windOFF']
-    config['all_data']['Technologies'].loc['GEOTHERMAL', 'f_max'] = up['f_max_GeoElec']
-    config['all_data']['Technologies'].loc['DHN_DEEP_GEO', 'f_max'] = up['f_max_GeoDHN']
+    config['all_data']['Technologies'].loc['PV', 'f_max'] = up['f_max_pv']
+    config['all_data']['Technologies'].loc['WIND_ONSHORE', 'f_max'] = up['f_max_windon']
+    config['all_data']['Technologies'].loc['WIND_OFFSHORE', 'f_max'] = up['f_max_windoff']
+    config['all_data']['Technologies'].loc['GEOTHERMAL', 'f_max'] = up['f_max_geoelec']
+    config['all_data']['Technologies'].loc['DHN_DEEP_GEO', 'f_max'] = up['f_max_geodhn']
 
     # demand
     config['all_data']['Demand'].loc[
@@ -874,7 +874,7 @@ def transcript_uncertainties(uncer_params, config):
         'NON_ENERGY', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up['ned_extra']
 
     # hourly capacity factors of RE
-    config['all_data']['Time_series'].loc[:, 'PV'] *= up['cpt_PV']
+    config['all_data']['Time_series'].loc[:, 'PV'] *= up['cpt_pv']
     config['all_data']['Time_series'].loc[:, 'Wind_onshore'] *= up['cpt_winds']
     config['all_data']['Time_series'].loc[:, 'Wind_offshore'] *= up['cpt_winds']
 

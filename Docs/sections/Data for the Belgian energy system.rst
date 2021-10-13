@@ -81,6 +81,8 @@ New technologies have been added, related to the new fuels.
 As an example, methanol can now be used for cars or trucks. 
 These new technologies have no restriction of deployment.
 
+The offshore wind capacity has been increased from 3.5 to 6 GW due to recent annoucement of the  
+`Belgian offshore plateform <https://www.belgianoffshoreplatform.be/fr/>`_ .
 
 Bibliography:
 -------------
