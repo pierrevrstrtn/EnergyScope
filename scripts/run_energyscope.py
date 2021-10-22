@@ -33,14 +33,9 @@ if __name__ == '__main__':
     # Example to change data: update wood availability to 23 400 GWh
     config['all_data']['Resources'].loc['WOOD', 'avail'] = 23400
 
-
-
     # # Test to update uncertain parameters
     # uncer_params = {'avail_elec': 27567.4}
     # config['all_data'] =  es.transcript_uncertainties(uncer_params,config)
-
-    # # Example to get total cost
-    # es.get_total_cost(config)
 
 
     # Printing the .dat files for the optimisation problem
@@ -49,6 +44,9 @@ if __name__ == '__main__':
     # Running EnergyScope
     es.run_ES(config)
 
-    # Example to print the sankey from this script
-    sankey_path = '../case_studies/' + config['case_study'] + '/output/sankey'
-    es.drawSankey(path=sankey_path)
+    # Example to get total cost
+    total_cost = es.get_total_cost(config)
+    
+    # # Example to print the sankey from this script
+    # sankey_path = '../case_studies/' + config['case_study'] + '/output/sankey'
+    # es.drawSankey(path=sankey_path)
