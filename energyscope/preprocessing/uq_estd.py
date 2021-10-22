@@ -29,9 +29,9 @@ def run_ESTD_UQ(sample):
 
 
 
-    # # Test to update uncertain parameters
-    # uncer_params = {'avail_elec': 27567.4}
-    # config['all_data'] =  es.transcript_uncertainties(uncer_params,config)
+    # Test to update uncertain parameters
+    uncer_params = sample_dict
+    config['all_data'] =  es.transcript_uncertainties(uncer_params,config)
 
 
     # Printing the .dat files for the optimisation problem
