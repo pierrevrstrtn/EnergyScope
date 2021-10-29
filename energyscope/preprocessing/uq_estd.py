@@ -1,8 +1,20 @@
 import pandas as pd
 import os
 import energyscope as es
+from pathlib import Path
 
 def run_ESTD_UQ(sample):
+
+    path = Path(__file__).parents[2]
+
+
+    #path = os.path.dirname(os.path.abspath(__file__))
+
+    user_data = os.path.join(path,'Data','User_data')
+    developer_data = os.path.join(path,'Data','Developer_data')
+    es_path = os.path.join(path,'energyscope','STEP_2_Energy_Model')
+    step1_output = os.path.join(path,'energyscope','STEP_1_TD_selection','TD_of_days.out')
+
     s = sample[0]
     name = sample[1]
     sample_index = s[0]
@@ -15,21 +27,21 @@ def run_ESTD_UQ(sample):
               'printing_td': True,  # printing the time related data in ESTD_12TD.dat for the optimisaiton problem
               'GWP_limit': 1e+7,  # [ktCO2-eq./year]	# Minimum GWP reduction
               'import_capacity': 9.72,  # [GW] Electrical interconnections with neighbouring countries
-              'data_folders': ['../../Data/User_data', '../../Data/Developer_data'],  # Folders containing the csv data files
-              'ES_path': '../../energyscope/STEP_2_Energy_Model',  # Path to the energy model (.mod and .run files)
-              'step1_output': '../../energyscope/STEP_1_TD_selection/TD_of_days.out',
+              'data_folders': [user_data, developer_data],  # Folders containing the csv data files
+              'ES_path': es_path,  # Path to the energy model (.mod and .run files)
+              'step1_output': step1_output,
               # OUtput of the step 1 selection of typical days
               'all_data': dict(),
               # Dictionnary with the dataframes containing all the data in the form : {'Demand': eud, 'Resources': resources, 'Technologies': technologies, 'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out, 'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in, 'Storage_eff_out': storage_eff_out, 'Time_series': time_series}
               'Working_directory': os.getcwd(),
-              'AMPL_path': '/Users/xrixhon/Documents/Software/AMPL'} # PATH to AMPL licence (to adapt by the user)
+              'AMPL_path': r'/Users/xrixhon/Documents/Software/AMPL'} # PATH to AMPL licence (to adapt by the user)
 
     # Reading the data
     config['all_data'] = es.import_data(config['data_folders'])
 
 
 
-    # Test to update uncertain parameters
+    # # Test to update uncertain parameters
     uncer_params = sample_dict
     config['all_data'] =  es.transcript_uncertainties(uncer_params,config)
 
@@ -42,11 +54,8 @@ def run_ESTD_UQ(sample):
 
     # Example to get total cost
     total_cost = es.get_total_cost(config,'uq')
-    
+
     return total_cost
-    # # Example to print the sankey from this script
-    # sankey_path = '../case_studies/' + config['case_study'] + '/output/sankey'
-    # es.drawSankey(path=sankey_path)
 
 def transcript_uncertainties(uncer_params, config):
     #TODO update with *=

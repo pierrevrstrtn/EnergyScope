@@ -17,3 +17,5 @@ case_studies/
 energyscope/postprocessing/__pycache__/
 
 energyscope/postprocessing/draw_sankey/__pycache__/
+
+.DS_Store

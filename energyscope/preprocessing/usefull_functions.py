@@ -16,7 +16,7 @@ import os
 import shutil
 from subprocess import call
 
-
+from pathlib import Path
 # Useful functions for printing in AMPL syntax #
 def make_dir(path):
     if not os.path.isdir(path):
@@ -100,11 +100,14 @@ def import_data(import_folders):
 
 # Function to print the ESTD_data.dat file #
 def print_data(config, case = 'deter'):
+    #two_up = os.path.dirname(os.path.dirname(__file__))
+    two_up = Path(__file__).parents[2]
+    
     if case=='deter':
-        cs = '../case_studies/'
+        cs = os.path.join(two_up,'case_studies/')
         make_dir(cs)
     else:
-        cs = '../../case_studies/'
+        cs = os.path.join(two_up,'case_studies')
         make_dir(cs)
         cs = cs + '/' + config['UQ_case'] + '/'
         make_dir(cs)
@@ -675,23 +678,24 @@ def print_data(config, case = 'deter'):
 
 # Function to run ES from python
 def run_ES(config, case = 'deter'):
+    two_up = Path(__file__).parents[2]
 
     if case == 'deter':
-        cs = '../case_studies/'
+        cs = os.path.join(two_up,'case_studies')
     else:
-        cs = '../../case_studies/'
-        cs = cs + config['UQ_case'] + '/'
+        cs = os.path.join(two_up,'case_studies',config['UQ_case'])
+        #cs = cs + config['UQ_case'] + '/'
 
     # TODO make the case_study folder containing all runs with input, model and outputs
     shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_model.mod'),
-                    os.path.join(cs, config['case_study'] + '/ESTD_model.mod'))
+                    os.path.join(cs, config['case_study'],'ESTD_model.mod'))
     shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_main.run'),
-                    os.path.join(cs, config['case_study'] + '/ESTD_main.run'))
+                    os.path.join(cs, config['case_study'], 'ESTD_main.run'))
     # creating output directory
-    make_dir(cs + config['case_study'] + '/output')
-    make_dir(cs + config['case_study'] + '/output' + '/hourly_data')
-    make_dir(cs + config['case_study'] + '/output' + '/sankey')
-    os.chdir(cs + config['case_study'])
+    make_dir(os.path.join(cs,config['case_study'],'output'))
+    make_dir(os.path.join(cs,config['case_study'],'output','hourly_data'))
+    make_dir(os.path.join(cs,config['case_study'],'output','sankey'))
+    os.chdir(os.path.join(cs,config['case_study']))
     # running ES
     logging.info('Running EnergyScope')
     call(config['AMPL_path']+ '/ampl ESTD_main.run', shell=True)
