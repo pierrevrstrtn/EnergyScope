@@ -24,15 +24,22 @@ data ESTD_12TD.dat; # TDs depending data
 
 option solver cplex;
 
+#option show_stats 3; # show statistics
+#option times 1; # show time
+#option gentimes 1; # show time
 
-option show_stats 3; # show statistics
-
-option cplex_options  'mipdisplay 5 mipinterval 10'; 
-option cplex_options $cplex_options 'baropt predual=-1 scale=1';
-#option cplex_options $cplex_options 'display=2';
 option log_file './log.txt';   #write the log in a .txt file. Create the file before running.
-option cplex_options $cplex_options 'mipgap 0.01 '; 
-option cplex_options $cplex_options 'timelimit 3600 '; 
+option presolve 200;
+
+option cplex_options $cplex_options 'baropt predual=-1 crossover=0';
+option cplex_options $cplex_options 'aggregate=-1';
+option cplex_options $cplex_options 'ordering=1';
+option cplex_options $cplex_options 'timelimit 3600 ';
+
+#option cplex_options $cplex_options 'display=2';
+#option cplex_options $cplex_options 'prestats=1';
+#option cplex_options $cplex_options 'comptol=1e-3';
+#option cplex_options $cplex_options 'bardisplay=1';
 
 
 ################################################################################
@@ -49,23 +56,14 @@ param PathName symbolic default "output/"; #place where outputs are print
 
 print PathName;
 
-
-
-option times 1; # show time
-option gentimes 1; # show time
-
 solve;
 
 print "TotalCost", TotalCost;
 print "GWP_op", sum {i in RESOURCES} GWP_op [i];
 
 display solve_result;
-display solve_result_num;
 display _ampl_elapsed_time;
-display _ampl_time;
 display _solve_elapsed_time;
-display _total_solve_time;
-display _solve_time;
 
 if solve_result = "limit" # To avoid post treatment error
 then print "TIME OUT"; 
@@ -79,9 +77,7 @@ else {
 			################################################################################
 
 			## Saving sets and parameters to output file
-			option show_stats 0; # show statistics
-			option times 0; # show time
-			option gentimes 0; # show time
+
 	
 			## Print cost breakdown to txt file.
 			print "--------------SAVING COSTS -----------";
@@ -89,28 +85,7 @@ else {
 			for {i in TECHNOLOGIES union RESOURCES}{
 				printf "%s\t%.6f\t%.6f\t%.6f\n", i, if i in TECHNOLOGIES then (tau[i] * C_inv[i]) else 0, if i in TECHNOLOGIES then C_maint [i] else 0, if i in RESOURCES then C_op [i] else 0 >> (PathName & "/cost_breakdown.txt");
 			}
-						
-			## Print GWP tech breakdown
-			print "--------------SAVING GWP_TECH -----------";
-			printf "Tech\t" > (PathName & "/cost_op_tech.txt");
-			for {i in RESOURCES diff BIOFUELS diff EXPORT}{
-				printf "%s\t",i >> (PathName & "/cost_op_tech.txt");
-			}
-			for {j in TECHNOLOGIES diff STORAGE_TECH}{
-				printf "\n %s \t", j >> (PathName & "/cost_op_tech.txt");
-				for {i in RESOURCES diff BIOFUELS diff EXPORT}{
-					printf " %f\t",if layers_in_out[j, i] == 0 then 0 
-									else
-										sum {t in PERIODS, h in HOUR_OF_PERIOD [t], td in TYPICAL_DAY_OF_PERIOD [t]} 
-										((c_op [i] * F_t [i, h, td] * t_op [h, td]) * (layers_in_out[j, i] * F_t [j, h, td]) # The specific resources emissions times the share of the technology
-										/(min(-0.000001,
-										sum{j2 in TECHNOLOGIES diff STORAGE_TECH } 
-										(layers_in_out[j2, i] * F_t [j2, h, td]) 
-										+ sum {j2 in STORAGE_TECH} ( Storage_out [j2, i, h, td] - Storage_in [j2, i, h, td] )) #The total share of technologies
-										))
-					>> (PathName & "/cost_op_tech.txt");
-				}
-			}
+
 						
 			## Print resources breakdown to txt file.
 			print "--------------SAVING RESOURCES -----------";
@@ -125,28 +100,6 @@ else {
 			printf "%s\t%s\t%s\n", "Name", "GWP_constr", "GWP_op" > (PathName & "/gwp_breakdown.txt"); 
 			for {i in TECHNOLOGIES union RESOURCES}{
 				printf "%s\t%.6f\t%.6f\n", i, if i in TECHNOLOGIES then GWP_constr [i] / lifetime [i] else 0, if i in RESOURCES then GWP_op [i] else 0 >> (PathName & "/gwp_breakdown.txt");
-			}
-			
-			## Print GWP tech breakdown
-			print "--------------SAVING GWP_TECH -----------";
-			printf "Tech\t" > (PathName & "/gwp_tech.txt");
-			for {i in RESOURCES diff BIOFUELS diff EXPORT}{
-				printf "%s\t",i >> (PathName & "/gwp_tech.txt");
-			}
-			for {j in TECHNOLOGIES diff STORAGE_TECH}{
-				printf "\n %s \t", j >> (PathName & "/gwp_tech.txt");
-				for {i in RESOURCES diff BIOFUELS diff EXPORT}{
-					printf " %f\t",if layers_in_out[j, i] == 0 then 0 
-									else
-										sum {t in PERIODS, h in HOUR_OF_PERIOD [t], td in TYPICAL_DAY_OF_PERIOD [t]} 
-										((gwp_op [i] * F_t [i, h, td] * t_op [h, td]) * (layers_in_out[j, i] * F_t [j, h, td]) # The specific resources emissions times the share of the technology
-										/(min(-0.000001,
-										sum{j2 in TECHNOLOGIES diff STORAGE_TECH } 
-										(layers_in_out[j2, i] * F_t [j2, h, td]) 
-										+ sum {j2 in STORAGE_TECH} ( Storage_out [j2, i, h, td] - Storage_in [j2, i, h, td] )) #The total share of technologies
-										))
-					>> (PathName & "/gwp_tech.txt");
-				}
 			}
 
 
@@ -1010,4 +963,4 @@ else {
 # 					, "Heat LT", "#FA8072", "TWh" >> (PathName & "/sankey/input2sankey.csv");
 			}
 
-		}# END SAVING
+		# END SAVING
