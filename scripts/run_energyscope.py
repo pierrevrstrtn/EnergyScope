@@ -44,9 +44,6 @@ if __name__ == '__main__':
     # Running EnergyScope
     es.run_ES(config)
 
-    # # Example to get total cost
-    # total_cost = es.get_total_cost(config)
-
     # # Example to print the sankey from this script
     # sankey_path = '../case_studies/' + config['case_study'] + '/output/sankey'
     # es.drawSankey(path=sankey_path)
