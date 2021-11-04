@@ -54,6 +54,7 @@ def run_ESTD_UQ(sample, AMPL_path):
     total_cost = es.get_total_cost(config,'uq')
 
     return total_cost
+    
 
 def transcript_uncertainties(uncer_params, config):
     #TODO update with *=
@@ -103,138 +104,138 @@ def transcript_uncertainties(uncer_params, config):
     for key in uncer_params:
         up[key] = uncer_params[key]
 
-        # changing absolute value
-        config['all_data']['Resources'].loc['ELECTRICITY', 'avail'] = up['avail_elec']
-        config['all_data']['Resources'].loc['WASTE', 'avail'] = up['avail_waste']
-        config['all_data']['Resources'].loc['COAL', 'avail'] = up['avail_coal']
-        config['all_data']['Resources'].loc['WOOD', 'avail'] *= up[
-            'avail_biomass']
-        config['all_data']['Resources'].loc['WET_BIOMASS', 'avail'] *= up['avail_biomass']
-    
-        # Changing cost of operating:
-        config['all_data']['Resources'].loc['ELECTRICITY', 'c_op'] = up['c_op_electricity']
-        config['all_data']['Resources'].loc['COAL', 'c_op'] = up['c_op_coal']
-        # c_op biomass
-        config['all_data']['Resources'].loc['WOOD', 'c_op'] *= up['c_op_biomass']
-        config['all_data']['Resources'].loc['WET_BIOMASS', 'c_op'] *= up['c_op_biomass']
-        # c_op_biofuels
-        config['all_data']['Resources'].loc['BIODIESEL', 'c_op'] *= up['c_op_biofuels']
-        config['all_data']['Resources'].loc['BIOETHANOL', 'c_op'] *= up['c_op_biofuels']
-        # c_op_syn_fuels
-        config['all_data']['Resources'].loc['H2_RE', 'c_op'] *= up['c_op_syn_fuels']
-        config['all_data']['Resources'].loc['GAS_RE', 'c_op'] *= up['c_op_syn_fuels']
-        config['all_data']['Resources'].loc['METHANOL_RE', 'c_op'] *= up['c_op_syn_fuels']
-        config['all_data']['Resources'].loc['AMMONIA_RE', 'c_op'] *= up['c_op_syn_fuels']
-        # c_op_ hydrocarbons
-        config['all_data']['Resources'].loc['GASOLINE', 'c_op'] *= up['c_op_hydrocarbons']
-        config['all_data']['Resources'].loc['DIESEL', 'c_op'] *= up['c_op_hydrocarbons']
-        config['all_data']['Resources'].loc['H2', 'c_op'] *= up['c_op_hydrocarbons']
-        config['all_data']['Resources'].loc['GAS', 'c_op'] *= up['c_op_hydrocarbons']
-        config['all_data']['Resources'].loc['METHANOL', 'c_op'] *= up['c_op_hydrocarbons']
-        config['all_data']['Resources'].loc['AMMONIA', 'c_op'] *= up['c_op_hydrocarbons']
-    
-        config['all_data']['Resources'].loc['ELECTRICITY', 'gwp_op'] = up['gwp_op_ELECTRICITY']
-    
-        config['all_data']['Technologies'].loc['PV', 'c_inv'] = up['c_inv_pv']
-        config['all_data']['Technologies'].loc['WIND_ONSHORE', 'c_inv'] = up['c_inv_wind_onshore']
-        config['all_data']['Technologies'].loc['WIND_OFFSHORE', 'c_inv'] = up['c_inv_wind_offshore']
-        config['all_data']['Technologies'].loc['DHN_HP_ELEC', 'c_inv'] = up['c_inv_dhn_hp_elec']
-        config['all_data']['Technologies'].loc['DEC_HP_ELEC', 'c_inv'] = up['c_inv_dec_hp_elec']
-    
-        config['all_data']['Technologies'].loc['H2_ELECTROLYSIS', 'c_inv'] = up['c_inv_h2_electrolysis']
-    
-        config['all_data']['Technologies'].loc['NUCLEAR', 'f_max'] = up['f_max_nuc']
-        config['all_data']['Technologies'].loc['PV', 'f_max'] = up['f_max_pv']
-        config['all_data']['Technologies'].loc['WIND_ONSHORE', 'f_max'] = up['f_max_windon']
-        config['all_data']['Technologies'].loc['WIND_OFFSHORE', 'f_max'] = up['f_max_windoff']
-        config['all_data']['Technologies'].loc['GEOTHERMAL', 'f_max'] = up['f_max_geoelec']
-        config['all_data']['Technologies'].loc['DHN_DEEP_GEO', 'f_max'] = up['f_max_geodhn']
-    
-        # demand
-        config['all_data']['Demand'].loc[
-            'ELECTRICITY', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
-            'elec_extra']
-        config['all_data']['Demand'].loc[
-            'LIGHTING', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
-            'elec_extra']
-        config['all_data']['Demand'].loc[
-            'HEAT_HIGH_T', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
-            'ht_extra']
-        config['all_data']['Demand'].loc[
-            'HEAT_LOW_T_SH', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
-            'sh_extra']
-        config['all_data']['Demand'].loc[
-            'MOBILITY_PASSENGER', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
-            'passenger_extra']
-        config['all_data']['Demand'].loc[
-            'MOBILITY_FREIGHT', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
-            'freight_extra']
-        config['all_data']['Demand'].loc[
-            'NON_ENERGY', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up['ned_extra']
-    
-        # hourly capacity factors of RE
-        config['all_data']['Time_series'].loc[:, 'PV'] *= up['cpt_pv']
-        config['all_data']['Time_series'].loc[:, 'Wind_onshore'] *= up['cpt_winds']
-        config['all_data']['Time_series'].loc[:, 'Wind_offshore'] *= up['cpt_winds']
-    
-        # update mobility costs
-        config['all_data']['Technologies'].loc['BUS_COACH_DIESEL', 'c_inv'] *= up['c_inv_bus'] * up['c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['BUS_COACH_HYDIESEL', 'c_inv'] *= up['c_inv_bus'] * 0.5 * (
-                    up['c_inv_ic_prop'] + up['c_inv_e_prop'])
-        config['all_data']['Technologies'].loc['BUS_COACH_CNG_STOICH', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                                      'BUS_COACH_CNG_STOICH', 'c_inv'] * up[
-                                                                                      'c_inv_bus'] * up['c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['BUS_COACH_FC_HYBRIDH2', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                                       'BUS_COACH_FC_HYBRIDH2', 'c_inv'] * \
-                                                                                   up['c_inv_bus'] * up['c_inv_fc_prop']
-    
-        config['all_data']['Technologies'].loc['CAR_GASOLINE', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                              'CAR_GASOLINE', 'c_inv'] * up['c_inv_car'] * \
-                                                                          up['c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['CAR_DIESEL', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                            'CAR_DIESEL', 'c_inv'] * up['c_inv_car'] * up[
-                                                                            'c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['CAR_NG', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                        'CAR_NG', 'c_inv'] * up['c_inv_car'] * up[
+    # changing absolute value
+    config['all_data']['Resources'].loc['ELECTRICITY', 'avail'] = up['avail_elec']
+    config['all_data']['Resources'].loc['WASTE', 'avail'] = up['avail_waste']
+    config['all_data']['Resources'].loc['COAL', 'avail'] = up['avail_coal']
+    config['all_data']['Resources'].loc['WOOD', 'avail'] *= up[
+        'avail_biomass']
+    config['all_data']['Resources'].loc['WET_BIOMASS', 'avail'] *= up['avail_biomass']
+
+    # Changing cost of operating:
+    config['all_data']['Resources'].loc['ELECTRICITY', 'c_op'] = up['c_op_electricity']
+    config['all_data']['Resources'].loc['COAL', 'c_op'] = up['c_op_coal']
+    # c_op biomass
+    config['all_data']['Resources'].loc['WOOD', 'c_op'] *= up['c_op_biomass']
+    config['all_data']['Resources'].loc['WET_BIOMASS', 'c_op'] *= up['c_op_biomass']
+    # c_op_biofuels
+    config['all_data']['Resources'].loc['BIODIESEL', 'c_op'] *= up['c_op_biofuels']
+    config['all_data']['Resources'].loc['BIOETHANOL', 'c_op'] *= up['c_op_biofuels']
+    # c_op_syn_fuels
+    config['all_data']['Resources'].loc['H2_RE', 'c_op'] *= up['c_op_syn_fuels']
+    config['all_data']['Resources'].loc['GAS_RE', 'c_op'] *= up['c_op_syn_fuels']
+    config['all_data']['Resources'].loc['METHANOL_RE', 'c_op'] *= up['c_op_syn_fuels']
+    config['all_data']['Resources'].loc['AMMONIA_RE', 'c_op'] *= up['c_op_syn_fuels']
+    # c_op_ hydrocarbons
+    config['all_data']['Resources'].loc['GASOLINE', 'c_op'] *= up['c_op_hydrocarbons']
+    config['all_data']['Resources'].loc['DIESEL', 'c_op'] *= up['c_op_hydrocarbons']
+    config['all_data']['Resources'].loc['H2', 'c_op'] *= up['c_op_hydrocarbons']
+    config['all_data']['Resources'].loc['GAS', 'c_op'] *= up['c_op_hydrocarbons']
+    config['all_data']['Resources'].loc['METHANOL', 'c_op'] *= up['c_op_hydrocarbons']
+    config['all_data']['Resources'].loc['AMMONIA', 'c_op'] *= up['c_op_hydrocarbons']
+
+    config['all_data']['Resources'].loc['ELECTRICITY', 'gwp_op'] = up['gwp_op_ELECTRICITY']
+
+    config['all_data']['Technologies'].loc['PV', 'c_inv'] = up['c_inv_pv']
+    config['all_data']['Technologies'].loc['WIND_ONSHORE', 'c_inv'] = up['c_inv_wind_onshore']
+    config['all_data']['Technologies'].loc['WIND_OFFSHORE', 'c_inv'] = up['c_inv_wind_offshore']
+    config['all_data']['Technologies'].loc['DHN_HP_ELEC', 'c_inv'] = up['c_inv_dhn_hp_elec']
+    config['all_data']['Technologies'].loc['DEC_HP_ELEC', 'c_inv'] = up['c_inv_dec_hp_elec']
+
+    config['all_data']['Technologies'].loc['H2_ELECTROLYSIS', 'c_inv'] = up['c_inv_h2_electrolysis']
+
+    config['all_data']['Technologies'].loc['NUCLEAR', 'f_max'] = up['f_max_nuc']
+    config['all_data']['Technologies'].loc['PV', 'f_max'] = up['f_max_pv']
+    config['all_data']['Technologies'].loc['WIND_ONSHORE', 'f_max'] = up['f_max_windon']
+    config['all_data']['Technologies'].loc['WIND_OFFSHORE', 'f_max'] = up['f_max_windoff']
+    config['all_data']['Technologies'].loc['GEOTHERMAL', 'f_max'] = up['f_max_geoelec']
+    config['all_data']['Technologies'].loc['DHN_DEEP_GEO', 'f_max'] = up['f_max_geodhn']
+
+    # demand
+    config['all_data']['Demand'].loc[
+        'ELECTRICITY', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'elec_extra']
+    config['all_data']['Demand'].loc[
+        'LIGHTING', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'elec_extra']
+    config['all_data']['Demand'].loc[
+        'HEAT_HIGH_T', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'ht_extra']
+    config['all_data']['Demand'].loc[
+        'HEAT_LOW_T_SH', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'sh_extra']
+    config['all_data']['Demand'].loc[
+        'MOBILITY_PASSENGER', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'passenger_extra']
+    config['all_data']['Demand'].loc[
+        'MOBILITY_FREIGHT', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up[
+        'freight_extra']
+    config['all_data']['Demand'].loc[
+        'NON_ENERGY', config['all_data']['Demand'].select_dtypes(include=['number']).columns] *= up['ned_extra']
+
+    # hourly capacity factors of RE
+    config['all_data']['Time_series'].loc[:, 'PV'] *= up['cpt_pv']
+    config['all_data']['Time_series'].loc[:, 'Wind_onshore'] *= up['cpt_winds']
+    config['all_data']['Time_series'].loc[:, 'Wind_offshore'] *= up['cpt_winds']
+
+    # update mobility costs
+    config['all_data']['Technologies'].loc['BUS_COACH_DIESEL', 'c_inv'] *= up['c_inv_bus'] * up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['BUS_COACH_HYDIESEL', 'c_inv'] *= up['c_inv_bus'] * 0.5 * (
+                up['c_inv_ic_prop'] + up['c_inv_e_prop'])
+    config['all_data']['Technologies'].loc['BUS_COACH_CNG_STOICH', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                                  'BUS_COACH_CNG_STOICH', 'c_inv'] * up[
+                                                                                  'c_inv_bus'] * up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['BUS_COACH_FC_HYBRIDH2', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                                   'BUS_COACH_FC_HYBRIDH2', 'c_inv'] * \
+                                                                               up['c_inv_bus'] * up['c_inv_fc_prop']
+
+    config['all_data']['Technologies'].loc['CAR_GASOLINE', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                          'CAR_GASOLINE', 'c_inv'] * up['c_inv_car'] * \
+                                                                      up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['CAR_DIESEL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                        'CAR_DIESEL', 'c_inv'] * up['c_inv_car'] * up[
                                                                         'c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['CAR_METHANOL', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                              'CAR_METHANOL', 'c_inv'] * up['c_inv_car'] * \
-                                                                          up['c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['CAR_HEV', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                         'CAR_HEV', 'c_inv'] * up['c_inv_car'] * 0.5 * (
-                                                                             up['c_inv_ic_prop'] + up['c_inv_e_prop'])
-        config['all_data']['Technologies'].loc['CAR_PHEV', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                          'CAR_PHEV', 'c_inv'] * up['c_inv_car'] * 0.5 * (
-                                                                              up['c_inv_ic_prop'] + up['c_inv_e_prop'])
-        config['all_data']['Technologies'].loc['CAR_BEV', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                         'CAR_BEV', 'c_inv'] * up['c_inv_car'] * up[
-                                                                         'c_inv_e_prop']
-        config['all_data']['Technologies'].loc['CAR_FUEL_CELL', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                               'CAR_FUEL_CELL', 'c_inv'] * up['c_inv_car'] * \
-                                                                           up['c_inv_fc_prop']
-    
-        config['all_data']['Technologies'].loc['BOAT_FREIGHT_DIESEL', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                                     'BOAT_FREIGHT_DIESEL', 'c_inv'] * up[
-                                                                                     'c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['BOAT_FREIGHT_NG', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                                 'BOAT_FREIGHT_NG', 'c_inv'] * up[
+    config['all_data']['Technologies'].loc['CAR_NG', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                    'CAR_NG', 'c_inv'] * up['c_inv_car'] * up[
+                                                                    'c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['CAR_METHANOL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                          'CAR_METHANOL', 'c_inv'] * up['c_inv_car'] * \
+                                                                      up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['CAR_HEV', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                     'CAR_HEV', 'c_inv'] * up['c_inv_car'] * 0.5 * (
+                                                                         up['c_inv_ic_prop'] + up['c_inv_e_prop'])
+    config['all_data']['Technologies'].loc['CAR_PHEV', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                      'CAR_PHEV', 'c_inv'] * up['c_inv_car'] * 0.5 * (
+                                                                          up['c_inv_ic_prop'] + up['c_inv_e_prop'])
+    config['all_data']['Technologies'].loc['CAR_BEV', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                     'CAR_BEV', 'c_inv'] * up['c_inv_car'] * up[
+                                                                     'c_inv_e_prop']
+    config['all_data']['Technologies'].loc['CAR_FUEL_CELL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                           'CAR_FUEL_CELL', 'c_inv'] * up['c_inv_car'] * \
+                                                                       up['c_inv_fc_prop']
+
+    config['all_data']['Technologies'].loc['BOAT_FREIGHT_DIESEL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                                 'BOAT_FREIGHT_DIESEL', 'c_inv'] * up[
                                                                                  'c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['BOAT_FREIGHT_METHANOL', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                                       'BOAT_FREIGHT_METHANOL', 'c_inv'] * \
-                                                                                   up['c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['TRUCK_DIESEL', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                              'TRUCK_DIESEL', 'c_inv'] * up['c_inv_truck'] * \
-                                                                          up['c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['TRUCK_FUEL_CELL', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                                 'TRUCK_FUEL_CELL', 'c_inv'] * up[
-                                                                                 'c_inv_truck'] * up['c_inv_fc_prop']
-        config['all_data']['Technologies'].loc['TRUCK_ELEC', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                            'TRUCK_ELEC', 'c_inv'] * up['c_inv_truck'] * up[
-                                                                            'c_inv_e_prop']
-        config['all_data']['Technologies'].loc['TRUCK_NG', 'c_inv'] = config['all_data']['Technologies'].loc[
-                                                                          'TRUCK_NG', 'c_inv'] * up['c_inv_truck'] * up[
-                                                                          'c_inv_ic_prop']
-        config['all_data']['Technologies'].loc['TRUCK_METHANOL', 'c_inv'] *= up['c_inv_truck'] * up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['BOAT_FREIGHT_NG', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                             'BOAT_FREIGHT_NG', 'c_inv'] * up[
+                                                                             'c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['BOAT_FREIGHT_METHANOL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                                   'BOAT_FREIGHT_METHANOL', 'c_inv'] * \
+                                                                               up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['TRUCK_DIESEL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                          'TRUCK_DIESEL', 'c_inv'] * up['c_inv_truck'] * \
+                                                                      up['c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['TRUCK_FUEL_CELL', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                             'TRUCK_FUEL_CELL', 'c_inv'] * up[
+                                                                             'c_inv_truck'] * up['c_inv_fc_prop']
+    config['all_data']['Technologies'].loc['TRUCK_ELEC', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                        'TRUCK_ELEC', 'c_inv'] * up['c_inv_truck'] * up[
+                                                                        'c_inv_e_prop']
+    config['all_data']['Technologies'].loc['TRUCK_NG', 'c_inv'] = config['all_data']['Technologies'].loc[
+                                                                      'TRUCK_NG', 'c_inv'] * up['c_inv_truck'] * up[
+                                                                      'c_inv_ic_prop']
+    config['all_data']['Technologies'].loc['TRUCK_METHANOL', 'c_inv'] *= up['c_inv_truck'] * up['c_inv_ic_prop']
 
     return config['all_data']
 
