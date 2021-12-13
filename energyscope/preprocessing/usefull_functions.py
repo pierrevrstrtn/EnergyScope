@@ -20,7 +20,7 @@ from pathlib import Path
 # Useful functions for printing in AMPL syntax #
 def make_dir(path):
     if not os.path.isdir(path):
-        os.mkdir(path)
+        os.makedirs(path)
 
 
 def ampl_syntax(df, comment):

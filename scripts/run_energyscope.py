@@ -28,9 +28,9 @@ if __name__ == '__main__':
               'step1_output': step1_output, # Output of the step 1 selection of typical days
               'all_data': dict(), # Dictionnary with the dataframes containing all the data in the form : {'Demand': eud, 'Resources': resources, 'Technologies': technologies, 'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out, 'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in, 'Storage_eff_out': storage_eff_out, 'Time_series': time_series}
               'Working_directory': os.getcwd(),
-              'AMPL_path': 'C:/My_programs/ampl_mswin64'} # PATH to AMPL licence (to adapt by the user)
-
-    # Reading the data
+              'AMPL_path': r'/Users/xrixhon/Documents/Software/AMPL'} # PATH to AMPL licence (to adapt by the user)
+    
+   # Reading the data
     config['all_data'] = es.import_data(config['data_folders'])
 
     ##TODO Student work: Write the updates in data HERE

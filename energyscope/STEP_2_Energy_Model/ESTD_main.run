@@ -961,6 +961,6 @@ else {
 # 					, "Heat LT", "#FA8072", "TWh" >> (PathName & "/sankey/input2sankey.csv");
 # 				printf "%s,%s,%.2f,%s,%s,%s\n", "DHN Sto", "Heat LT DHN", sum {i in STORAGE_OF_END_USES_TYPES["HEAT_LOW_T_DHN"],t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]} max(Storage_out  [i, "HEAT_LOW_T_DHN", h, td] - Storage_in  [i, "HEAT_LOW_T_DHN", h, td],0)/1000
 # 					, "Heat LT", "#FA8072", "TWh" >> (PathName & "/sankey/input2sankey.csv");
-			}
-
+# 			}
+	}
 		# END SAVING
