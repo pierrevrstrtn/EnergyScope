@@ -20,7 +20,7 @@ Features
 ========
 
 In the energy system community, several criteria are used to compare models. 
-EnergyScope TD is a bottom-up energy system model and has been compared to 53 other models in [limpens2021generating].
+EnergyScope TD is a bottom-up energy system model and has been compared to 53 other models in :cite:`Limpens2021thesis`.
 
 Each model is tailored for a different applications. In the following, the strengths and weaknesses of the model is presented.
 
@@ -88,7 +88,6 @@ Short computational time
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 The model has a short computational time around **60 seconds** making it an ideal candidate for uncertainty quantification.
-The strengths of the model are:
 
 
 Weaknesses of the model
