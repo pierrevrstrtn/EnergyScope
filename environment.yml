@@ -1,4 +1,4 @@
-name: energyscope
+name: EnergyScope_MECA2675
 
 dependencies:
   - python >= 3.7
