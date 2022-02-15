@@ -682,15 +682,17 @@ def run_ES(config, case = 'deter'):
 
     if case == 'deter':
         cs = os.path.join(two_up,'case_studies')
+        run = 'ESTD_main_all_prints.run'
     else:
         cs = os.path.join(two_up,'case_studies',config['UQ_case'])
+        run = 'ESTD_main.run'
         #cs = cs + config['UQ_case'] + '/'
 
     # TODO make the case_study folder containing all runs with input, model and outputs
     shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_model.mod'),
                     os.path.join(cs, config['case_study'],'ESTD_model.mod'))
-    shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_main.run'),
-                    os.path.join(cs, config['case_study'], 'ESTD_main.run'))
+    shutil.copyfile(os.path.join(config['ES_path'], run),
+                    os.path.join(cs, config['case_study'], run))
     # creating output directory
     make_dir(os.path.join(cs,config['case_study'],'output'))
     make_dir(os.path.join(cs,config['case_study'],'output','hourly_data'))
@@ -698,7 +700,12 @@ def run_ES(config, case = 'deter'):
     os.chdir(os.path.join(cs,config['case_study']))
     # running ES
     logging.info('Running EnergyScope')
-    call(config['AMPL_path']+ '/ampl ESTD_main.run', shell=True)
+
+    if config['AMPL_path'] is None:
+        call('ampl '+run, shell=True)
+    else:
+        call(config['AMPL_path']+'/ampl '+run, shell=True)
+
     os.chdir(config['Working_directory'])
 
     logging.info('End of run')

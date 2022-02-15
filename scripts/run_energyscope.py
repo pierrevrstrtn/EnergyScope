@@ -2,7 +2,7 @@
 """
 This script modifies the input data and runs the EnergyScope model
 
-@author: Paolo Thiran, Matija Pavičević
+@author: Paolo Thiran, Matija Pavičević, Xavier Rixhon, Gauthier Limpens
 """
 
 import os
@@ -18,7 +18,7 @@ if __name__ == '__main__':
     es_path = os.path.join(path, 'energyscope', 'STEP_2_Energy_Model')
     step1_output = os.path.join(path, 'energyscope', 'STEP_1_TD_selection', 'TD_of_days.out')
     # specify the configuration
-    config = {'case_study': 'final_options', # Name of the case study. The outputs will be printed into : config['ES_path']+'\output_'+config['case_study']
+    config = {'case_study': 'test', # Name of the case study. The outputs will be printed into : config['ES_path']+'\output_'+config['case_study']
               'printing': True,  # printing the data in ETSD_data.dat file for the optimisation problem
               'printing_td': True,  # printing the time related data in ESTD_12TD.dat for the optimisaiton problem
               'GWP_limit': 1e+7,  # [ktCO2-eq./year]	# Minimum GWP reduction
@@ -28,7 +28,7 @@ if __name__ == '__main__':
               'step1_output': step1_output, # Output of the step 1 selection of typical days
               'all_data': dict(), # Dictionnary with the dataframes containing all the data in the form : {'Demand': eud, 'Resources': resources, 'Technologies': technologies, 'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out, 'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in, 'Storage_eff_out': storage_eff_out, 'Time_series': time_series}
               'Working_directory': os.getcwd(),
-              'AMPL_path': r'/Users/xrixhon/Documents/Software/AMPL'} # PATH to AMPL licence (to adapt by the user)
+              'AMPL_path': None} # PATH to AMPL licence (to adapt by the user), set to None if AMPL is in your PATH variables
     
    # Reading the data
     config['all_data'] = es.import_data(config['data_folders'])
