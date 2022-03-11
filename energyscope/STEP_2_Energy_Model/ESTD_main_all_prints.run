@@ -36,10 +36,10 @@ option cplex_options $cplex_options 'aggregate=-1';
 option cplex_options $cplex_options 'ordering=1';
 option cplex_options $cplex_options 'timelimit 3600 ';
 
-#option cplex_options $cplex_options 'display=2';
-#option cplex_options $cplex_options 'prestats=1';
+option cplex_options $cplex_options 'display=2';
+option cplex_options $cplex_options 'prestats=1';
 #option cplex_options $cplex_options 'comptol=1e-3';
-#option cplex_options $cplex_options 'bardisplay=1';
+option cplex_options $cplex_options 'bardisplay=1';
 
 
 ################################################################################
