@@ -1,10 +1,14 @@
 Getting started
 +++++++++++++++
 
-The model is a mathematical formulation of a linear programming which can be solved with different solvers. 
-The model was originally developed in AMPL. Compatible solvers are CPLEX, Gurobi, etc. Running the model in AMPL requires the licences of AMPL and of at least one LP solver.  
+The model is a mathematical formulation of a linear programming. Ith can be solved with different solvers: CPLEX, Gurobi, GLPSOL, etc. 
+The model was originally developed in AMPL. Running the model in AMPL requires the licences of AMPL and of at least one LP solver.  
 
 However, the following version was tailored to be executed with GLPK [1]_, an open source model. 
+
+
+.. [1]
+    A drawback of GLPK is the long computational time (30 times longer than with AMPL). Thus, most of the code developments are made with AMPL using the CPLEX solver. When computational time are refered, they were obtained with the latter solver.
 
 
 How to install and run the model with GLPK:
@@ -78,9 +82,6 @@ To open the Sankey diagram, open the ``ESTD_sankey.html`` file. The browser shou
 .. figure:: /images/sankey_select_file.png
 
 Click on the ``Browse`` button and select the Sankey file ``input2sankey``. Finally, click on the ``Show Sankey`` button.
-
-.. [1]
-    A drawback of GLPK is the long computational time (30 times longer than with AMPL). Thus, most of the code developments are made with AMPL using the CPLEX solver. When computational time are refered, they were obtained with the latter solver.
 
 How to install and run the model with AMPL:
 ===========================================
