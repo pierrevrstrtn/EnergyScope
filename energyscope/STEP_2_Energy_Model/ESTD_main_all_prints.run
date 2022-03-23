@@ -24,7 +24,7 @@ data ESTD_12TD.dat; # TDs depending data
 
 option solver cplex;
 
-#option show_stats 3; # show statistics
+option show_stats 3; # show statistics
 #option times 1; # show time
 #option gentimes 1; # show time
 
