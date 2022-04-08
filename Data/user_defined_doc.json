@@ -23,5 +23,6 @@
     "state_of_charge_ev" :	"Minimum state of charge required for each electric vehicle at each hour of the day",
     "loss_network" : {"ELECTRICITY": "Losses in electrical network", "HEAT_LOW_T_DHN": "Losses in DHN"},
     "c_grid_extra" : "cost to reinforce the grid due to intermittent renewable energy penetration. See 2.2.2",
+    "import_capacity" : "expected interconnection with neighbouring countries [GW]",
     "STORAGE_DAILY" : "List of technologies meant for daily storage, allows to reduce computational cost" ,
 }
