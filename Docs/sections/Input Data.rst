@@ -397,12 +397,12 @@ Since, a specific study for the Belgian case has been conducted by a consortium 
       | ources**    | {op}`       | {op}`       | {2direct}`  |             |
       |             |             |             | [26]_       |             |
       +-------------+-------------+-------------+-------------+-------------+
-      |             | [€\ :sub:`2\| [kgCO\      | [kgCO:sub:`\| [GWh]       |
-      |             | 015`/MWh\   | :sub:`2-eq.`| 2`/MWh\     |             |
+      |             | [€\ :sub:`2\| [kgCO\      | [kgCO:sub:\ | [GWh]       |
+      |             | 015`/MWh\   | :sub:`2-eq.`| `2`/MWh\    |             |
       |             | :sub:`fuel`]| /MWh\       | :sub:`fuel`]|             |
       |             |             | :sub:`fuel`]|             |             |
       +-------------+-------------+-------------+-------------+-------------+
-      | Electricity | 84.3 [27]_  | 275.3 [28]_ | 0           | 27.5        |
+      | Electricity | 84.3 [27]_  | 206.4 [28]_ | 0           | 27.5        |
       | Import      |             |             |             |             |
       +-------------+-------------+-------------+-------------+-------------+
       | Gasoline    | 82.4 [29]_  | 345 [28]_   | 250         | infinity    |
@@ -425,7 +425,7 @@ Since, a specific study for the Belgian case has been conducted by a consortium 
       | non-RE      | 23.1        | 150  [28]_  | 260 [33]_   | 17.8        |
       | waste       |             |             |             |             |
       +-------------+-------------+-------------+-------------+-------------+
-      | Coal        | 17.6        | 401         | 360         | infinity    |
+      | Coal        | 17.6        | 401         | 360         | 33.3 [37]_  |
       |             |             | :cite:`\    |             |             |
       |             |             | we\         |             |             |
       |             |             | idema_ecoin\|             |             |
@@ -437,10 +437,10 @@ Since, a specific study for the Belgian case has been conducted by a consortium 
       |             |             | idema_ecoin\|             |             |
       |             |             | vent_2013`  |             |             |
       +-------------+-------------+-------------+-------------+-------------+
-      | Bio-diesel  | 111.3 [35]_ | 0  [36]_    | 270         | infinity    |
+      | Bio-diesel  | 120.0       | 0  [36]_    | 270         | infinity    |
       |             |             |             |             |             |
       +-------------+-------------+-------------+-------------+-------------+
-      | B\          | 120.0       | 0  [36]_    | 250         | infinity    |
+      | B\          | 111.3 [35]_ | 0  [36]_    | 250         | infinity    |
       | io-gasoline |             |             |             |             |
       +-------------+-------------+-------------+-------------+-------------+
       | Renew. gas  | 118.3       | 0 [36]_     | 200         | infinity    |
@@ -541,6 +541,10 @@ Since, a specific study for the Belgian case has been conducted by a consortium 
 .. [36]
    Emissions related to electro-fuels
    and bio-fuels production are neglected.
+   
+.. [36]
+   Belgium is phasing out coal. Coal is still used in industrial processes.
+   In 2015, 33.3 TWh of coal were used. Thus, the amount available should be lower than this value.
 
 
 .. _sec:app1_end_uses:
