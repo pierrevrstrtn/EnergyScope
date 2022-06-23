@@ -13,10 +13,20 @@ import numpy as np
 import pandas as pd
 import csv
 import os
+import json
 import shutil
 from subprocess import call
 
 from pathlib import Path
+
+# TODO
+#  add step1 and reading of weights
+#  check how to include efficiency as in pathway
+#  update units c_maint in data
+#  check data efficiency electrolyser -> XR
+#  update for nuclear up to 2035
+
+
 # Useful functions for printing in AMPL syntax #
 def make_dir(path):
     if not os.path.isdir(path):
@@ -60,22 +70,36 @@ def print_param(name, param, comment, out_path):
             writer.writerow(['param ' + str(name) + ' := ' + str(param) + '; # ' + str(comment)])
 
 
-# Function to import the data from the CSV data files #
-def import_data(import_folders):
-    logging.info('Importing data files')
-    # Reading CSV #
-    # Reading User CSV to build dataframes
-    eud = pd.read_csv(import_folders[0] + '/Demand.csv', sep=';', index_col=2, header=0)
-    resources = pd.read_csv(import_folders[0] + '/Resources.csv', sep=';', index_col=2, header=2)
-    technologies = pd.read_csv(import_folders[0] + '/Technologies.csv', sep=';', index_col=3, header=0, skiprows=[1])
+def print_json(my_sets, file):  # printing the dictionary containing all the sets into directory/sets.json
+    with open(file, 'w') as fp:
+        json.dump(my_sets, fp, indent=4, sort_keys=True)
+    return
 
-    # Reading Developer CSV to build dataframes
-    end_uses_categories = pd.read_csv(import_folders[1] + '/END_USES_CATEGORIES.csv', sep=';')
-    layers_in_out = pd.read_csv(import_folders[1] + '/Layers_in_out.csv', sep=';', index_col=0)
-    storage_characteristics = pd.read_csv(import_folders[1] + '/Storage_characteristics.csv', sep=';', index_col=0)
-    storage_eff_in = pd.read_csv(import_folders[1] + '/Storage_eff_in.csv', sep=';', index_col=0)
-    storage_eff_out = pd.read_csv(import_folders[1] + '/Storage_eff_out.csv', sep=';', index_col=0)
-    time_series = pd.read_csv(import_folders[1] + '/Time_series.csv', sep=';', header=0, index_col=0)
+def read_json(file):
+    # reading the saved dictionary containing all the sets from directory/sets.json
+    with open(file, 'r') as fp:
+        data = json.load(fp)
+    return data
+
+
+# Function to import the data from the CSV data files #
+def import_data(config):
+
+    import_folders = config['data_dir']
+    logging.info('Importing data files from '+ str(import_folders))
+    # Reading CSV #
+    eud = pd.read_csv(import_folders / 'Demand.csv', sep=';', index_col=2, header=0)
+    resources = pd.read_csv(import_folders / 'Resources.csv', sep=';', index_col=2, header=2)
+    technologies = pd.read_csv(import_folders / 'Technologies.csv', sep=';', index_col=3, header=0, skiprows=[1])
+    end_uses_categories = pd.read_csv(import_folders / 'END_USES_CATEGORIES.csv', sep=';')
+    layers_in_out = pd.read_csv(import_folders / 'Layers_in_out.csv', sep=';', index_col=0)
+    storage_characteristics = pd.read_csv(import_folders / 'Storage_characteristics.csv', sep=';', index_col=0)
+    storage_eff_in = pd.read_csv(import_folders / 'Storage_eff_in.csv', sep=';', index_col=0)
+    storage_eff_out = pd.read_csv(import_folders / 'Storage_eff_out.csv', sep=';', index_col=0)
+    time_series = pd.read_csv(import_folders / 'Time_series.csv', sep=';', header=0, index_col=0)
+
+    # Reading user_defined.json
+    config['user_defined'] = read_json(import_folders / 'user_defined.json')
 
     # Pre-processing #
     resources.drop(columns=['Comment'], inplace=True)
@@ -95,7 +119,9 @@ def import_data(import_folders):
         if type(all_df[key].columns[0]) == str:
             all_df[key].columns = all_df[key].columns.str.strip()
 
-    return all_df
+    config['all_data'] = all_df
+
+    return
 
 
 # Function to print the ESTD_data.dat file #
@@ -132,7 +158,6 @@ def print_data(config, case = 'deter'):
         out_path = cs + config['case_study'] + '/ESTD_data.dat'
         # config['ES_path'] + '/ESTD_data.dat'
         gwp_limit = config['GWP_limit']
-        import_capacity = config['import_capacity']  # [GW] Maximum power of electrical interconnections
 
         # Pre-processing df #
 
@@ -149,49 +174,46 @@ def print_data(config, case = 'deter'):
         technologies_simple.index.name = 'param:'
         technologies_simple = technologies_simple.astype('float')
 
-        # Developer defined parameters #
         # Economical inputs
-
-        # TODO put everything into a config file so that we can modify it from outside the function
-        i_rate = 0.015  # [-]
+        i_rate = config['user_defined']['i_rate']  # [-]
         # Political inputs
-        re_share_primary = 0  # [-] Minimum RE share in primary consumption
-        solar_area = 250  # [km^2]
-        power_density_pv = 0.2367  # PV : 1 kW/4.22m2   => 0.2367 kW/m2 => 0.2367 GW/km2
-        power_density_solar_thermal = 0.2857  # Solar thermal : 1 kW/3.5m2 => 0.2857 kW/m2 => 0.2857 GW/km2
+        re_share_primary = config['user_defined']['re_share_primary']  # [-] Minimum RE share in primary consumption
+        solar_area = config['user_defined']['solar_area']  # [km^2]
+        power_density_pv = config['user_defined'][
+            'power_density_pv']  # PV : 1 kW/4.22m2   => 0.2367 kW/m2 => 0.2367 GW/km2
+        power_density_solar_thermal = config['user_defined'][
+            'power_density_solar_thermal']  # Solar thermal : 1 kW/3.5m2 => 0.2857 kW/m2 => 0.2857 GW/km2
 
         # Technologies shares
-        share_mobility_public_min = 0.199
-        share_mobility_public_max = 0.5
-        share_freight_train_min = 0.109
-        share_freight_train_max = 0.25
-        share_freight_road_min = 0
-        share_freight_road_max = 1
-        share_freight_boat_min = 0.156
-        share_freight_boat_max = 0.3
-        share_heat_dhn_min = 0.02
-        share_heat_dhn_max = 0.37
+        share_mobility_public_min = config['user_defined']['share_mobility_public_min']
+        share_mobility_public_max = config['user_defined']['share_mobility_public_max']
+        share_freight_train_min = config['user_defined']['share_freight_train_min']
+        share_freight_train_max = config['user_defined']['share_freight_train_max']
+        share_freight_road_min = config['user_defined']['share_freight_road_min']
+        share_freight_road_max = config['user_defined']['share_freight_road_max']
+        share_freight_boat_min = config['user_defined']['share_freight_boat_min']
+        share_freight_boat_max = config['user_defined']['share_freight_boat_max']
+        share_heat_dhn_min = config['user_defined']['share_heat_dhn_min']
+        share_heat_dhn_max = config['user_defined']['share_heat_dhn_max']
 
-        share_ned = pd.DataFrame([0.779, 0.029, 0.192], index=['HVC', 'METHANOL', 'AMMONIA'], columns=['share_ned'])
+        share_ned = pd.DataFrame.from_dict(config['user_defined']['share_ned'], orient='index', columns=['share_ned'])
 
         # Electric vehicles :
         # km-pass/h/veh. : Gives the equivalence between capacity and number of vehicles.
         # ev_batt, size [GWh]: Size of batteries per car per technology of EV
-        evs = pd.DataFrame({'EVs_BATT': ['PHEV_BATT', 'BEV_BATT'], 'vehicule_capacity': [5.04E+01, 5.04E+01],
-                            'batt_per_car': [4.40, 24.0]}, index=['CAR_PHEV', 'CAR_BEV'])
-        a = np.zeros((2, 24))
-        a[0, 6] = 0.6
-        a[1, 6] = 0.6
-        state_of_charge_ev = pd.DataFrame(a, columns=np.arange(1, 25), index=['PHEV_BATT', 'BEV_BATT'])
+        keys_to_extract = ['EVs_BATT', 'vehicule_capacity', 'batt_per_car']
+        evs = pd.DataFrame({key: config['user_defined']['evs'][key] for key in keys_to_extract},
+                           index=config['user_defined']['evs']['CAR'])
+        state_of_charge_ev = pd.DataFrame.from_dict(config['user_defined']['state_of_charge_ev'], orient='index',
+                                                    columns=np.arange(1, 25))
         # Network
-        loss_network = {'ELECTRICITY': 4.7E-02, 'HEAT_LOW_T_DHN': 5.0E-02}
-        c_grid_extra = 367.8  # cost to reinforce the grid due to intermittent renewable energy penetration. See 2.2.2
+        loss_network = config['user_defined']['loss_network']
+        c_grid_extra = config['user_defined'][
+            'c_grid_extra']  # cost to reinforce the grid due to intermittent renewable energy penetration. See 2.2.2
+        import_capacity = config['user_defined']['import_capacity']  # [GW] Maximum power of electrical interconnections
 
         # Storage daily
-        STORAGE_DAILY = ['TS_DEC_HP_ELEC', 'TS_DEC_THHP_GAS', 'TS_DEC_COGEN_GAS', 'TS_DEC_COGEN_OIL',
-                         'TS_DEC_ADVCOGEN_GAS',
-                         'TS_DEC_ADVCOGEN_H2', 'TS_DEC_BOILER_GAS', 'TS_DEC_BOILER_WOOD', 'TS_DEC_BOILER_OIL',
-                         'TS_DEC_DIRECT_ELEC', 'TS_DHN_DAILY', 'BATT_LI', 'TS_HIGH_TEMP']  # TODO automatise
+        STORAGE_DAILY = config['user_defined']['STORAGE_DAILY']  # TODO automatise
 
         # Building SETS from data #
         SECTORS = list(eud_simple.columns)
@@ -682,15 +704,17 @@ def run_ES(config, case = 'deter'):
 
     if case == 'deter':
         cs = os.path.join(two_up,'case_studies')
+        run = 'ESTD_main_all_prints.run'
     else:
         cs = os.path.join(two_up,'case_studies',config['UQ_case'])
+        run = 'ESTD_main.run'
         #cs = cs + config['UQ_case'] + '/'
 
     # TODO make the case_study folder containing all runs with input, model and outputs
     shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_model.mod'),
                     os.path.join(cs, config['case_study'],'ESTD_model.mod'))
-    shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_main.run'),
-                    os.path.join(cs, config['case_study'], 'ESTD_main.run'))
+    shutil.copyfile(os.path.join(config['ES_path'], run),
+                    os.path.join(cs, config['case_study'], run))
     # creating output directory
     make_dir(os.path.join(cs,config['case_study'],'output'))
     make_dir(os.path.join(cs,config['case_study'],'output','hourly_data'))
@@ -698,7 +722,14 @@ def run_ES(config, case = 'deter'):
     os.chdir(os.path.join(cs,config['case_study']))
     # running ES
     logging.info('Running EnergyScope')
-    call(config['AMPL_path']+ '/ampl ESTD_main.run', shell=True)
+
+    if config['AMPL_path'] is None:
+        #TODO add error message if ampl not found, check why doesn't print log in certain IDE
+        call('ampl '+run, shell=True)
+    else:
+        #TODO check about cplex call in .run if not in PATH
+        call(config['AMPL_path']+'/ampl '+run, shell=True)
+
     os.chdir(config['Working_directory'])
 
     logging.info('End of run')
