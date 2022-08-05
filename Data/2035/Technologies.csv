@@ -9,7 +9,7 @@ Category;Subcategory;Technologies name;Technologies param;c_inv;c_maint;gwp_cons
 [ktonCO2_eq/GWh]
 [ktonCO2_eq/(Mkmpass/h)]
 [ktonCO2_eq/(Mtonkm/h)]";[years];[];[];[];[GW];[GW];
-Electricity;Electricity;Nuclear; NUCLEAR ;4845.73;102.930986;707.88;60;0.849;0;1;0;0;
+Electricity;Electricity;Nuclear; NUCLEAR ;4845.73;102.930986;707.88;60;0.849;0;1;0;2;
 Electricity;Electricity;Combined cycle gas turbine; CCGT ;771.99;19.55202588;183.79;25;0.961538462;0;1;0;1.00E+15;
 Electricity;Electricity;Amonia combined cycle gas turbine; CCGT_AMMONIA ;771.99;19.55202588;183.79;25;0.961538462;0;1;0;1.00E+15;
 Electricity;Electricity;Ultra-supercritical coal power plant; COAL_US ;2516.71;29.38376695;331.6;35;0.868;0;1;0;0;
