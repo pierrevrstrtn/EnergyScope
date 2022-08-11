@@ -16,7 +16,7 @@ Electricity;Electricity;Ultra-supercritical coal power plant; COAL_US ;2571.42;3
 Electricity;Electricity;Intagrated gasification combined cycle with coal; COAL_IGCC ;3316.37;49.47283735;331.6;35;0.853432;0;1;0;0;
 Electricity;Electricity;Photovoltaic; PV ;1083.93;12.37861446;2081.43;25;1;0;1;0;59.2;
 Electricity;Electricity;Wind onshore; WIND_ONSHORE ;1101.18;12.80752941;622.85;30;1;0;1;0;10;
-Electricity;Electricity;Wind offshore; WIND_OFFSHORE ;5219.54;36.31492615;622.85;30;1;0;1;0;5;
+Electricity;Electricity;Wind offshore; WIND_OFFSHORE ;5219.54;36.31492615;622.85;30;1;0;1;0;6;
 Electricity;Electricity;Hydro river; HYDRO_RIVER ;5044.92;50.4447982;1262.82;40;1;0;1;0;0.115;
 Electricity;Electricity;Geothermal power plant; GEOTHERMAL ;8211.27;152.5472;24929.09;30;0.95;0;1;0;0;
 Heat;Heat high temperature;Cogeneration gas (industry); IND_COGEN_GAS ;1484.44;95.41808193;1024.32;25;0.84745;0;1;0;1.00E+15;
