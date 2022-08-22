@@ -19,55 +19,11 @@ from subprocess import call
 
 from pathlib import Path
 
+from energyscope import ampl_syntax, print_set, print_df, newline, print_param
+from energyscope.preprocessing.dat_print import print_header
+
 # TODO
 #  add step1 and reading of weights
-#  check how to include efficiency as in pathway
-#  update units c_maint in data
-#  check data efficiency electrolyser -> XR
-#  update for nuclear up to 2035
-
-
-# Useful functions for printing in AMPL syntax #
-def make_dir(path):
-    if not os.path.isdir(path):
-        os.makedirs(path)
-
-
-def ampl_syntax(df, comment):
-    # adds ampl syntax to df
-    df2 = df.copy()
-    df2.rename(columns={df2.columns[df2.shape[1] - 1]: str(df2.columns[df2.shape[1] - 1]) + ' ' + ':= ' + comment},
-               inplace=True)
-    return df2
-
-
-def print_set(my_set, name, out_path):
-    with open(out_path, mode='a', newline='') as file:
-        writer = csv.writer(file, delimiter='\t', quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow(['set ' + name + ' := \t' + '\t'.join(my_set) + ';'])
-
-
-def print_df(name, df, out_path):
-    df.to_csv(out_path, sep='\t', mode='a', header=True, index=True, index_label=name, quoting=csv.QUOTE_NONE)
-
-    with open(out_path, mode='a', newline='') as file:
-        writer = csv.writer(file, delimiter='\t', quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow([';'])
-
-
-def newline(out_path):
-    with open(out_path, mode='a', newline='') as file:
-        writer = csv.writer(file, delimiter='\t', quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow([''])
-
-
-def print_param(name, param, comment, out_path):
-    with open(out_path, mode='a', newline='') as file:
-        writer = csv.writer(file, delimiter='\t', quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-        if comment == '':
-            writer.writerow(['param ' + str(name) + ' := ' + str(param) + ';'])
-        else:
-            writer.writerow(['param ' + str(name) + ' := ' + str(param) + '; # ' + str(comment)])
 
 
 def print_json(my_sets, file):  # printing the dictionary containing all the sets into directory/sets.json
@@ -83,23 +39,35 @@ def read_json(file):
 
 
 # Function to import the data from the CSV data files #
-def import_data(config):
+def import_data(config: dict):
+    """
+    Read the data into the csv and the user_defined.json into the data directory (config['data_dir'])
+    and stores it into 2 dictionaries in the config (config['all_data'] and config['user_defined']).
+    The data of the different csv are stored into dataframes and the miscallenous data of the user_defined is stored as dictionnary of different items
 
-    import_folders = config['data_dir']
-    logging.info('Importing data files from '+ str(import_folders))
+    Parameters
+    ----------
+    config : dict
+    Dictionnary containing all the configurations to run the curretn case study of EnergyScope.
+    For this function to work, it must contain and item of type pathlib.Path into the key 'data_dir'
+
+    """
+
+    data_dir = config['data_dir']
+    logging.info('Importing data files from '+ str(data_dir))
     # Reading CSV #
-    eud = pd.read_csv(import_folders / 'Demand.csv', sep=';', index_col=2, header=0)
-    resources = pd.read_csv(import_folders / 'Resources.csv', sep=';', index_col=2, header=2)
-    technologies = pd.read_csv(import_folders / 'Technologies.csv', sep=';', index_col=3, header=0, skiprows=[1])
-    end_uses_categories = pd.read_csv(import_folders / 'END_USES_CATEGORIES.csv', sep=';')
-    layers_in_out = pd.read_csv(import_folders / 'Layers_in_out.csv', sep=';', index_col=0)
-    storage_characteristics = pd.read_csv(import_folders / 'Storage_characteristics.csv', sep=';', index_col=0)
-    storage_eff_in = pd.read_csv(import_folders / 'Storage_eff_in.csv', sep=';', index_col=0)
-    storage_eff_out = pd.read_csv(import_folders / 'Storage_eff_out.csv', sep=';', index_col=0)
-    time_series = pd.read_csv(import_folders / 'Time_series.csv', sep=';', header=0, index_col=0)
+    eud = pd.read_csv(data_dir / 'Demand.csv', sep=';', index_col=2, header=0)
+    resources = pd.read_csv(data_dir / 'Resources.csv', sep=';', index_col=2, header=2)
+    technologies = pd.read_csv(data_dir / 'Technologies.csv', sep=';', index_col=3, header=0, skiprows=[1])
+    end_uses_categories = pd.read_csv(data_dir / 'END_USES_CATEGORIES.csv', sep=';')
+    layers_in_out = pd.read_csv(data_dir / 'Layers_in_out.csv', sep=';', index_col=0)
+    storage_characteristics = pd.read_csv(data_dir / 'Storage_characteristics.csv', sep=';', index_col=0)
+    storage_eff_in = pd.read_csv(data_dir / 'Storage_eff_in.csv', sep=';', index_col=0)
+    storage_eff_out = pd.read_csv(data_dir / 'Storage_eff_out.csv', sep=';', index_col=0)
+    time_series = pd.read_csv(data_dir / 'Time_series.csv', sep=';', header=0, index_col=0)
 
     # Reading user_defined.json
-    config['user_defined'] = read_json(import_folders / 'user_defined.json')
+    config['user_defined'] = read_json(data_dir / 'user_defined.json')
 
     # Pre-processing #
     resources.drop(columns=['Comment'], inplace=True)
@@ -126,18 +94,18 @@ def import_data(config):
 
 # Function to print the ESTD_data.dat file #
 def print_data(config, case = 'deter'):
-    #two_up = os.path.dirname(os.path.dirname(__file__))
+    """
+    TODO add doc
+    """
     two_up = Path(__file__).parents[2]
     
     if case=='deter':
-        cs = os.path.join(two_up,'case_studies/')
-        make_dir(cs)
+        cs = two_up / 'case_studies'
     else:
-        cs = os.path.join(two_up,'case_studies')
-        make_dir(cs)
-        cs = cs + '/' + config['UQ_case'] + '/'
-        make_dir(cs)
-    make_dir(cs + config['case_study'])
+        cs = two_up / 'case_studies' / config['UQ_case']
+
+    # make dir and parents
+    (cs / config['case_study']).mkdir(parents=True, exist_ok=True)
 
     data = config['all_data']
 
@@ -155,7 +123,7 @@ def print_data(config, case = 'deter'):
         logging.info('Printing ESTD_data.dat')
 
         # Prints the data into .dat file (out_path) with the right syntax for AMPL
-        out_path = cs + config['case_study'] + '/ESTD_data.dat'
+        out_path = cs / config['case_study'] / 'ESTD_data.dat'
         # config['ES_path'] + '/ESTD_data.dat'
         gwp_limit = config['GWP_limit']
 
@@ -213,7 +181,7 @@ def print_data(config, case = 'deter'):
         import_capacity = config['user_defined']['import_capacity']  # [GW] Maximum power of electrical interconnections
 
         # Storage daily
-        STORAGE_DAILY = config['user_defined']['STORAGE_DAILY']  # TODO automatise
+        STORAGE_DAILY = config['user_defined']['STORAGE_DAILY']
 
         # Building SETS from data #
         SECTORS = list(eud_simple.columns)
@@ -310,50 +278,8 @@ def print_data(config, case = 'deter'):
 
         # Printing data #
         # printing signature of data file
-        with open(out_path, mode='w', newline='') as file:
-            writer = csv.writer(file, delimiter='\t', quotechar=' ', quoting=csv.QUOTE_MINIMAL)
-
-            writer.writerow(['# ------------------------------------------------------------------------------'
-                             '-------------------------------------------	'])
-            writer.writerow(['#	EnergyScope TD is an open-source energy model suitable for country scale analysis.'
-                             ' It is a simplified representation of an urban or national energy system accounting for the'
-                             ' energy flows'])
-            writer.writerow(
-                ['#	within its boundaries. Based on a hourly resolution, it optimises the design and operation '
-                 'of the energy system while minimizing the cost of the system.'])
-            writer.writerow(['#	'])
-            writer.writerow(['#	Copyright (C) <2018-2019> <Ecole Polytechnique Fédérale de Lausanne (EPFL), '
-                             'Switzerland and Université catholique de Louvain (UCLouvain), Belgium>'])
-            writer.writerow(['#	'])
-            writer.writerow(['#	'])
-            writer.writerow(['#	Licensed under the Apache License, Version 2.0 (the "License");'])
-            writer.writerow(['#	you may not use this file except in compliance with the License.'])
-            writer.writerow(['#	You may obtain a copy of the License at'])
-            writer.writerow(['#	'])
-            writer.writerow(['#	http://www.apache.org/licenses/LICENSE-2.0'])
-            writer.writerow(['#	'])
-            writer.writerow(['#	Unless required by applicable law or agreed to in writing, software'])
-            writer.writerow(['#	distributed under the License is distributed on an "AS IS" BASIS,'])
-            writer.writerow(['#	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.'])
-            writer.writerow(['#	See the License for the specific language governing permissions and'])
-            writer.writerow(['#	limitations under the License.'])
-            writer.writerow(['#	'])
-            writer.writerow(['#	Description and complete License: see LICENSE file.'])
-            writer.writerow(
-                ['# -------------------------------------------------------------------------------------------'
-                 '------------------------------	'])
-            writer.writerow(['	'])
-            writer.writerow(['# UNIT MEASURES:'])
-            writer.writerow(['# Unless otherwise specified units are:'])
-            writer.writerow(
-                [
-                    '# Energy [GWh], Power [GW], Cost [Meuro], Time [h], Passenger transport [Mpkm], Freight Transport [Mtkm]'])
-            writer.writerow(['	'])
-            writer.writerow(['# References based on Supplementary material'])
-            writer.writerow(['# --------------------------	'])
-            writer.writerow(['# SETS not depending on TD	'])
-            writer.writerow(['# --------------------------	'])
-            writer.writerow(['	'])
+        header_file = (Path(__file__).parents[1]/ 'headers' / 'header_data.txt')
+        print_header(header_file=header_file, dat_file=out_path)
 
         # printing sets
         print_set(SECTORS, 'SECTORS', out_path)
@@ -503,21 +429,16 @@ def print_data(config, case = 'deter'):
             writer.writerow(['# [A.6]'])
         print_df('param loss_network ', loss_network_df, out_path)
 
-    #     return
-    #
-    #
-    # # Function to print the ESTD_12TD.dat file from timeseries and STEP1 results #
-    # def print_td_data(timeseries, out_path='STEP_2_Energy_Model', step1_out='STEP_1_TD_selection/TD_of_days.out',
-    #                   nbr_td=12):
     if config['printing_td']:
 
-        out_path = cs + config['case_study']  # config['ES_path']
+        out_path = cs / config['case_study']  # config['ES_path']
         step1_out = config['step1_output']
-        nbr_td = 12  # TODO add that as an argument
+        nbr_td = config['nbr_td']
 
         logging.info('Printing ESTD_' + str(nbr_td) + 'TD.dat')
 
         # DICTIONARIES TO TRANSLATE NAMES INTO AMPL SYNTAX #
+        # TODO automatise
         # for EUD timeseries
         eud_params = {'Electricity (%_elec)': 'param electricity_time_series :',
                       'Space Heating (%_sh)': 'param heating_time_series :',
@@ -530,36 +451,25 @@ def print_data(config, case = 'deter'):
         res_mult_params = {'Solar': ['DHN_SOLAR', 'DEC_SOLAR']}
 
         # Redefine the output file from the out_path given #
-        out_path = out_path + '/ESTD_' + str(nbr_td) + 'TD.dat'
+        out_path = out_path / ('ESTD_' + str(nbr_td) + 'TD.dat')
 
         # READING OUTPUT OF STEP1 #
-        td_of_days = pd.read_csv(step1_out, names=['TD_of_days'])
-        td_of_days['day'] = np.arange(1, 366, 1)  # putting the days of the year beside
+        td_data = generate_t_h_td(config)
+        config['td_data'] = td_data
 
         # COMPUTING NUMBER OF DAYS REPRESENTED BY EACH TD #
-        sorted_td = td_of_days.groupby('TD_of_days').count()
-        sorted_td.rename(columns={'day': '#days'}, inplace=True)
-        sorted_td.reset_index(inplace=True)
-        sorted_td.set_index(np.arange(1, nbr_td + 1), inplace=True)  # adding number of TD as index
+        sorted_td = td_data['td_count'].copy()
 
         # BUILDING T_H_TD MATRICE #
         # generate T_H_TD
-        td_and_hour_array = np.ones((24 * 365, 2))
-        for i in range(365):
-            td_and_hour_array[i * 24:(i + 1) * 24, 0] = np.arange(1, 25, 1)
-            td_and_hour_array[i * 24:(i + 1) * 24, 1] = td_and_hour_array[i * 24:(i + 1) * 24, 1] * sorted_td[
-                sorted_td['TD_of_days'] == td_of_days.loc[i, 'TD_of_days']].index.values
-        t_h_td = pd.DataFrame(td_and_hour_array, index=np.arange(1, 8761, 1), columns=['H_of_D', 'TD_of_day'])
-        t_h_td = t_h_td.astype('int64')
-        # giving the right syntax
-        t_h_td.reset_index(inplace=True)
-        t_h_td.rename(columns={'index': 'H_of_Y'}, inplace=True)
+        t_h_td = td_data['t_h_td'].copy()
+        # giving the right syntax for AMPL
         t_h_td['par_g'] = '('
         t_h_td['par_d'] = ')'
         t_h_td['comma1'] = ','
         t_h_td['comma2'] = ','
         # giving the right order to the columns
-        t_h_td = t_h_td[['par_g', 'H_of_Y', 'comma1', 'H_of_D', 'comma2', 'TD_of_day', 'par_d']]
+        t_h_td = t_h_td[['par_g', 'H_of_Y', 'comma1', 'H_of_D', 'comma2', 'TD_number', 'par_d']]
 
         # COMPUTING THE NORM OVER THE YEAR ##
         norm = time_series.sum(axis=0)
@@ -568,11 +478,9 @@ def print_data(config, case = 'deter'):
 
         # BUILDING TD TIMESERIES #
         # creating df with 2 columns : day of the year | hour in the day
-        day_and_hour_array = np.ones((24 * 365, 2))
-        for i in range(365):
-            day_and_hour_array[i * 24:(i + 1) * 24, 0] = day_and_hour_array[i * 24:(i + 1) * 24, 0] * (i + 1)
-            day_and_hour_array[i * 24:(i + 1) * 24, 1] = np.arange(1, 25, 1)
-        day_and_hour = pd.DataFrame(day_and_hour_array, index=np.arange(1, 8761, 1), columns=['D_of_H', 'H_of_D'])
+        d_of_h = np.repeat(np.arange(1,366,1), 24, axis=0) # 24 times each day of the year
+        h_of_d = np.resize(np.arange(1, 25), 24*365)  # 365 times hours from 1 to 24
+        day_and_hour = pd.DataFrame(np.vstack((d_of_h,h_of_d)).T, index=np.arange(1, 8761, 1), columns=['D_of_H', 'H_of_D'])
         day_and_hour = day_and_hour.astype('int64')
         time_series = time_series.merge(day_and_hour, left_index=True, right_index=True)
 
@@ -602,40 +510,13 @@ def print_data(config, case = 'deter'):
 
         # PRINTING #
         # printing description of file
-        with open(out_path, mode='w', newline='') as td_file:
-            td_writer = csv.writer(td_file, delimiter='\t', quotechar=' ', quoting=csv.QUOTE_MINIMAL)
+        header_file = (Path(__file__).parents[1] / 'headers' / 'header_12td.txt')
+        print_header(header_file=header_file, dat_file=out_path)
 
-            # Comments and license
-            td_writer.writerow([
-                '# -------------------------------------------------------------------------------------------------------------------------	'])
-            td_writer.writerow([
-                '#	EnergyScope TD is an open-source energy model suitable for country scale analysis. It is a simplified representation of an urban or national energy system accounting for the energy flows'])
-            td_writer.writerow([
-                '#	within its boundaries. Based on a hourly resolution, it optimises the design and operation of the energy system while minimizing the cost of the system.'])
-            td_writer.writerow(['#	'])
-            td_writer.writerow([
-                '#	Copyright (C) <2018-2019> <Ecole Polytechnique Fédérale de Lausanne (EPFL), Switzerland and Université catholique de Louvain (UCLouvain), Belgium>'])
-            td_writer.writerow(['#	'])
-            td_writer.writerow(['#	'])
-            td_writer.writerow(['#	Licensed under the Apache License, Version 2.0 (the "License");'])
-            td_writer.writerow(['#	you may not use this file except in compliance with the License.'])
-            td_writer.writerow(['#	You may obtain a copy of the License at'])
-            td_writer.writerow(['#	'])
-            td_writer.writerow(['#	http://www.apache.org/licenses/LICENSE-2.0'])
-            td_writer.writerow(['#	'])
-            td_writer.writerow(['#	Unless required by applicable law or agreed to in writing, software'])
-            td_writer.writerow(['#	distributed under the License is distributed on an "AS IS" BASIS,'])
-            td_writer.writerow(['#	WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.'])
-            td_writer.writerow(['#	See the License for the specific language governing permissions and'])
-            td_writer.writerow(['#	limitations under the License.'])
-            td_writer.writerow(['#	'])
-            td_writer.writerow(['#	Description and complete License: see LICENSE file.'])
-            td_writer.writerow([
-                '# -------------------------------------------------------------------------------------------------------------------------	'])
-            td_writer.writerow(['	'])
+        # printing sets and parameters
+        with open(out_path, mode='a', newline='') as td_file:
+            td_writer = csv.writer(td_file, delimiter='\t', quotechar=' ', quoting=csv.QUOTE_MINIMAL)
             # peak_sh_factor
-            td_writer.writerow(['# SETS depending on TD	'])
-            td_writer.writerow(['# --------------------------	'])
             td_writer.writerow(['param peak_sh_factor	:=	' + str(peak_sh_factor)])
             td_writer.writerow([';		'])
             td_writer.writerow(['		'])
@@ -697,29 +578,54 @@ def print_data(config, case = 'deter'):
 
     return
 
+def generate_t_h_td(config, Nbr_TD=12):
+    """Generate t_h_td and td_count dataframes and assign it to each region
+    t_h_td is a pd.DataFrame containing 4 columns:
+    hour of the year (H_of_Y), hour of the day (H_of_D), typical day representing this day (TD_of_days)
+    and the number assigned to this typical day (TD_number)
+
+    td_count is a pd.DataFrame containing 2 columns:
+    List of typical days (TD_of_days) and number of days they represent (#days)
+    """
+    # Reading td_of_days
+    td_of_days = pd.read_csv(config['step1_output'], names=['TD_of_days'])
+    td_of_days['day'] = np.arange(1, 366, 1)  # putting the days of the year beside
+
+    # COMPUTING NUMBER OF DAYS REPRESENTED BY EACH TD AND ASSIGNING A TD NUMBER TO EACH REPRESENTATIVE DAY
+    td_count = td_of_days.groupby('TD_of_days').count()
+    td_count = td_count.reset_index().rename(columns={'index': 'TD_of_days', 'day': '#days'})
+    td_count['TD_number'] = np.arange(1, Nbr_TD + 1)
+
+    # BUILDING T_H_TD MATRICE
+    t_h_td = pd.DataFrame(np.repeat(td_of_days['TD_of_days'].values, 24, axis=0),
+                          columns=['TD_of_days'])  # column TD_of_days is each TD repeated 24 times
+    map_td = dict(zip(td_count['TD_of_days'],
+                      np.arange(1, Nbr_TD + 1)))  # mapping dictionnary from TD_of_Days to TD number
+    t_h_td['TD_number'] = t_h_td['TD_of_days'].map(map_td)
+    t_h_td['H_of_D'] = np.resize(np.arange(1, 25), t_h_td.shape[0])  # 365 times hours from 1 to 24
+    t_h_td['H_of_Y'] = np.arange(1, 8761)
+    return {'td_of_days': td_of_days, 'td_count': td_count, 't_h_td': t_h_td}
+
 
 # Function to run ES from python
 def run_ES(config, case = 'deter'):
     two_up = Path(__file__).parents[2]
 
     if case == 'deter':
-        cs = os.path.join(two_up,'case_studies')
+        cs = two_up / 'case_studies'
         run = 'ESTD_main_all_prints.run'
     else:
-        cs = os.path.join(two_up,'case_studies',config['UQ_case'])
+        cs = two_up / 'case_studies' / config['UQ_case']
         run = 'ESTD_main.run'
-        #cs = cs + config['UQ_case'] + '/'
 
-    # TODO make the case_study folder containing all runs with input, model and outputs
-    shutil.copyfile(os.path.join(config['ES_path'], 'ESTD_model.mod'),
-                    os.path.join(cs, config['case_study'],'ESTD_model.mod'))
-    shutil.copyfile(os.path.join(config['ES_path'], run),
-                    os.path.join(cs, config['case_study'], run))
+    # copy .mod and .run to case_study directory
+    shutil.copyfile((config['ES_path'] / 'ESTD_model.mod'), (cs / config['case_study'] / 'ESTD_model.mod'))
+    shutil.copyfile((config['ES_path'] / run), (cs / config['case_study'] / run))
     # creating output directory
-    make_dir(os.path.join(cs,config['case_study'],'output'))
-    make_dir(os.path.join(cs,config['case_study'],'output','hourly_data'))
-    make_dir(os.path.join(cs,config['case_study'],'output','sankey'))
-    os.chdir(os.path.join(cs,config['case_study']))
+    (cs / config['case_study'] / 'output').mkdir(parents=True, exist_ok=True)
+    (cs / config['case_study'] / 'output' / 'hourly_data').mkdir(parents=True, exist_ok=True)
+    (cs / config['case_study'] / 'output' / 'sankey').mkdir(parents=True, exist_ok=True)
+    os.chdir((cs / config['case_study']))
     # running ES
     logging.info('Running EnergyScope')
 
@@ -734,55 +640,3 @@ def run_ES(config, case = 'deter'):
 
     logging.info('End of run')
     return
-
-
-# Function to compute the annual average emission factors of each resource from the outputs #
-def compute_gwp_op(import_folders, out_path='STEP_2_Energy_Model'):
-    # import data and model outputs
-    resources = pd.read_csv(import_folders[0] + '/Resources.csv', sep=';', index_col=2, header=2)
-    yb = pd.read_csv(out_path + '/output/year_balance.txt', sep='\t', index_col=0)
-
-    # clean df and get useful data
-    yb.rename(columns=lambda x: x.strip(), inplace=True)
-    yb.rename(index=lambda x: x.strip(), inplace=True)
-    gwp_op_data = resources['gwp_op'].dropna()
-    res_names = list(gwp_op_data.index)
-    res_names_red = list(set(res_names) & set(list(yb.columns)))  # resources that are a layer
-    yb2 = yb.drop(index='END_USES_DEMAND')
-    tot_year = yb2.mul(yb2.gt(0)).sum()[res_names_red]
-
-    # compute the actual resources used to produce each resource
-    res_used = pd.DataFrame(0, columns=res_names_red, index=res_names)
-    for r in res_names_red:
-        yb_r = yb2.loc[yb2.loc[:, r] > 0, :]
-        for i, j in yb_r.iterrows():
-            if i in res_names:
-                res_used.loc[i, r] = res_used.loc[i, r] + j[i]
-            else:
-                s = list(j[j < 0].index)[0]
-                res_used.loc[s, r] = res_used.loc[s, r] - j[s]
-
-    # differentiate the imported resources from the ones that are the mix between the imported ones and the produced ones
-    gwp_op_imp = gwp_op_data.copy()
-    gwp_op_imp.rename(index=lambda x: x + '_imp', inplace=True)
-    gwp_op = pd.concat([gwp_op_data.copy(), gwp_op_imp])
-    res_used_imp = pd.DataFrame(0, index=res_used.index, columns=res_used.columns)
-    for i, j in res_used.iteritems():
-        res_used_imp.loc[i, i] = j[i]
-        res_used.loc[i, i] = 0
-    res_used_imp.rename(index=lambda x: x + '_imp', inplace=True)
-    all_res_used = pd.concat([res_used, res_used_imp])
-
-    # compute the gwp_op of each mix through looping over the equations
-    gwp_op_new = gwp_op.copy()
-    conv = 100
-    count = 0
-    while conv > 1e-6:
-        gwp_op = gwp_op_new
-        gwp_op_new = pd.concat([(all_res_used.mul(gwp_op, axis=0).sum() / tot_year).fillna(0), gwp_op_imp])
-        conv = (gwp_op_new - gwp_op).abs().sum()
-        count += 1
-
-    gwp_op_final = gwp_op_new[res_names_red]
-
-    return gwp_op_final.combine_first(gwp_op_data)

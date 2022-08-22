@@ -9,6 +9,7 @@ import os
 import pandas as pd
 from pathlib import Path
 import energyscope as es
+import sys
 
 if __name__ == '__main__':
    # define path
@@ -17,15 +18,16 @@ if __name__ == '__main__':
     es_path = path / 'energyscope' / 'STEP_2_Energy_Model'
     step1_output = path / 'energyscope' / 'STEP_1_TD_selection' / 'TD_of_days.out'
     # specify the configuration
-    config = {'case_study': 'test_2050', # Name of the case study. The outputs will be printed into : config['ES_path']+'\output_'+config['case_study']
+    config = {'case_study': '2050_GWP6000_4', # Name of the case study. The outputs will be printed into : config['ES_path']+'\output_'+config['case_study']
               'printing': True,  # printing the data in ETSD_data.dat file for the optimisation problem
               'printing_td': True,  # printing the time related data in ESTD_12TD.dat for the optimisaiton problem
-              'GWP_limit': 1e+7,  # [ktCO2-eq./year]	# Minimum GWP reduction
+              'GWP_limit': 6000,  # [ktCO2-eq./year]	# Minimum GWP reduction
               'data_dir': data,  # Folders containing the csv data files
               'ES_path': es_path,  # Path to the energy model (.mod and .run files)
               'step1_output': step1_output, # Output of the step 1 selection of typical days
+              'nbr_td': 12, # number of typical days to consider
               'all_data': dict(), # Dictionnary with the dataframes containing all the data in the form : {'Demand': eud, 'Resources': resources, 'Technologies': technologies, 'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out, 'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in, 'Storage_eff_out': storage_eff_out, 'Time_series': time_series}
-              'user_defined': dict(), # Dictionnary with user_defined parameters from user_defined.json, see definition into Data/user_defined_doc.json
+              'user_defined': dict(), # Dictionnary with user_defined parameters from user_defined.json, see definition into Data/user_defined_doc.json # TODO change name into misc_data and put into all_data
               'Working_directory': os.getcwd(),
               'AMPL_path': None} # PATH to AMPL licence (to adapt by the user), set to None if AMPL is in your PATH variables
     
@@ -45,5 +47,5 @@ if __name__ == '__main__':
     es.run_ES(config)
 
     # Example to print the sankey from this script
-    sankey_path = '../case_studies/' + config['case_study'] + '/output/sankey'
-    es.drawSankey(path=sankey_path)
+    # sankey_path = '../case_studies/' + config['case_study'] + '/output/sankey'
+    # es.drawSankey(path=sankey_path)
