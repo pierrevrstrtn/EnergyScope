@@ -3,7 +3,7 @@
 # TODO: to be deleted
 This script allows to print the .run files.
 
-@author: Jonathan Dumas, Antoine Dubois
+@author: Jonathan Dumas, Antoine Dubois, Paolo Thiran
 """
 import os
 from typing import List

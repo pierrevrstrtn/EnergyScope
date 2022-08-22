@@ -6,39 +6,17 @@ This script modifies the input data and runs the EnergyScope model
 """
 
 import os
-import pandas as pd
 from pathlib import Path
 import energyscope as es
-import sys
 
 if __name__ == '__main__':
-    case_study = '2050_GWP6000_6' # Name of the case study. The outputs will be printed into : config['ES_path']+'\output_'+config['case_study']
-   # define path
-    path = Path(__file__).parents[1]
-    data = path / 'Data' / '2050'
-    es_path = path / 'energyscope' / 'ampl_models'
-    step1_output = path / 'energyscope' / 'STEP_1_TD_selection' / 'TD_of_days.out'
-    cs_path = path / 'case_studies' / case_study
-    # specify the configuration
-    config = {'case_study': case_study,
-              'printing': True,  # printing the data in ETSD_data.dat file for the optimisation problem
-              'printing_td': True,  # printing the time related data in ESTD_12TD.dat for the optimisaiton problem
-              'GWP_limit': 6000,  # [ktCO2-eq./year]	# Minimum GWP reduction
-              'data_dir': data,  # Folders containing the csv data files
-              'ES_path': es_path,  # Path to the energy model (.mod and .run files)
-              'step1_output': step1_output, # Output of the step 1 selection of typical days
-              'nbr_td': 12, # number of typical days to consider
-              'all_data': dict(), # Dictionnary with the dataframes containing all the data in the form : {'Demand': eud, 'Resources': resources, 'Technologies': technologies, 'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out, 'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in, 'Storage_eff_out': storage_eff_out, 'Time_series': time_series}
-              'user_defined': dict(), # Dictionnary with user_defined parameters from user_defined.json, see definition into Data/user_defined_doc.json # TODO change name into misc_data and put into all_data
-              'Working_directory': os.getcwd(),
-              'AMPL_path': None, # PATH to AMPL licence (to adapt by the user), set to None if AMPL is in your PATH variables
-              'ampl_options' : {'show_stats': 3, 'times': 1, 'gentimes': 1, 'log_file': str(cs_path/'output'/'log.txt'),
-                                'presolve': 200,
-                                'solver': 'cplex',
-                                'cplex_options': 'baropt predual=-1 crossover=0 aggregate=-1 ordering=1 timelimit=3600 display=2 prestats=1 bardisplay=1'}, # options for ampl
-              'print_hourly_data': False,
-              'print_sankey': False
-              }
+    # define project path
+    project_path = Path(__file__).parents[1]
+
+    # loading the config file
+    config = es.load_config(config_fn='config_ref.yaml', project_path=project_path)
+    config['Working_directory'] = os.getcwd() # keeping curretn working directory into config
+
 
    # Reading the data
     es.import_data(config)
@@ -47,7 +25,7 @@ if __name__ == '__main__':
     # Example to change data: update wood availability to 23 400 GWh (ref value here)
     config['all_data']['Resources'].loc['WOOD', 'avail'] = 23400
     # Example to change share of public mobility into passenger mobility into 0.5 (ref value here)
-    config['user_defined']['share_mobility_public_max'] = 0.5
+    config['all_data']['Misc']['share_mobility_public_max'] = 0.5
 
     # Printing the .dat files for the optimisation problem
     es.print_data(config)
@@ -57,5 +35,5 @@ if __name__ == '__main__':
 
     # Example to print the sankey from this script
     if config['print_sankey']:
-        sankey_path = cs_path / 'output' / 'sankey'
+        sankey_path = config['cs_path']/ config['case_study'] / 'output' / 'sankey'
         es.drawSankey(path=sankey_path)

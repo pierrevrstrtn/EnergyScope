@@ -12,11 +12,11 @@ import logging
 import numpy as np
 import pandas as pd
 import csv
+import yaml
 import os
 import json
 import shutil
 from subprocess import CalledProcessError, run
-
 from pathlib import Path
 
 from energyscope import ampl_syntax, print_set, print_df, newline, print_param, print_header, print_run
@@ -37,18 +37,45 @@ def read_json(file):
         data = json.load(fp)
     return data
 
+def load_config(config_fn: str, project_path: Path):
+    """
+    Load the configuration into a dict.
+
+    Parameters
+    ----------
+    config_fn: str
+    configuration file name.
+
+    project_path: pathlib.Path
+    path to project EnergyScope
+
+    Returns
+    -------
+    A dict with the configuration.
+    """
+
+    # Load parameters
+    cfg = yaml.load(open(config_fn, 'r'), Loader=yaml.FullLoader)
+    # Extend path
+    for param in ['data_dir', 'es_path', 'cs_path', 'step1_output']:
+        cfg[param] = project_path / cfg[param]
+
+    # Extend path for log_file
+    cfg['ampl_options']['log_file'] = str(cfg['cs_path']/ cfg['case_study'] / cfg['ampl_options']['log_file'])
+
+    return cfg
 
 # Function to import the data from the CSV data files #
 def import_data(config: dict):
     """
-    Read the data into the csv and the user_defined.json into the data directory (config['data_dir'])
-    and stores it into 2 dictionaries in the config (config['all_data'] and config['user_defined']).
+    Read the data into the csv and the misc.json into the data directory (config['data_dir'])
+    and stores it into 2 dictionaries in the config (config['all_data'] and config['all_data']['Misc']).
     The data of the different csv are stored into dataframes and the miscallenous data of the user_defined is stored as dictionnary of different items
 
     Parameters
     ----------
     config : dict
-    Dictionnary containing all the configurations to run the curretn case study of EnergyScope.
+    Dictionnary containing all the configurations to run the current case study of EnergyScope.
     For this function to work, it must contain and item of type pathlib.Path into the key 'data_dir'
 
     """
@@ -66,8 +93,8 @@ def import_data(config: dict):
     storage_eff_out = pd.read_csv(data_dir / 'Storage_eff_out.csv', sep=';', index_col=0)
     time_series = pd.read_csv(data_dir / 'Time_series.csv', sep=';', header=0, index_col=0)
 
-    # Reading user_defined.json
-    config['user_defined'] = read_json(data_dir / 'user_defined.json')
+    # Reading misc.json
+    misc = read_json(data_dir / 'misc.json')
 
     # Pre-processing #
     resources.drop(columns=['Comment'], inplace=True)
@@ -86,6 +113,8 @@ def import_data(config: dict):
             all_df[key].index = all_df[key].index.str.strip()
         if type(all_df[key].columns[0]) == str:
             all_df[key].columns = all_df[key].columns.str.strip()
+
+    all_df['Misc'] =  misc
 
     config['all_data'] = all_df
 
@@ -124,7 +153,7 @@ def print_data(config, case = 'deter'):
 
         # Prints the data into .dat file (out_path) with the right syntax for AMPL
         out_path = cs / config['case_study'] / 'ESTD_data.dat'
-        # config['ES_path'] + '/ESTD_data.dat'
+        # config['es_path'] + '/ESTD_data.dat'
         gwp_limit = config['GWP_limit']
 
         # Pre-processing df #
@@ -143,45 +172,45 @@ def print_data(config, case = 'deter'):
         technologies_simple = technologies_simple.astype('float')
 
         # Economical inputs
-        i_rate = config['user_defined']['i_rate']  # [-]
+        i_rate = config['all_data']['Misc']['i_rate']  # [-]
         # Political inputs
-        re_share_primary = config['user_defined']['re_share_primary']  # [-] Minimum RE share in primary consumption
-        solar_area = config['user_defined']['solar_area']  # [km^2]
-        power_density_pv = config['user_defined'][
+        re_share_primary = config['all_data']['Misc']['re_share_primary']  # [-] Minimum RE share in primary consumption
+        solar_area = config['all_data']['Misc']['solar_area']  # [km^2]
+        power_density_pv = config['all_data']['Misc'][
             'power_density_pv']  # PV : 1 kW/4.22m2   => 0.2367 kW/m2 => 0.2367 GW/km2
-        power_density_solar_thermal = config['user_defined'][
+        power_density_solar_thermal = config['all_data']['Misc'][
             'power_density_solar_thermal']  # Solar thermal : 1 kW/3.5m2 => 0.2857 kW/m2 => 0.2857 GW/km2
 
         # Technologies shares
-        share_mobility_public_min = config['user_defined']['share_mobility_public_min']
-        share_mobility_public_max = config['user_defined']['share_mobility_public_max']
-        share_freight_train_min = config['user_defined']['share_freight_train_min']
-        share_freight_train_max = config['user_defined']['share_freight_train_max']
-        share_freight_road_min = config['user_defined']['share_freight_road_min']
-        share_freight_road_max = config['user_defined']['share_freight_road_max']
-        share_freight_boat_min = config['user_defined']['share_freight_boat_min']
-        share_freight_boat_max = config['user_defined']['share_freight_boat_max']
-        share_heat_dhn_min = config['user_defined']['share_heat_dhn_min']
-        share_heat_dhn_max = config['user_defined']['share_heat_dhn_max']
+        share_mobility_public_min = config['all_data']['Misc']['share_mobility_public_min']
+        share_mobility_public_max = config['all_data']['Misc']['share_mobility_public_max']
+        share_freight_train_min = config['all_data']['Misc']['share_freight_train_min']
+        share_freight_train_max = config['all_data']['Misc']['share_freight_train_max']
+        share_freight_road_min = config['all_data']['Misc']['share_freight_road_min']
+        share_freight_road_max = config['all_data']['Misc']['share_freight_road_max']
+        share_freight_boat_min = config['all_data']['Misc']['share_freight_boat_min']
+        share_freight_boat_max = config['all_data']['Misc']['share_freight_boat_max']
+        share_heat_dhn_min = config['all_data']['Misc']['share_heat_dhn_min']
+        share_heat_dhn_max = config['all_data']['Misc']['share_heat_dhn_max']
 
-        share_ned = pd.DataFrame.from_dict(config['user_defined']['share_ned'], orient='index', columns=['share_ned'])
+        share_ned = pd.DataFrame.from_dict(config['all_data']['Misc']['share_ned'], orient='index', columns=['share_ned'])
 
         # Electric vehicles :
         # km-pass/h/veh. : Gives the equivalence between capacity and number of vehicles.
         # ev_batt, size [GWh]: Size of batteries per car per technology of EV
         keys_to_extract = ['EVs_BATT', 'vehicule_capacity', 'batt_per_car']
-        evs = pd.DataFrame({key: config['user_defined']['evs'][key] for key in keys_to_extract},
-                           index=config['user_defined']['evs']['CAR'])
-        state_of_charge_ev = pd.DataFrame.from_dict(config['user_defined']['state_of_charge_ev'], orient='index',
+        evs = pd.DataFrame({key: config['all_data']['Misc']['evs'][key] for key in keys_to_extract},
+                           index=config['all_data']['Misc']['evs']['CAR'])
+        state_of_charge_ev = pd.DataFrame.from_dict(config['all_data']['Misc']['state_of_charge_ev'], orient='index',
                                                     columns=np.arange(1, 25))
         # Network
-        loss_network = config['user_defined']['loss_network']
-        c_grid_extra = config['user_defined'][
+        loss_network = config['all_data']['Misc']['loss_network']
+        c_grid_extra = config['all_data']['Misc'][
             'c_grid_extra']  # cost to reinforce the grid due to intermittent renewable energy penetration. See 2.2.2
-        import_capacity = config['user_defined']['import_capacity']  # [GW] Maximum power of electrical interconnections
+        import_capacity = config['all_data']['Misc']['import_capacity']  # [GW] Maximum power of electrical interconnections
 
         # Storage daily
-        STORAGE_DAILY = config['user_defined']['STORAGE_DAILY']
+        STORAGE_DAILY = config['all_data']['Misc']['STORAGE_DAILY']
 
         # Building SETS from data #
         SECTORS = list(eud_simple.columns)
@@ -429,7 +458,7 @@ def print_data(config, case = 'deter'):
 
     if config['printing_td']:
 
-        out_path = cs / config['case_study']  # config['ES_path']
+        out_path = cs / config['case_study']  # config['es_path']
         step1_out = config['step1_output']
         nbr_td = config['nbr_td']
 
@@ -634,7 +663,7 @@ def run_ES(config, case = 'deter'):
         # call(config['AMPL_path']+'/ampl '+run, shell=True)
 
     # copy .mod and print .run to case_study directory
-    shutil.copyfile((config['ES_path'] / 'ESTD_model.mod'), (cs / config['case_study'] / 'ESTD_model.mod'))
+    shutil.copyfile((config['es_path'] / 'ESTD_model.mod'), (cs / config['case_study'] / 'ESTD_model.mod'))
     print_run(run_fn=(cs / config['case_study'] / run_file), mod_fns=[(cs / config['case_study'] / 'ESTD_model.mod')],
               dat_fns=[(cs / config['case_study'] / 'ESTD_data.dat'),
                        (cs / config['case_study'] / ('ESTD_'+str(config['nbr_td'])+'TD.dat'))],
