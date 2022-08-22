@@ -224,31 +224,30 @@ else {
 # 			#
 
 			
-# 			## Energy yearly balance
-# 			printf "Tech\t" > (PathName & "/year_balance.txt");
-# 			for {l in LAYERS}{
-# 				printf "%s\t",l >> (PathName & "/year_balance.txt");
-# 			}
-# 			for {i in RESOURCES union TECHNOLOGIES diff STORAGE_TECH}{
-# 				printf "\n %s \t", i >> (PathName & "/year_balance.txt");
-# 				for {l in LAYERS}{
-# 					printf " %f\t", sum {t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]}
-# 			layers_in_out[i, l] * F_t [i, h, td] >> (PathName & "/year_balance.txt");
-# 				}
-# 			}
-# 			for {j in STORAGE_TECH}{
-# 				printf "\n %s \t", j >> (PathName & "/year_balance.txt");
-# 				for {l in LAYERS}{
-# 					printf " %f\t", sum {t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]}
-# 			(Storage_out [j, l, h, td] - Storage_in [j, l, h, td]) >> (PathName & "/year_balance.txt");
-# 				}
-# 			}
-# 			printf "\n END_USES_DEMAND \t" >> (PathName & "/year_balance.txt");
-# 			for {l in LAYERS}{
-# 				printf " %f\t", sum {t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]}
-# 					End_uses [l, h, td] >> (PathName & "/year_balance.txt");
-# 			}
-
+ 			## Energy yearly balance
+ 			printf "Tech\t" > (PathName & "/year_balance.txt");
+ 			for {l in LAYERS}{
+ 				printf "%s\t",l >> (PathName & "/year_balance.txt");
+ 			}
+ 			for {i in RESOURCES union TECHNOLOGIES diff STORAGE_TECH}{
+ 				printf "\n %s \t", i >> (PathName & "/year_balance.txt");
+ 				for {l in LAYERS}{
+ 					printf " %f\t", sum {t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]}
+ 			layers_in_out[i, l] * F_t [i, h, td] >> (PathName & "/year_balance.txt");
+ 				}
+ 			}
+ 			for {j in STORAGE_TECH}{
+ 				printf "\n %s \t", j >> (PathName & "/year_balance.txt");
+ 				for {l in LAYERS}{
+ 					printf " %f\t", sum {t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]}
+ 			(Storage_out [j, l, h, td] - Storage_in [j, l, h, td]) >> (PathName & "/year_balance.txt");
+ 				}
+ 			}
+ 			printf "\n END_USES_DEMAND \t" >> (PathName & "/year_balance.txt");
+ 			for {l in LAYERS}{
+ 				printf " %f\t", sum {t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]}
+ 					End_uses [l, h, td] >> (PathName & "/year_balance.txt");
+ 			}
 
 # 			################################################################################
 # 			################################################################################                                                    
