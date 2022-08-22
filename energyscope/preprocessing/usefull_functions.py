@@ -15,15 +15,15 @@ import csv
 import os
 import json
 import shutil
-from subprocess import call
+from subprocess import CalledProcessError, run
 
 from pathlib import Path
 
-from energyscope import ampl_syntax, print_set, print_df, newline, print_param
-from energyscope.preprocessing.dat_print import print_header
+from energyscope import ampl_syntax, print_set, print_df, newline, print_param, print_header, print_run
 
 # TODO
 #  add step1 and reading of weights
+#  add possibility to run with amplpy
 
 
 def print_json(my_sets, file):  # printing the dictionary containing all the sets into directory/sets.json
@@ -246,12 +246,10 @@ def print_data(config, case = 'deter'):
         BOILERS = []
 
         for i in ALL_TECH_OF_EUT:
-            if (layers_in_out.loc[i, 'HEAT_HIGH_T'] == 1 or layers_in_out.loc[i, 'HEAT_LOW_T_DHN'] == 1 or
-                    layers_in_out.loc[i, 'HEAT_LOW_T_DECEN'] == 1):
-                if layers_in_out.loc[i, 'ELECTRICITY'] > 0:
-                    COGEN.append(i)
-                else:
-                    BOILERS.append(i)
+            if 'BOILER' in i :
+                BOILERS.append(i)
+            if 'COGEN' in i :
+                COGEN.append(i)
 
         # Adding AMPL syntax #
         # creating Batt_per_Car_df for printing
@@ -613,28 +611,48 @@ def run_ES(config, case = 'deter'):
 
     if case == 'deter':
         cs = two_up / 'case_studies'
-        run = 'ESTD_main_all_prints.run'
+        run_file = 'ESTD_main.run'
     else:
         cs = two_up / 'case_studies' / config['UQ_case']
-        run = 'ESTD_main.run'
+        run_file = 'ESTD_main.run'
 
-    # copy .mod and .run to case_study directory
-    shutil.copyfile((config['ES_path'] / 'ESTD_model.mod'), (cs / config['case_study'] / 'ESTD_model.mod'))
-    shutil.copyfile((config['ES_path'] / run), (cs / config['case_study'] / run))
     # creating output directory
     (cs / config['case_study'] / 'output').mkdir(parents=True, exist_ok=True)
     (cs / config['case_study'] / 'output' / 'hourly_data').mkdir(parents=True, exist_ok=True)
     (cs / config['case_study'] / 'output' / 'sankey').mkdir(parents=True, exist_ok=True)
+
+    # using AMPL_path if specified. Otherwise, we assume ampl is in environment variables
+    if config['AMPL_path'] is None:
+        # TODO add error message if ampl not found, check why doesn't print log in certain IDE
+        ampl_command = 'ampl ' + run_file
+        # call('ampl '+run, shell=True)
+    else:
+        print('AMPL path is', config['AMPL_path'])
+        config['ampl_options']['solver'] = config['AMPL_path'] / config['ampl_options']['solver']
+        ampl_command = [config['AMPL_path']/'ampl', run_file]
+        # TODO check about cplex call in .run if not in PATH
+        # call(config['AMPL_path']+'/ampl '+run, shell=True)
+
+    # copy .mod and print .run to case_study directory
+    shutil.copyfile((config['ES_path'] / 'ESTD_model.mod'), (cs / config['case_study'] / 'ESTD_model.mod'))
+    print_run(run_fn=(cs / config['case_study'] / run_file), mod_fns=[(cs / config['case_study'] / 'ESTD_model.mod')],
+              dat_fns=[(cs / config['case_study'] / 'ESTD_data.dat'),
+                       (cs / config['case_study'] / ('ESTD_'+str(config['nbr_td'])+'TD.dat'))],
+              options=config['ampl_options'], output_dir=(cs / config['case_study'] / 'output'),
+              print_hourly_data=config['print_hourly_data'], print_sankey=config['print_sankey'])
+
     os.chdir((cs / config['case_study']))
     # running ES
     logging.info('Running EnergyScope')
 
-    if config['AMPL_path'] is None:
-        #TODO add error message if ampl not found, check why doesn't print log in certain IDE
-        call('ampl '+run, shell=True)
-    else:
-        #TODO check about cplex call in .run if not in PATH
-        call(config['AMPL_path']+'/ampl '+run, shell=True)
+
+
+    try:
+        run(ampl_command, shell=True, check=True)
+    except CalledProcessError as e:
+        print("The run didn't end normally.")
+        print(e)
+        exit()
 
     os.chdir(config['Working_directory'])
 

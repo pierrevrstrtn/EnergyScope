@@ -28,7 +28,7 @@ option solver cplex;
 #option times 1; # show time
 #option gentimes 1; # show time
 
-option log_file './log.txt';   #write the log in a .txt file. Create the file before running.
+option log_file './output/log.txt';   #write the log in a .txt file. Create the file before running.
 option presolve 200;
 
 option cplex_options $cplex_options 'baropt predual=-1 crossover=0';
