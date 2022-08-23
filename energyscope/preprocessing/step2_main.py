@@ -24,6 +24,7 @@ from energyscope import ampl_syntax, print_set, print_df, newline, print_param, 
 # TODO
 #  add step1 and reading of weights
 #  add possibility to run with amplpy
+#  fix sto_year print
 
 
 def print_json(my_sets, file):  # printing the dictionary containing all the sets into directory/sets.json

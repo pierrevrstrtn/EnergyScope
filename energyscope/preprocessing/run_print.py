@@ -82,7 +82,7 @@ def print_save(run_fn: str, output_dir: str, print_hourly_data=True, print_sanke
             for line in header:
                 file.write(line)
 
-        ampl_utils_dir = Path(__file__).parents[1] / 'ampl_models' / 'utils'
+        ampl_utils_dir = Path(__file__).parents[1] / 'STEP_2_Energy_Model' / 'utils'
         file.write(f'\t\t\tinclude {ampl_utils_dir}/print_year_summary.run;\n')
         if print_hourly_data:
             file.write(f'\t\t\tinclude {ampl_utils_dir}/print_sankey.run;\n')
