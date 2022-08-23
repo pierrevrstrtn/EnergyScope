@@ -33,7 +33,7 @@ setup(
     install_requires=[
         'numpy',
         'pandas',
-        'yaml',
+        'pyyaml',
         'matplotlib',
         'plotly'
     ],

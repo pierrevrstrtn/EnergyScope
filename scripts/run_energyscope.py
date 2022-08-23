@@ -8,7 +8,6 @@ This script modifies the input data and runs the EnergyScope model
 import os
 from pathlib import Path
 import energyscope as es
-import energyscope.postprocessing.plots
 
 if __name__ == '__main__':
     # define project path
@@ -31,7 +30,7 @@ if __name__ == '__main__':
     es.print_data(config)
 
     # Running EnergyScope
-    # es.run_ES(config)
+    es.run_ES(config)
 
     # Example to print the sankey from this script
     if config['print_sankey']:
@@ -39,14 +38,13 @@ if __name__ == '__main__':
         es.drawSankey(path=sankey_path)
 
     # Reading outputs
-    outputs = es.read_outputs(config['case_study'], hourly_data=True, layers=['layer_ELECTRICITY'])
+    outputs = es.read_outputs(config['case_study'], hourly_data=True, layers=['layer_ELECTRICITY','layer_HEAT_LOW_T_DECEN'])
 
     elec_year_ts = es.from_td_to_year(outputs['layer_ELECTRICITY'], config['td_data']['t_h_td'])
     elec_assets = es.get_assets_l(layer='ELECTRICITY', eff_tech=config['all_data']['Layers_in_out'], assets=outputs['assets'])
 
     # plots
-    elec_plot = energyscope.postprocessing.plots.plot_layer_elec_td(outputs['layer_ELECTRICITY'])
-    fig, ax = es.plot_barh(outputs['resources_breakdown'][['Used']])
-    fig2, ax2 = es.plot_barh(elec_assets[['f']])
-
-    # TODO test plots, etc into postprocessing
+    elec_plot = es.plot_layer_elec_td(outputs['layer_ELECTRICITY']) # layer_ELECTRICITY for the 12 tds
+    fig,ax = es.hourly_plot(plotdata=outputs['layer_HEAT_LOW_T_DECEN'], nbr_tds=12) # layer_HEAT_LOW_T_DECEN for the 12 tds
+    fig2, ax2 = es.plot_barh(outputs['resources_breakdown'][['Used']], title='Primary energy [GWh/y]') # primary resources used
+    fig3, ax3 = es.plot_barh(elec_assets[['f']], title='Electricity assets [GW_e]', x_label='Installed capacity [GW_e]') # elec assets
