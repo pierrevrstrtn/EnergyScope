@@ -20,7 +20,7 @@ def print_mod(run_fn: str, mod_fns: List[str]) -> None:
     with open(run_fn, mode='a', newline='') as file:
         file.write("\n# Load model\n")
         for mod_fn in mod_fns:
-            file.write(f"model {mod_fn};\n")
+            file.write(f'model "{mod_fn}";\n')
 
 
 def print_dat(run_fn: str, dat_fns: List[str]) -> None:
@@ -32,7 +32,7 @@ def print_dat(run_fn: str, dat_fns: List[str]) -> None:
     with open(run_fn, mode='a', newline='') as file:
         file.write("\n# Load data\n")
         for dat_fn in dat_fns:
-            file.write(f"data {dat_fn};\n")
+            file.write(f'data "{dat_fn}";\n')
 
 
 def print_options(run_fn: str, options: dict) -> None:
@@ -83,11 +83,11 @@ def print_save(run_fn: str, output_dir: str, print_hourly_data=True, print_sanke
                 file.write(line)
 
         ampl_utils_dir = Path(__file__).parents[1] / 'STEP_2_Energy_Model' / 'utils'
-        file.write(f'\t\t\tinclude {ampl_utils_dir}/print_year_summary.run;\n')
+        file.write(f'\t\t\tinclude "{ampl_utils_dir}/print_year_summary.run";\n')
         if print_hourly_data:
-            file.write(f'\t\t\tinclude {ampl_utils_dir}/print_sankey.run;\n')
+            file.write(f'\t\t\tinclude "{ampl_utils_dir}/print_sankey.run";\n')
         if print_sankey:
-            file.write(f'\t\t\tinclude {ampl_utils_dir}/print_hourly_data.run;\n')
+            file.write(f'\t\t\tinclude "{ampl_utils_dir}/print_hourly_data.run";\n')
         file.write("\t\t\texit 0;\n\t\t}\n\t}\n}")
 
 

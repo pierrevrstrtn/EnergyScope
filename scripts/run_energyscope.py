@@ -9,7 +9,15 @@ import os
 from pathlib import Path
 import energyscope as es
 
+# TODO
+#  finish documentation and export it
+#  Update uq_estd
+#  Add other automatic plots
+
 if __name__ == '__main__':
+    # Set to True if you want to only analyz the results of an already runned case study
+    analysis_only = False
+
     # define project path
     project_path = Path(__file__).parents[1]
 
@@ -18,7 +26,8 @@ if __name__ == '__main__':
     config['Working_directory'] = os.getcwd() # keeping current working directory into config
 
    # Reading the data of the csv
-    es.import_data(config)
+    if not analysis_only:
+        es.import_data(config)
 
     ##TODO Student work: Write the updates in data HERE
     # Example to change data: update wood availability to 23 400 GWh (ref value here)
@@ -26,11 +35,12 @@ if __name__ == '__main__':
     # Example to change share of public mobility into passenger mobility into 0.5 (ref value here)
     config['all_data']['Misc']['share_mobility_public_max'] = 0.5
 
-    # Printing the .dat files for the optimisation problem
-    es.print_data(config)
+    if not analysis_only:
+        # Printing the .dat files for the optimisation problem
+        es.print_data(config)
 
-    # Running EnergyScope
-    es.run_ES(config)
+        # Running EnergyScope
+        es.run_ES(config)
 
     # Example to print the sankey from this script
     if config['print_sankey']:
@@ -40,11 +50,15 @@ if __name__ == '__main__':
     # Reading outputs
     outputs = es.read_outputs(config['case_study'], hourly_data=True, layers=['layer_ELECTRICITY','layer_HEAT_LOW_T_DECEN'])
 
-    elec_year_ts = es.from_td_to_year(outputs['layer_ELECTRICITY'], config['td_data']['t_h_td'])
-    elec_assets = es.get_assets_l(layer='ELECTRICITY', eff_tech=config['all_data']['Layers_in_out'], assets=outputs['assets'])
-
-    # plots
-    elec_plot = es.plot_layer_elec_td(outputs['layer_ELECTRICITY']) # layer_ELECTRICITY for the 12 tds
-    fig,ax = es.hourly_plot(plotdata=outputs['layer_HEAT_LOW_T_DECEN'], nbr_tds=12) # layer_HEAT_LOW_T_DECEN for the 12 tds
-    fig2, ax2 = es.plot_barh(outputs['resources_breakdown'][['Used']], title='Primary energy [GWh/y]') # primary resources used
-    fig3, ax3 = es.plot_barh(elec_assets[['f']], title='Electricity assets [GW_e]', x_label='Installed capacity [GW_e]') # elec assets
+    # Plots (examples)
+    # primary resources used
+    fig2, ax2 = es.plot_barh(outputs['resources_breakdown'][['Used']], title='Primary energy [GWh/y]')
+    # elec assets
+    elec_assets = es.get_assets_l(layer='ELECTRICITY', eff_tech=config['all_data']['Layers_in_out'],
+                                  assets=outputs['assets'])
+    fig3, ax3 = es.plot_barh(elec_assets[['f']], title='Electricity assets [GW_e]',
+                             x_label='Installed capacity [GW_e]')
+    # layer_ELECTRICITY for the 12 tds
+    elec_layer_plot = es.plot_layer_elec_td(outputs['layer_ELECTRICITY'])
+    # layer_HEAT_LOW_T_DECEN for the 12 tds
+    fig,ax = es.hourly_plot(plotdata=outputs['layer_HEAT_LOW_T_DECEN'], nbr_tds=12)

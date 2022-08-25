@@ -653,15 +653,12 @@ def run_ES(config, case = 'deter'):
 
     # using AMPL_path if specified. Otherwise, we assume ampl is in environment variables
     if config['AMPL_path'] is None:
-        # TODO add error message if ampl not found, check why doesn't print log in certain IDE
         ampl_command = 'ampl ' + run_file
         # call('ampl '+run, shell=True)
     else:
         print('AMPL path is', config['AMPL_path'])
         config['ampl_options']['solver'] = config['AMPL_path'] / config['ampl_options']['solver']
         ampl_command = [config['AMPL_path']/'ampl', run_file]
-        # TODO check about cplex call in .run if not in PATH
-        # call(config['AMPL_path']+'/ampl '+run, shell=True)
 
     # copy .mod and print .run to case_study directory
     shutil.copyfile((config['es_path'] / 'ESTD_model.mod'), (cs / config['case_study'] / 'ESTD_model.mod'))
