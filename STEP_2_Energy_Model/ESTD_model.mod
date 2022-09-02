@@ -480,8 +480,8 @@ for {i in END_USES_TYPES}{
 ## Print ASSETS to txt file
 printf "TECHNOLOGIES\t c_inv\t c_maint\t lifetime\t  f_min\t f\t f_max\t fmin_perc\t" > "output/assets.txt"; 
 printf "f_perc\t fmax_perc\t c_p\t c_p_max\t tau\t gwp_constr" >> "output/assets.txt"; # Must be split in 2 parts, otherwise too long for GLPK
-printf "\n UNITS\t[MCHCapitalf/GW]\t [MCHCapitalf/GW]\t [y]\t [GW or GWh]\t" >> "output/assets.txt"; 
-printf " [GW or GWh]\t [GW or GWh]\t [0-1]\t [0-1]\t [0-1]\t [0-1]\t [0-1]\t [-]\t [ktCO2-eq./GW or GWh] " >> "output/assets.txt"; 
+printf "\n UNITS\t[Meuros]\t [Meuros/y]\t [y]\t [GW or GWh]\t" >> "output/assets.txt"; 
+printf " [GW or GWh]\t [GW or GWh]\t [0-1]\t [0-1]\t [0-1]\t [0-1]\t [0-1]\t [-]\t [ktCO2-eq.] " >> "output/assets.txt"; 
 for {i in END_USES_TYPES, tech in TECHNOLOGIES_OF_END_USES_TYPE[i]}{
 	printf "\n%s\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t%f\t",tech,
 C_inv[tech],C_maint[tech],lifetime[tech],f_min[tech],F[tech],f_max[tech],
