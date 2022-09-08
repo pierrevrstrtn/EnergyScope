@@ -150,15 +150,51 @@ def plot_layer_elec_td(layer_elec: pd.DataFrame, title='Layer electricity', tds 
     return {'fig': fig, 'ax': ax, 'other_prods': other_prods, 'other_cons': other_cons}
 
 
-def plot_barh(plotdata: pd.DataFrame, treshold=0.15, title='', x_label='', xlim=None, legend=None, figsize=(13,7), show_plot=True):
-    """TODO
+def plot_barh(plotdata: pd.DataFrame, treshold=0.15, title='', x_label='', y_label='', xlim=None, legend=None, figsize=(13,7), show_plot=True):
+    """Cleans and plot the plotdata into a barh ordered plot
+    Drops the rows with maximum value below the treshold in plotdata, sort them according to the last column
+    and plots them in a barh plot
+
+    Parameters
+    ----------
+    plotdata: pandas.DataFrame
+    Dataframe to plot
+
+    treshold: float (default=0.15)
+    Treshold to determine rows to keep or not
+
+    x_label: str
+    Label of the x axis for the plot
+
+    y_label: str
+    Label of the y axis for the plot
+
+    xlim: tuple
+    xlim for the plot
+
+    legend: boolean
+    Show or not the legend for the plot
+
+    figsize: tuple
+    Figure size for the plot
+
+    show_plot: Boolean
+    Show or not the graph
+
+    Returns
+    -------
+     fig: matplotlib.figure.Figure
+    Figure object of the plot
+
+    ax: matplotlib.axes._subplots.AxesSubplot
+    Ax object of the plot
 
     """
 
     # plotting elec assets
     fig, ax = plt.subplots(figsize=figsize)
     plotdata = plotdata.loc[plotdata.max(axis=1) > treshold, :].sort_values(by=plotdata.columns[-1])
-    plotdata.rename(index=plotting_names).plot(kind='barh', width=0.8, colormap='viridis', ax=ax)
+    plotdata.rename(index=plotting_names).plot(kind='barh', width=0.8, colormap='tab20', ax=ax)
 
     # legend options
     if legend is None:
@@ -170,8 +206,9 @@ def plot_barh(plotdata: pd.DataFrame, treshold=0.15, title='', x_label='', xlim=
     ax.set_title(title)
     # adding label and lim to x axis
     ax.set_xlabel(x_label)
+    ax.set_ylabel(y_label)
     if xlim is not None:
-        ax.set_xlim('xlim')
+        ax.set_xlim(xlim)
 
     fig.tight_layout()
     if show_plot:
