@@ -22,6 +22,7 @@ from pathlib import Path
 from energyscope import ampl_syntax, print_set, print_df, newline, print_param, print_header, print_run
 
 # TODO
+#  write doc
 #  add step1 and reading of weights
 #  add possibility to run with amplpy
 #  fix sto_year print

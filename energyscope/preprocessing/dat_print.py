@@ -11,6 +11,7 @@ Contains functions format and print data into ampl syntax into .dat files
 import csv
 from pathlib import Path
 
+#TODO write doc
 
 def ampl_syntax(df, comment):
     # adds ampl syntax to df

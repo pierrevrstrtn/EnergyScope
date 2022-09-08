@@ -5,13 +5,18 @@ from pathlib import Path
 
 from ..common import *
 
-#TODO complete doc
-def read_outputs(cs, hourly_data=False, layers=[]):
+def read_outputs(cs:str, hourly_data=False, layers=[]):
     """Reads the EnergyScope outputs in the case study (cs) specified
     Parameters
     ----------
     cs : str
     Case study to read output from
+
+    hourly_data: boolean (default False)
+    Whether to read the hourly data ouput or not
+
+    layers: list(str)
+    List of the names of the layers to be read (ex: ['layer_ELECTRICITY','layer_HEAT_LOW_T_DECEN'])
 
     Returns
     -------
@@ -37,14 +42,23 @@ def read_outputs(cs, hourly_data=False, layers=[]):
         outputs['energy_stored'] = pd.read_csv(path/'hourly_data'/'energy_stored.txt', sep='\t', index_col=0)
         for l in layers:
             outputs[l] = read_layer(cs,l)
-
-        # TODO addother layers
-
     return outputs
 
-def read_layer(cs, layer_name, ext='.txt'):
-    """
+def read_layer(cs:str, layer_name, ext='.txt'):
+    """Reads the output file of the layer specified and returns it as a dataframe
 
+        Parameters
+        ----------
+        cs : str
+        Case study to read output from
+
+        : pd.DataFrame()
+        Dataframe to be cleaned
+
+        Returns
+        -------
+        df2: pd.DataFrame()
+        The stripped dataframe
     """
 
     layer = pd.read_csv(Path(__file__).parents[2]/'case_studies'/str(cs)/'output' / 'hourly_data' / (layer_name+ext), sep='\t',
@@ -55,16 +69,17 @@ def read_layer(cs, layer_name, ext='.txt'):
 
 def clean_col_and_index(df):
     """Strip the leading and trailing white space in columns and index
-    Parameters
-    ----------
-    df: pd.DataFrame()
-    Dataframe to be cleaned
 
-    Returns
-    -------
-    df2: pd.DataFrame()
-    The stripped dataframe
-    """
+        Parameters
+        ----------
+        df: pd.DataFrame()
+        Dataframe to be cleaned
+
+        Returns
+        -------
+        df2: pd.DataFrame()
+        The stripped dataframe
+        """
     df2 = df.copy()
     if df2.columns.inferred_type == 'string':
         df2.rename(columns=lambda x: x.strip(), inplace=True)
@@ -74,6 +89,18 @@ def clean_col_and_index(df):
 
 
 def rename_storage_power(s):
+    """Rename storage input and output power to plotting name
+
+     Parameters
+    ----------
+    s: str
+    String to be renamed should be of the form "XXX_in" or "XXX_out" with "XXX" the name of the storage technology in capital letters.
+
+    Returns
+    -------
+    A string with the plotting name corresponding to the storage technology and the "in" or "out"
+
+    """
 
     l = s.rsplit(sep='_')
     name = plotting_names['_'.join(l[:-1])]

@@ -3,6 +3,9 @@ import os
 import energyscope as es
 from pathlib import Path
 
+# TODO adapt to updates and test
+# TODO write doc
+
 def run_ESTD_UQ(sample, AMPL_path, gwp_limit):
 
     path = Path(__file__).parents[2]
@@ -20,13 +23,13 @@ def run_ESTD_UQ(sample, AMPL_path, gwp_limit):
     # specify the configuration
     config = {'UQ_case': name,
               'case_study': 'Run_{}'.format(sample_index),
-              # Name of the case study. The outputs will be printed into : config['ES_path']+'\output_'+config['case_study']
+              # Name of the case study. The outputs will be printed into : config['es_path']+'\output_'+config['case_study']
               'printing': True,  # printing the data in ETSD_data.dat file for the optimisation problem
               'printing_td': True,  # printing the time related data in ESTD_12TD.dat for the optimisaiton problem
               'GWP_limit': gwp_limit,  # [ktCO2-eq./year]	# Minimum GWP reduction
               'import_capacity': 9.72,  # [GW] Electrical interconnections with neighbouring countries
               'data_folders': [user_data, developer_data],  # Folders containing the csv data files
-              'ES_path': es_path,  # Path to the energy model (.mod and .run files)
+              'es_path': es_path,  # Path to the energy model (.mod and .run files)
               'step1_output': step1_output,
               # OUtput of the step 1 selection of typical days
               'all_data': dict(),
