@@ -4,6 +4,20 @@ from pathlib import Path
 
 
 def get_total_cost(config, case = 'deter'):
+    """Read the cost breakdown and computes the total cost
+
+        Parameters
+        ----------
+        config: dictionnary
+        Dictionnary defining the case study
+
+        case: str
+        Set to 'deter' for determinist run and 'uq' for uncertainty quatification run
+
+        Returns
+        -------
+        Total annualised cost of the system (float) [M€/y]
+        """
     two_up = Path(__file__).parents[2]
 
     if case == 'deter':

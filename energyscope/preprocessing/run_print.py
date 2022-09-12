@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-# TODO: to be deleted
 This script allows to print the .run files.
 
 @author: Jonathan Dumas, Antoine Dubois, Paolo Thiran
@@ -9,6 +8,7 @@ import os
 from typing import List
 from pathlib import Path
 
+# TODO uniformise doc with other scripts
 
 def print_mod(run_fn: str, mod_fns: List[str]) -> None:
     """

@@ -26,8 +26,7 @@ if __name__ == '__main__':
     config['Working_directory'] = os.getcwd() # keeping current working directory into config
 
    # Reading the data of the csv
-    if not analysis_only:
-        es.import_data(config)
+    es.import_data(config)
 
     ##TODO Student work: Write the updates in data HERE
     # Example to change data: update wood availability to 23 400 GWh (ref value here)

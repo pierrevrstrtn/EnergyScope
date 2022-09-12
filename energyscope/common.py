@@ -9,6 +9,7 @@ commons = {}
 commons['logfile'] = str(datetime.datetime.now()).replace(':', '-').replace(' ', '_') + '.energyscope.log'
 
 
+# list giving the order in which the technologies should be plotted into the layer elec graph
 elec_order_graphs = ['IND_COGEN_GAS', 'IND_COGEN_WOOD', 'IND_COGEN_WASTE',
                 'DHN_COGEN_GAS', 'DHN_COGEN_WOOD', 'DHN_COGEN_WASTE', 'DHN_COGEN_WET_BIOMASS',
                 'DHN_COGEN_BIO_HYDROLYSIS',
@@ -26,6 +27,7 @@ elec_order_graphs = ['IND_COGEN_GAS', 'IND_COGEN_WOOD', 'IND_COGEN_WASTE',
                 'IND_DIRECT_ELEC', 'H2_ELECTROLYSIS', 'PHS_Pin', 'BATT_LI_Pin', 'BEV_BATT_Pin', 'PHEV_BATT_Pin',
                 'ELEC_EXPORT']
 
+# dictionnary to map the names of the resources and technologies into the model into a format to be plotted
 plotting_names = {'ELECTRICITY': 'Electricity',
                   'GASOLINE': 'Gasoline',
                   'DIESEL': 'Diesel',
@@ -107,6 +109,7 @@ plotting_names = {'ELECTRICITY': 'Electricity',
                   'AMMONIA_STORAGE': 'Ammonia storage', 'METHANOL_STORAGE': 'Methanol storage',
                   'CO2_STORAGE': 'CO2 storage'}
 
+# dictionnary specifying the colors of the different technologies for plot of the elec layer
 colors_elec = {'Ind. cogen. gas': '#DC143C', # Heat HT in sankey
                'CCGT': '#FFD700', # Gas in sankey
                'PV': '#FFFF00', # Solar in sankey
@@ -125,6 +128,7 @@ colors_elec = {'Ind. cogen. gas': '#DC143C', # Heat HT in sankey
                'Ind. direct elec.': '#B60000', # Dark red
                'Lithium batt. Pout': '#6fb1c7', #Light blue (close to elec)
                'Lithium batt. Pin': '#6fb1c7', # Light blue (close to elec)
-               'Electricity': '#00BFFF' # Light blue
-                }
+               'Electricity': '#00BFFF', # Light blue
+               'Elec export': '#00BFFF'  # Light blue
+}
 #TODO add other tech into colors_elec
