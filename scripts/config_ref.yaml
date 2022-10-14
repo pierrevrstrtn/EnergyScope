@@ -22,7 +22,8 @@ printing_td: True
 
 # Run options for optimization problem
 # path to AMPL licence directory (to adapt by the user), set to None if AMPL is in your PATH variables
-'AMPL_path':
+# /!\ Don't use "\" but rather "\\" or "/"
+'AMPL_path': 
 # options for ampl
 'ampl_options' : {'show_stats': 3,
                   'log_file': 'output/log.txt',

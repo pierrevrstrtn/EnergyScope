@@ -657,6 +657,7 @@ def run_ES(config, case = 'deter'):
         ampl_command = 'ampl ' + run_file
         # call('ampl '+run, shell=True)
     else:
+        config['AMPL_path'] = Path(config['AMPL_path'])
         print('AMPL path is', config['AMPL_path'])
         config['ampl_options']['solver'] = config['AMPL_path'] / config['ampl_options']['solver']
         ampl_command = [config['AMPL_path']/'ampl', run_file]

@@ -156,7 +156,6 @@ def get_assets_l(layer: str, eff_tech: pd.DataFrame, assets: pd.DataFrame, tresh
     tech = list(eff_tech.loc[eff_tech.loc[:,layer]>treshold,:].index)
     # drop the resources
     tech = [i for i in tech if i in list(assets.index)]
-    print(tech)
     # select the assets
     df = assets.loc[tech,:].copy()
     # scale the assets tho their efficiency
