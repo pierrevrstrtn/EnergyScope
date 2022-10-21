@@ -1,4 +1,4 @@
-Uncertain_parameters;Type;Range_min;Range_max;Center;Half_width
+Uncertain_parameter;Type;Range_min;Range_max;Center;Half_width
 param_i_rate;Relative;-0.462;0.462;0.000;0.462
 avail_elec;Relative;-0.321;0.321;0.000;0.321
 avail_waste;Relative;-0.321;0.321;0.000;0.321
