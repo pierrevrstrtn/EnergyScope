@@ -94,6 +94,7 @@ def import_data(config: dict):
     storage_eff_in = pd.read_csv(data_dir / 'Storage_eff_in.csv', sep=';', index_col=0)
     storage_eff_out = pd.read_csv(data_dir / 'Storage_eff_out.csv', sep=';', index_col=0)
     time_series = pd.read_csv(data_dir / 'Time_series.csv', sep=';', header=0, index_col=0)
+    uncertainty_ranges = pd.read_csv(data_dir/ 'Uncertainty_ranges.csv', sep=';', header=0, index_col=0)
 
     # Reading misc.json
     misc = read_json(data_dir / 'misc.json')
@@ -108,7 +109,8 @@ def import_data(config: dict):
     all_df = {'Demand': eud, 'Resources': resources, 'Technologies': technologies,
               'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out,
               'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in,
-              'Storage_eff_out': storage_eff_out, 'Time_series': time_series}
+              'Storage_eff_out': storage_eff_out, 'Time_series': time_series, 
+              'Uncertainty_ranges': uncertainty_ranges}
 
     for key in all_df:
         if type(all_df[key].index[0]) == str:
@@ -124,17 +126,14 @@ def import_data(config: dict):
 
 
 # Function to print the ESTD_data.dat file #
-def print_data(config, case = 'deter'):
+def print_data(config):
     """
     TODO add doc
     """
     two_up = Path(__file__).parents[2]
     
-    if case=='deter':
-        cs = two_up / 'case_studies'
-    else:
-        cs = two_up / 'case_studies' / config['UQ_case']
-
+    cs = two_up / 'case_studies'
+    
     # make dir and parents
     (cs / config['case_study']).mkdir(parents=True, exist_ok=True)
 
@@ -637,15 +636,12 @@ def generate_t_h_td(config, Nbr_TD=12):
 
 
 # Function to run ES from python
-def run_ES(config, case = 'deter'):
+def run_ES(config):
     two_up = Path(__file__).parents[2]
+    
+    cs = two_up / 'case_studies'
+    run_file = 'ESTD_main.run'
 
-    if case == 'deter':
-        cs = two_up / 'case_studies'
-        run_file = 'ESTD_main.run'
-    else:
-        cs = two_up / 'case_studies' / config['UQ_case']
-        run_file = 'ESTD_main.run'
 
     # creating output directory
     (cs / config['case_study'] / 'output').mkdir(parents=True, exist_ok=True)
