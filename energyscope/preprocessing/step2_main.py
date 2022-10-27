@@ -61,11 +61,11 @@ def load_config(config_fn: str, project_path: Path):
     # Extend path
     for param in ['data_dir', 'es_path', 'cs_path', 'step1_output']:
         cfg[param] = project_path / cfg[param]
-
+    log_file = cfg['ampl_options']['log_file']
     # Extend path for log_file
-    cfg['ampl_options']['log_file'] = str(cfg['cs_path']/ cfg['case_study'] / cfg['ampl_options']['log_file'])
+    cfg['ampl_options']['log_file'] = str(cfg['cs_path']/ cfg['case_study'] / log_file)
 
-    return cfg
+    return cfg, log_file
 
 # Function to import the data from the CSV data files #
 def import_data(config: dict):

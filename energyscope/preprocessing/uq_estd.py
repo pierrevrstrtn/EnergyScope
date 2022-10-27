@@ -12,7 +12,7 @@ def run_ESTD_UQ(sample):
     project_path = Path(__file__).parents[2]
 
     # loading the config file into a python dictionnary
-    config = es.load_config(config_fn='config_ref.yaml', project_path=project_path)
+    config, log_file = es.load_config(config_fn='config_ref.yaml', project_path=project_path)
     config['Working_directory'] = os.getcwd() # keeping current working directory into config
 
     # Reading the data of the csv
@@ -25,6 +25,7 @@ def run_ESTD_UQ(sample):
     name = sample[1]
 
     config['case_study'] = name + '/Run_{}'.format(sample_index)
+    config['ampl_options']['log_file'] = str(config['cs_path']/ config['case_study'] / log_file)
 
     config['print_sankey'] = False #For the UQ analysis, no need to print the Sankey
 
