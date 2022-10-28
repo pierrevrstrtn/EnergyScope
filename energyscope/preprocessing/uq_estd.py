@@ -12,7 +12,7 @@ def run_ESTD_UQ(sample):
     project_path = Path(__file__).parents[2]
 
     # loading the config file into a python dictionnary
-    config = es.load_config(config_fn=os.path.join(project_path,'scripts','config_ref.yaml'), project_path=project_path)
+    config = es.load_config(config_fn=os.path.join(project_path,'scripts','config_ref_UQ.yaml'), project_path=project_path)
     config['Working_directory'] = os.getcwd() # keeping current working directory into config
 
     # Reading the data of the csv
