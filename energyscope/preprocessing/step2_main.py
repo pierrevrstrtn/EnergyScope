@@ -656,7 +656,7 @@ def run_ES(config):
         config['AMPL_path'] = Path(config['AMPL_path'])
         print('AMPL path is', config['AMPL_path'])
         config['ampl_options']['solver'] = config['AMPL_path'] / config['ampl_options']['solver']
-        ampl_command = [config['AMPL_path']/'ampl', run_file]
+        ampl_command = str(config['AMPL_path']/'ampl ')+ run_file
 
     # copy .mod and print .run to case_study directory
     shutil.copyfile((config['es_path'] / 'ESTD_model.mod'), (cs / config['case_study'] / 'ESTD_model.mod'))
