@@ -37,7 +37,7 @@ def run_ESTD_UQ(sample):
     es.print_data(config)
 
     # Running EnergyScope
-    es.run_ES(config)
+    es.run_es(config)
 
     # Example to get total cost
     total_cost = es.get_total_cost(config)

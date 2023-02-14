@@ -9,7 +9,6 @@ from typing import List
 from pathlib import Path
 
 # TODO uniformise doc with other scripts
-
 def print_mod(run_fn: str, mod_fns: List[str]) -> None:
     """
     Add .mod imports to run file
@@ -65,12 +64,14 @@ def print_solve(run_fn: str) -> None:
             file.write(line)
 
 
-def print_save(run_fn: str, output_dir: str, print_hourly_data=True, print_sankey=True) -> None:
+def print_save(run_fn: str, output_dir: str, print_files: List[str]) -> None:
     """
     Add the AMPL scripts used to save results to the run file
     :param run_fn: Path to .run file
     :param output_dir: Path to the directory where the output of the model is to be generated (e.g. used as PathName in
     AMPL_utils/print.run and AMPL_utils/sankey.run)
+    :param print_files: List of path to files giving the instruction to what to print from the run
+
     """
 
     with open(run_fn, mode='a', newline='') as file:
@@ -82,16 +83,12 @@ def print_save(run_fn: str, output_dir: str, print_hourly_data=True, print_sanke
             for line in header:
                 file.write(line)
 
-        ampl_utils_dir = Path(__file__).parents[1] / 'STEP_2_Energy_Model' / 'utils'
-        file.write(f'\t\t\tinclude "{ampl_utils_dir}/print_year_summary.run";\n')
-        if print_hourly_data:
-            file.write(f'\t\t\tinclude "{ampl_utils_dir}/print_sankey.run";\n')
-        if print_sankey:
-            file.write(f'\t\t\tinclude "{ampl_utils_dir}/print_hourly_data.run";\n')
+        for t in print_files:
+            file.write(f'\t\t\tinclude "{t}";\n')
         file.write("\t\t\texit 0;\n\t\t}\n\t}\n}")
 
 
-def print_run(run_fn: str, mod_fns: List[str], dat_fns: List[str], options: dict, output_dir: str, print_hourly_data=True, print_sankey=True) -> None:
+def print_run(run_fn: str, mod_fns: List[str], dat_fns: List[str], options: dict, output_dir: str, print_files: List[str]) -> None:
     """
     Print the .run file.
 
@@ -102,6 +99,7 @@ def print_run(run_fn: str, mod_fns: List[str], dat_fns: List[str], options: dict
     values to be attributed to those options
     :param output_dir: Path to the directory where the output of the model is to be generated (e.g. used as PathName in
     AMPL_utils/print.run and AMPL_utils/sankey.run)
+    :param print_files: List of path to the files containing the instructions of which outputs to print
     """
 
     # Add header
@@ -119,4 +117,4 @@ def print_run(run_fn: str, mod_fns: List[str], dat_fns: List[str], options: dict
     # Add solving
     print_solve(run_fn)
     # Add saving
-    print_save(run_fn, output_dir, print_hourly_data=print_hourly_data, print_sankey=print_sankey)
+    print_save(run_fn, output_dir, print_files)

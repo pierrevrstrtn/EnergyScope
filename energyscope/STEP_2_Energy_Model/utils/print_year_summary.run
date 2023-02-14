@@ -1,5 +1,8 @@
 ## Saving year summary to output file
 
+print "TotalCost", TotalCost;
+print "GWP_op", sum {i in RESOURCES} GWP_op [i];
+
 ## Print cost breakdown to txt file.
 print "--------------SAVING COSTS -----------";
 printf "%s\t%s\t%s\t%s\n", "Name", "C_inv", "C_maint", "C_op" > (PathName & "/cost_breakdown.txt");

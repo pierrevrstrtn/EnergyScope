@@ -14,12 +14,14 @@ import pandas as pd
 import csv
 import yaml
 import os
+import sys
 import json
 import shutil
 from subprocess import CalledProcessError, run
 from pathlib import Path
 
 from energyscope import ampl_syntax, print_set, print_df, newline, print_param, print_header, print_run
+
 
 # TODO
 #  write doc
@@ -33,11 +35,13 @@ def print_json(my_sets, file):  # printing the dictionary containing all the set
         json.dump(my_sets, fp, indent=4, sort_keys=True)
     return
 
+
 def read_json(file):
     # reading the saved dictionary containing all the sets from directory/sets.json
     with open(file, 'r') as fp:
         data = json.load(fp)
     return data
+
 
 def load_config(config_fn: str, project_path: Path):
     """
@@ -59,20 +63,21 @@ def load_config(config_fn: str, project_path: Path):
     # Load parameters
     cfg = yaml.load(open(config_fn, 'r'), Loader=yaml.FullLoader)
     # Extend path
-    for param in ['data_dir', 'es_path', 'cs_path', 'step1_output']:
+    for param in ['data_dir', 'es_path', 'cs_path', 'step1_path']:
         cfg[param] = project_path / cfg[param]
 
     # Extend path for log_file
-    cfg['ampl_options']['log_file'] = str(cfg['cs_path']/ cfg['case_study'] / cfg['ampl_options']['log_file'])
+    cfg['ampl_options']['log_file'] = str(cfg['cs_path'] / cfg['case_study'] / cfg['ampl_options']['log_file'])
 
     return cfg
 
-# Function to import the data from the CSV data files #
+
 def import_data(config: dict):
     """
     Read the data into the csv and the misc.json into the data directory (config['data_dir'])
     and stores it into 2 dictionaries in the config (config['all_data'] and config['all_data']['Misc']).
-    The data of the different csv are stored into dataframes and the miscallenous data of the user_defined is stored as dictionnary of different items
+    The data of the different csv are stored into dataframes and the miscallenous data of the user_defined is stored as
+    dictionnary of different items
 
     Parameters
     ----------
@@ -83,7 +88,7 @@ def import_data(config: dict):
     """
 
     data_dir = config['data_dir']
-    logging.info('Importing data files from '+ str(data_dir))
+    logging.info('Importing data files from ' + str(data_dir))
     # Reading CSV #
     eud = pd.read_csv(data_dir / 'Demand.csv', sep=';', index_col=2, header=0)
     resources = pd.read_csv(data_dir / 'Resources.csv', sep=';', index_col=2, header=2)
@@ -94,7 +99,7 @@ def import_data(config: dict):
     storage_eff_in = pd.read_csv(data_dir / 'Storage_eff_in.csv', sep=';', index_col=0)
     storage_eff_out = pd.read_csv(data_dir / 'Storage_eff_out.csv', sep=';', index_col=0)
     time_series = pd.read_csv(data_dir / 'Time_series.csv', sep=';', header=0, index_col=0)
-    uncertainty_ranges = pd.read_csv(data_dir/ 'Uncertainty_ranges.csv', sep=';', header=0, index_col=0)
+    uncertainty_ranges = pd.read_csv(data_dir / 'Uncertainty_ranges.csv', sep=';', header=0, index_col=0)
 
     # Reading misc.json
     misc = read_json(data_dir / 'misc.json')
@@ -109,7 +114,7 @@ def import_data(config: dict):
     all_df = {'Demand': eud, 'Resources': resources, 'Technologies': technologies,
               'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out,
               'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in,
-              'Storage_eff_out': storage_eff_out, 'Time_series': time_series, 
+              'Storage_eff_out': storage_eff_out, 'Time_series': time_series,
               'Uncertainty_ranges': uncertainty_ranges}
 
     for key in all_df:
@@ -118,7 +123,7 @@ def import_data(config: dict):
         if type(all_df[key].columns[0]) == str:
             all_df[key].columns = all_df[key].columns.str.strip()
 
-    all_df['Misc'] =  misc
+    all_df['Misc'] = misc
 
     config['all_data'] = all_df
 
@@ -131,9 +136,9 @@ def print_data(config):
     TODO add doc
     """
     two_up = Path(__file__).parents[2]
-    
+
     cs = two_up / 'case_studies'
-    
+
     # make dir and parents
     (cs / config['case_study']).mkdir(parents=True, exist_ok=True)
 
@@ -194,7 +199,8 @@ def print_data(config):
         share_heat_dhn_min = config['all_data']['Misc']['share_heat_dhn_min']
         share_heat_dhn_max = config['all_data']['Misc']['share_heat_dhn_max']
 
-        share_ned = pd.DataFrame.from_dict(config['all_data']['Misc']['share_ned'], orient='index', columns=['share_ned'])
+        share_ned = pd.DataFrame.from_dict(config['all_data']['Misc']['share_ned'], orient='index',
+                                           columns=['share_ned'])
 
         # Electric vehicles :
         # km-pass/h/veh. : Gives the equivalence between capacity and number of vehicles.
@@ -208,7 +214,8 @@ def print_data(config):
         loss_network = config['all_data']['Misc']['loss_network']
         c_grid_extra = config['all_data']['Misc'][
             'c_grid_extra']  # cost to reinforce the grid due to intermittent renewable energy penetration. See 2.2.2
-        import_capacity = config['all_data']['Misc']['import_capacity']  # [GW] Maximum power of electrical interconnections
+        import_capacity = config['all_data']['Misc']['import_capacity']
+        # [GW] Maximum power of electrical interconnections
 
         # Storage daily
         STORAGE_DAILY = config['all_data']['Misc']['STORAGE_DAILY']
@@ -276,9 +283,9 @@ def print_data(config):
         BOILERS = []
 
         for i in ALL_TECH_OF_EUT:
-            if 'BOILER' in i :
+            if 'BOILER' in i:
                 BOILERS.append(i)
-            if 'COGEN' in i :
+            if 'COGEN' in i:
                 COGEN.append(i)
 
         # Adding AMPL syntax #
@@ -306,7 +313,7 @@ def print_data(config):
 
         # Printing data #
         # printing signature of data file
-        header_file = (Path(__file__).parents[1]/ 'headers' / 'header_data.txt')
+        header_file = (Path(__file__).parents[1] / 'headers' / 'header_data.txt')
         print_header(header_file=header_file, dat_file=out_path)
 
         # printing sets
@@ -460,7 +467,6 @@ def print_data(config):
     if config['printing_td']:
 
         out_path = cs / config['case_study']  # config['es_path']
-        step1_out = config['step1_output']
         nbr_td = config['nbr_td']
 
         logging.info('Printing ESTD_' + str(nbr_td) + 'TD.dat')
@@ -506,9 +512,10 @@ def print_data(config):
 
         # BUILDING TD TIMESERIES #
         # creating df with 2 columns : day of the year | hour in the day
-        d_of_h = np.repeat(np.arange(1,366,1), 24, axis=0) # 24 times each day of the year
-        h_of_d = np.resize(np.arange(1, 25), 24*365)  # 365 times hours from 1 to 24
-        day_and_hour = pd.DataFrame(np.vstack((d_of_h,h_of_d)).T, index=np.arange(1, 8761, 1), columns=['D_of_H', 'H_of_D'])
+        d_of_h = np.repeat(np.arange(1, 366, 1), 24, axis=0)  # 24 times each day of the year
+        h_of_d = np.resize(np.arange(1, 25), 24 * 365)  # 365 times hours from 1 to 24
+        day_and_hour = pd.DataFrame(np.vstack((d_of_h, h_of_d)).T, index=np.arange(1, 8761, 1),
+                                    columns=['D_of_H', 'H_of_D'])
         day_and_hour = day_and_hour.astype('int64')
         time_series = time_series.merge(day_and_hour, left_index=True, right_index=True)
 
@@ -519,7 +526,6 @@ def print_data(config):
         # computing the sum of ts over each TD
         agg_td_ts = td_ts.groupby('D_of_H').sum()
         agg_td_ts.reset_index(inplace=True)
-        agg_td_ts.set_index(np.arange(1, nbr_td + 1), inplace=True)
         agg_td_ts.drop(columns=['D_of_H', 'H_of_D'], inplace=True)
         # multiplicating each TD by the number of day it represents
         for c in agg_td_ts.columns:
@@ -544,6 +550,11 @@ def print_data(config):
         # printing sets and parameters
         with open(out_path, mode='a', newline='') as td_file:
             td_writer = csv.writer(td_file, delimiter='\t', quotechar=' ', quoting=csv.QUOTE_MINIMAL)
+
+            # print nbr_tds param
+            td_writer.writerow(['param nbr_tds := ' + str(nbr_td)])
+            td_writer.writerow([';		'])
+            td_writer.writerow(['		'])
             # peak_sh_factor
             td_writer.writerow(['param peak_sh_factor	:=	' + str(peak_sh_factor)])
             td_writer.writerow([';		'])
@@ -606,7 +617,8 @@ def print_data(config):
 
     return
 
-def generate_t_h_td(config, Nbr_TD=12):
+
+def generate_t_h_td(config):
     """Generate t_h_td and td_count dataframes and assign it to each region
     t_h_td is a pd.DataFrame containing 4 columns:
     hour of the year (H_of_Y), hour of the day (H_of_D), typical day representing this day (TD_of_days)
@@ -615,20 +627,21 @@ def generate_t_h_td(config, Nbr_TD=12):
     td_count is a pd.DataFrame containing 2 columns:
     List of typical days (TD_of_days) and number of days they represent (#days)
     """
+
     # Reading td_of_days
-    td_of_days = pd.read_csv(config['step1_output'], names=['TD_of_days'])
+    td_of_days = pd.read_csv(config['step1_path'] / 'TD_of_days.out', names=['TD_of_days'])
     td_of_days['day'] = np.arange(1, 366, 1)  # putting the days of the year beside
 
     # COMPUTING NUMBER OF DAYS REPRESENTED BY EACH TD AND ASSIGNING A TD NUMBER TO EACH REPRESENTATIVE DAY
     td_count = td_of_days.groupby('TD_of_days').count()
     td_count = td_count.reset_index().rename(columns={'index': 'TD_of_days', 'day': '#days'})
-    td_count['TD_number'] = np.arange(1, Nbr_TD + 1)
+    td_count['TD_number'] = np.arange(1, config['nbr_td'] + 1)
 
     # BUILDING T_H_TD MATRICE
     t_h_td = pd.DataFrame(np.repeat(td_of_days['TD_of_days'].values, 24, axis=0),
                           columns=['TD_of_days'])  # column TD_of_days is each TD repeated 24 times
     map_td = dict(zip(td_count['TD_of_days'],
-                      np.arange(1, Nbr_TD + 1)))  # mapping dictionnary from TD_of_Days to TD number
+                      np.arange(1, config['nbr_td'] + 1)))  # mapping dictionnary from TD_of_Days to TD number
     t_h_td['TD_number'] = t_h_td['TD_of_days'].map(map_td)
     t_h_td['H_of_D'] = np.resize(np.arange(1, 25), t_h_td.shape[0])  # 365 times hours from 1 to 24
     t_h_td['H_of_Y'] = np.arange(1, 8761)
@@ -636,12 +649,11 @@ def generate_t_h_td(config, Nbr_TD=12):
 
 
 # Function to run ES from python
-def run_ES(config):
+def run_es(config):
     two_up = Path(__file__).parents[2]
-    
+
     cs = two_up / 'case_studies'
     run_file = 'ESTD_main.run'
-
 
     # creating output directory
     (cs / config['case_study'] / 'output').mkdir(parents=True, exist_ok=True)
@@ -656,30 +668,37 @@ def run_ES(config):
         config['AMPL_path'] = Path(config['AMPL_path'])
         print('AMPL path is', config['AMPL_path'])
         config['ampl_options']['solver'] = config['AMPL_path'] / config['ampl_options']['solver']
-        ampl_command = str(config['AMPL_path']/'ampl ')+ run_file
+        ampl_command = str(config['AMPL_path'] / 'ampl ') + run_file
 
-    # copy .mod and print .run to case_study directory
+    # copy .mod to case_study directory
     shutil.copyfile((config['es_path'] / 'ESTD_model.mod'), (cs / config['case_study'] / 'ESTD_model.mod'))
+    # list printing files to consider according to config
+    ampl_utils_dir = Path(__file__).parents[1] / 'STEP_2_Energy_Model' / 'utils'
+    print_files = [str(ampl_utils_dir / 'print_year_summary.run')]
+    if config['print_hourly_data']:
+        print_files.append(str(ampl_utils_dir / 'print_hourly_data.run'))
+    if config['print_sankey']:
+        print_files.append(str(ampl_utils_dir / 'print_sankey.run'))
+    # print .run to case_study directory
     print_run(run_fn=(cs / config['case_study'] / run_file), mod_fns=[(cs / config['case_study'] / 'ESTD_model.mod')],
               dat_fns=[(cs / config['case_study'] / 'ESTD_data.dat'),
-                       (cs / config['case_study'] / ('ESTD_'+str(config['nbr_td'])+'TD.dat'))],
+                       (cs / config['case_study'] / ('ESTD_' + str(config['nbr_td']) + 'TD.dat'))],
               options=config['ampl_options'], output_dir=(cs / config['case_study'] / 'output'),
-              print_hourly_data=config['print_hourly_data'], print_sankey=config['print_sankey'])
+              print_files=print_files)
 
     os.chdir((cs / config['case_study']))
     # running ES
     logging.info('Running EnergyScope')
-
-
 
     try:
         run(ampl_command, shell=True, check=True)
     except CalledProcessError as e:
         print("The run didn't end normally.")
         print(e)
-        exit()
+        sys.exit(1)
 
     os.chdir(config['Working_directory'])
 
     logging.info('End of run')
+
     return

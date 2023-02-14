@@ -9,14 +9,9 @@ import os
 from pathlib import Path
 import energyscope as es
 
-# TODO
-#  finish documentation and export it
-#  Update uq_estd
-#  Add other automatic plots
-
 if __name__ == '__main__':
-    # Set to True if you want to only analyz the results of an already runned case study
     analysis_only = False
+    compute_TDs = True
 
     # define project path
     project_path = Path(__file__).parents[1]
@@ -24,22 +19,25 @@ if __name__ == '__main__':
     # loading the config file into a python dictionnary
     config = es.load_config(config_fn='config_ref.yaml', project_path=project_path)
     config['Working_directory'] = os.getcwd() # keeping current working directory into config
-
+    
    # Reading the data of the csv
     es.import_data(config)
+
+    if compute_TDs:
+        es.build_td_of_days(config)
 
     ##TODO Student work: Write the updates in data HERE
     # Example to change data: update wood availability to 23 400 GWh (ref value here)
     config['all_data']['Resources'].loc['WOOD', 'avail'] = 23400
     # Example to change share of public mobility into passenger mobility into 0.5 (ref value here)
     config['all_data']['Misc']['share_mobility_public_max'] = 0.5
-
+    
     if not analysis_only:
-        # Printing the .dat files for the optimisation problem
+        # Printing the .dat files for the optimisation problem       
         es.print_data(config)
 
         # Running EnergyScope
-        es.run_ES(config)
+        es.run_es(config)
 
     # Example to print the sankey from this script
     if config['print_sankey']:
@@ -61,3 +59,6 @@ if __name__ == '__main__':
     elec_layer_plot = es.plot_layer_elec_td(outputs['layer_ELECTRICITY'])
     # layer_HEAT_LOW_T_DECEN for the 12 tds
     fig,ax = es.hourly_plot(plotdata=outputs['layer_HEAT_LOW_T_DECEN'], nbr_tds=12)
+    
+    
+    
