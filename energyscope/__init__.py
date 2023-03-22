@@ -68,7 +68,6 @@ from .preprocessing.dat_print import *
 from .preprocessing.run_print import *
 from .preprocessing.STEP_1_TD_selection.select_tds import *
 from .preprocessing.step2_main import *
-from .preprocessing.uq_estd import run_ESTD_UQ, transcript_uncertainties
 from .postprocessing.cost import get_total_cost
 from .postprocessing.postprocessing import *
 from .postprocessing.plots import *

@@ -26,12 +26,6 @@ if __name__ == '__main__':
     if compute_TDs:
         es.build_td_of_days(config)
 
-    ##TODO Student work: Write the updates in data HERE
-    # Example to change data: update wood availability to 23 400 GWh (ref value here)
-    config['all_data']['Resources'].loc['WOOD', 'avail'] = 23400
-    # Example to change share of public mobility into passenger mobility into 0.5 (ref value here)
-    config['all_data']['Misc']['share_mobility_public_max'] = 0.5
-    
     if not analysis_only:
         # Printing the .dat files for the optimisation problem       
         es.print_data(config)

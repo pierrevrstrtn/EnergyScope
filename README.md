@@ -1,3 +1,21 @@
+![energyScope logo](./Docs/images/estd_graphical_abstract.png)
+===================
+
+ 
+# Content and documentation #
+This folder contains the fifth release (v2_3, hourly LP) of the EnergyScope model adapted to the Belgian case.  
+This version has its pre-processing done in python (excel previously) and is based on the version proposed in [4].  
+A documentation is available [here](https://energyscope.readthedocs.io).
+
+Do refer to the documentation for:
+- Model overview
+- Releases and publications
+- Model formulation
+- Data used and sources
+- License
+- Get started and exercices
+
+
 # Acknowledging authorship #
 In the academic spirit of collaboration, the source code should be appropriately acknowledged in the resulting scientific disseminations.  
 You may cite it as follows: 
@@ -6,7 +24,8 @@ You may cite it as follows:
 - [3], for reference to the energyscope MILP modeling framework 	
 - [4], for reference to the current code 	
 
-You are welcome to report any bugs related to the code to the following:    
+You are welcome to report any bugs related to the code by reporting an issue:
+
  moret.stefano@gmail.com or gauthierLimpens@gmail.com  
  
 # Content and documentation#
