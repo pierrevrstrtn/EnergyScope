@@ -25,7 +25,7 @@ if __name__ == '__main__':
 
     if compute_TDs:
         es.build_td_of_days(config)
-
+   
     if not analysis_only:
         # Printing the .dat files for the optimisation problem       
         es.print_data(config)

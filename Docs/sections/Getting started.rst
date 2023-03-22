@@ -1,20 +1,13 @@
 Getting started
 +++++++++++++++
 
-The model is coded in GLPK, using the open-source solver GLPSOL. To run the model, perform the following 4 steps:
-=======
 The model is a mathematical formulation of a linear programming. Ith can be solved with different solvers: CPLEX, Gurobi, GLPSOL, etc. 
 The model was originally developed in AMPL. Running the model in AMPL requires the licences of AMPL and of at least one LP solver.  
 
 However, the following version was tailored to be executed with GLPK [1]_, an open source model. 
 
-
-.. [1]
-    A drawback of GLPK is the long computational time (30 times longer than with AMPL). Thus, most of the code developments are made with AMPL using the CPLEX solver. When computational time are refered, they were obtained with the latter solver.
-
-
-How to install and run the model with GLPK:
-===========================================
+How to install and run the model:
+=================================
 The model is coded in GLPK, using the open-source solver GLPSOL. To run the model, perform the following 4 steps: install the solver, download the code, execute the code and enjoy the results.
 
 1. Install GLPK:
@@ -52,12 +45,10 @@ c) on Windows:
 - Download the source files from: https://sourceforge.net/projects/winglpk/files/latest/download
 - Extract the files in a folder. Depending on your operating system use glpsol.exe from:
     * ./w64 if running on a 64 bit version
-    * ./w32 if running on a 64 bit version
+    * ./w32 if running on a 32 bit version
 - For facilitating the access to glpsol.exe you can add the full path (depending on your operating system, see below) from the previous point to the system variables PATH
 
 2. Clone/download the content of this folder
-=======
-    * ./w32 if running on a 32 bit version
 
 
 3. Navigate to the folder 'STEP_2_Energy_Model' folder via terminal/cmd prompt and execute (check glpsol documentation for more options):
@@ -72,7 +63,6 @@ If the command at point (3) did not run, it might be that glpsol is not on your 
 - (best) add the folder in which glpsol is installed to the PATH. e.g. on Windows 7 (http://geekswithblogs.net/renso/archive/2009/10/21/how-to-set-the-windows-path-in-windows-7.aspx). on mac (from terminal) 'export PATH=/usr/local/bin:$PATH' (if glpsol is installed in /usr/local/bin)
 
 Descriptions of outputs files and folders: 
-==========================================
 
 - ./assets.txt : Installed capacity of each technology and its specific cost, gwp... 
 - ./cost_breakdown.txt : Cost of resources and technologies. 
@@ -81,14 +71,14 @@ Descriptions of outputs files and folders:
 - ./hourly_data/ : Folder containing the hourly data for each layer and for each storage technology. 
 - ./sankey/ : Folder containing the SANKEY diagram. 
 
-
-The model was originally developed in AMPL. Compatible solvers are CPLEX, Gurobi, etc. Running the model in AMPL requires the licences of AMPL and of at least one LP solver.  
-
 To open the Sankey diagram, open the ``ESTD_sankey.html`` file. The browser should indicate the following figure:
 
 .. figure:: /images/sankey_select_file.png
 
 Click on the ``Browse`` button and select the Sankey file ``input2sankey``. Finally, click on the ``Show Sankey`` button.
+
+.. [1]
+    A drawback of GLPK is the long computational time (30 times longer than with AMPL). Thus, most of the code developments are made with AMPL using the CPLEX solver. When computational time are refered, they were obtained with the latter solver.
 
 How to install and run the model with AMPL:
 ===========================================
@@ -109,4 +99,3 @@ Exercice 1 - analyse the system
 
 .. caution ::
    TO BE DONE
-

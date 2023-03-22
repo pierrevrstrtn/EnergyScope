@@ -7,7 +7,7 @@ The EnergyScope model
 =====================
 The EnergyScope project is an open-source whole-energy system for regional energy system. The model optimises the design and hourly operation over a year for a target year.
 
-=======
+
 .. .. figure:: /images/estd_graphical_abstract.png
    :alt: Graphical abstract
    :name: fig:graphical_abstract
@@ -32,7 +32,7 @@ Contents
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
+
    sections/Overview
    sections/Releases
    sections/Getting started

@@ -34,7 +34,7 @@ The data can be grouped into three parts: resources (Section `Resources <#app:se
 complement and confirm or correct the prices already reported in previous works
 :cite:`Moret2017PhDThesis,Limpens2019,limpens2020impact`.
 For energy demand, the annual demand is calculated from the work of the
-European Commission’s projections up to 2050
+European Commission's projections up to 2050
 :cite:`EuropeanCommission2016`. As a complement, the time
 series are all calculated on the basis of the year 2015. For
 technologies, they are characterised by the following characteristics:
@@ -542,7 +542,7 @@ Since, a specific study for the Belgian case has been conducted by a consortium 
    Emissions related to electro-fuels
    and bio-fuels production are neglected.
    
-.. [36]
+.. [37]
    Belgium is phasing out coal. Coal is still used in industrial processes.
    In 2015, 33.3 TWh of coal were used. Thus, the amount available should be lower than this value.
 
@@ -644,7 +644,7 @@ building. HDD is derived from measurements of outside air temperature.
 The heating requirements for a given building at a specific location are
 considered to be directly proportional to the number of HDD at that
 location. [...] Heating degree days are defined relative to a base
-temperature*”. According to the European Environment Agency [37]_, the
+temperature*”. According to the European Environment Agency [37b]_, the
 base temperature is 15.5\ :math:`^o`\ C, we took 16\ :math:`^o`\ C. HDH
 are computed as the difference between ambient temperature and the
 reference temperature at each hour of the year. If the ambient
@@ -3129,7 +3129,7 @@ Switzerland).
    onshore and offshore, were assumed respectively.
 
 
-.. [37]
+.. [37b]
    From
    https://www.eea.europa.eu/data-and-maps/indicators/heating-degree-days-2,
    consulted the 06-12-2019
