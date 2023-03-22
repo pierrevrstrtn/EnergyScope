@@ -45,29 +45,11 @@ Codes versions
 - second release with energy system improvment (v2.1 Energy system update) of EnergyScope (ES) model: https://github.com/energyscope/EnergyScope/tree/v2.1 . See :cite:t:`Limpens_belgian_2020`.
 
 Authors: 
-
+========
 - Stefano Moret, Ecole Polytechnique Fédérale de Lausanne (Switzerland), <moret.stefano@gmail.com> 
 - Gauthier Limpens, Université catholique de Louvain (Belgium), <gauthierLimpens@gmail.com>  
 - Paolo Thiran, Université catholique de Louvain (Belgium)
 - Xavier Rixhon, Université catholique de Louvain (Belgium)
-
-
-Model extensions
-================
-
-The EnergyScope TD models account for two published model extension:
-
-- Pathway optimisation: *EnergyScope Pathway* enables to optimise the energy system from an existing year (usually 2015) 
-  to a future target year. The model has been extended to a big linear model which represents 8 representative years from 2015 to 2050. 
-  The overall transition is optimised at once with a perfect foresight on technology performances (prices, efficiency,...), resources prices, energy demand ...
-  
-  **Main contributors**: Gauthier Limpens, see :cite:`Limpens2021thesis`
-
-- Multi-region; *EnergyScope Multi-Cells* allows the representation of several region at once. 
-  The regions are resolved simultaneously with the exchanges of several energy carriers (usually electricity, molecules and wood).
-  The new model has been first developped by :cite:t:`thiranenergyscope` on a fictive case, then extended to the Europe region with a 6-cells resolution, see :cite:t:`cornet2021energy`.
-  
-  **Main contributors**: Paolo Thiran, see :cite:`thiranenergyscope,cornet2021energy,thiran2021flexibility`
 
 Applications
 ============
@@ -92,13 +74,27 @@ The model has been used for:
   **Main contributors**: Gauthier Limpens and Stefano Moret, see :cite:`Limpens2019,Limpens_role_2019,Limpens_belgian_2020,Limpens2021thesis`.
 
 
+  
+Current developments:
+=====================
+Pathway, multi-cells, (myopic) (something more from EPFL?)
+
+Bibliography
+============
+
+[1] G. Limpens, S . Moret, H. Jeanmart, F. Maréchal (2019). EnergyScope TD: a novel open-source model for regional energy systems and its application to the case of Switzerland. https://doi.org/10.1016/j.apenergy.2019.113729	
+
+[2] V. Codina Gironès, S. Moret, F. Maréchal, D. Favrat (2015). Strategic energy planning for large-scale energy systems: A modelling framework to aid decision-making. Energy, 90(PA1), 173–186. https://doi.org/10.1016/j.energy.2015.06.008   	
+
+[3] S. Moret, M. Bierlaire, F. Maréchal (2016). Strategic Energy Planning under Uncertainty: a Mixed-Integer Linear Programming Modeling Framework for Large-Scale Energy Systems. https://doi.org/10.1016/B978-0-444-63428-3.50321-0  	
+
+
 Case studies
 ============
 
 The model has been applied to the following countries:
 
 - Switzerland:
-  
     * *Uncertainty*: :cite:t:`Moret2017PhDThesis`
     * *Scenario analysis and storage needs*: see for the main study :cite:t:`Limpens2019` and :cite:t:`Limpens_role_2019` for a specific study on the storage.
   
