@@ -30,7 +30,7 @@ def build_td_of_days(config):
     Returns
     ----------
     Returns none.
-    Creates the .dat files 'TD_of_days.out' and 'TD_of_days_XX.out' in the
+    Creates the .dat files 'td_of_days.out' and 'TD_of_days_XX.out' in the
     data_dir directory
     """
     all_data = config['all_data']
@@ -44,7 +44,7 @@ def build_td_of_days(config):
     
     # run clustering algorithm
     td_of_days = kmedoid_clustering(config, n_data, weights)
-    td_of_days.to_csv(config['step1_path'] / 'TD_of_days.out', index=False, header=False)
+    td_of_days.to_csv(config['step1_path'] / 'td_of_days.out', index=False, header=False)
     return
 
 
@@ -183,10 +183,10 @@ def kmedoid_clustering(config, n_data, weights):
     step1_path = config['step1_path']
     
     # define path
-    mod_path = step1_path / 'TD_main.mod'
+    mod_path = step1_path / 'td_main.mod'
     data_path = step1_path / 'data.dat'
     log_file = step1_path / 'log.txt'
-    run_file = 'TD_main.run'
+    run_file = 'td_main.run'
 
     # logging info
     logging.info('Starting kmedoid clustering of typical days based on ' + str(data_path))
@@ -232,7 +232,7 @@ def kmedoid_clustering(config, n_data, weights):
         print(e)
         sys.exit(1)
 
-    td_of_days = pd.read_csv('TD_of_days.out', header=None)
+    td_of_days = pd.read_csv('td_of_days.out', header=None)
 
     os.chdir(config['Working_directory'])
 

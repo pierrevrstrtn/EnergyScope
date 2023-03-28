@@ -58,7 +58,7 @@ def print_solve(run_fn: str) -> None:
     :param run_fn: Path to .run file
     """
 
-    solve_fn = Path(__file__).parents[1] / 'headers' / 'run_solve.txt'
+    solve_fn = Path(__file__).parents[1] / 'es_pre' / 'headers' / 'run_solve.txt'
     with open(run_fn, mode='a', newline='') as file, open(solve_fn, 'r') as header:
         for line in header:
             file.write(line)
@@ -78,7 +78,7 @@ def print_save(run_fn: str, output_dir: str, print_files: List[str]) -> None:
         file.write("\n# Saving sets and parameters to output file\n")
         file.write(f'param PathName symbolic := "{output_dir}";\n')
 
-        solve_fn = Path(__file__).parents[1] / 'headers' / 'run_save.txt'
+        solve_fn = Path(__file__).parents[1] / 'es_pre' / 'headers' / 'run_save.txt'
         with open(solve_fn, 'r') as header:
             for line in header:
                 file.write(line)
@@ -103,7 +103,7 @@ def print_run(run_fn: str, mod_fns: List[str], dat_fns: List[str], options: dict
     """
 
     # Add header
-    header_fn = Path(__file__).parents[1] / 'headers' / 'run_header.txt'
+    header_fn = Path(__file__).parents[1] / 'es_pre' / 'headers' / 'run_header.txt'
     with open(run_fn, mode='w', newline='') as file, open(header_fn, 'r') as header:
         for line in header:
             file.write(line)

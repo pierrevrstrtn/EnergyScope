@@ -29,114 +29,13 @@ from energyscope import ampl_syntax, print_set, print_df, newline, print_param, 
 #  add possibility to run with amplpy
 #  fix sto_year print
 
-
-def print_json(my_sets, file):  # printing the dictionary containing all the sets into directory/sets.json
-    with open(file, 'w') as fp:
-        json.dump(my_sets, fp, indent=4, sort_keys=True)
-    return
-
-
-def read_json(file):
-    # reading the saved dictionary containing all the sets from directory/sets.json
-    with open(file, 'r') as fp:
-        data = json.load(fp)
-    return data
-
-
-def load_config(config_fn: str, project_path: Path):
-    """
-    Load the configuration into a dict.
-
-    Parameters
-    ----------
-    config_fn: str
-    configuration file name.
-
-    project_path: pathlib.Path
-    path to project EnergyScope
-
-    Returns
-    -------
-    A dict with the configuration.
-    """
-
-    # Load parameters
-    cfg = yaml.load(open(config_fn, 'r'), Loader=yaml.FullLoader)
-    # Extend path
-    for param in ['data_dir', 'es_path', 'cs_path', 'step1_path']:
-        cfg[param] = project_path / cfg[param]
-
-    # Extend path for log_file
-    cfg['ampl_options']['log_file'] = str(cfg['cs_path'] / cfg['case_study'] / cfg['ampl_options']['log_file'])
-
-    return cfg
-
-
-def import_data(config: dict):
-    """
-    Read the data into the csv and the misc.json into the data directory (config['data_dir'])
-    and stores it into 2 dictionaries in the config (config['all_data'] and config['all_data']['Misc']).
-    The data of the different csv are stored into dataframes and the miscallenous data of the user_defined is stored as
-    dictionnary of different items
-
-    Parameters
-    ----------
-    config : dict
-    Dictionnary containing all the configurations to run the current case study of EnergyScope.
-    For this function to work, it must contain and item of type pathlib.Path into the key 'data_dir'
-
-    """
-
-    data_dir = config['data_dir']
-    logging.info('Importing data files from ' + str(data_dir))
-    # Reading CSV #
-    eud = pd.read_csv(data_dir / 'Demand.csv', sep=';', index_col=2, header=0)
-    resources = pd.read_csv(data_dir / 'Resources.csv', sep=';', index_col=2, header=2)
-    technologies = pd.read_csv(data_dir / 'Technologies.csv', sep=';', index_col=3, header=0, skiprows=[1])
-    end_uses_categories = pd.read_csv(data_dir / 'END_USES_CATEGORIES.csv', sep=';')
-    layers_in_out = pd.read_csv(data_dir / 'Layers_in_out.csv', sep=';', index_col=0)
-    storage_characteristics = pd.read_csv(data_dir / 'Storage_characteristics.csv', sep=';', index_col=0)
-    storage_eff_in = pd.read_csv(data_dir / 'Storage_eff_in.csv', sep=';', index_col=0)
-    storage_eff_out = pd.read_csv(data_dir / 'Storage_eff_out.csv', sep=';', index_col=0)
-    time_series = pd.read_csv(data_dir / 'Time_series.csv', sep=';', header=0, index_col=0)
-
-    # Reading misc.json
-    misc = read_json(data_dir / 'misc.json')
-
-    # Pre-processing #
-    resources.drop(columns=['Comment'], inplace=True)
-    resources.dropna(axis=0, how='any', inplace=True)
-    technologies.drop(columns=['Comment'], inplace=True)
-    technologies.dropna(axis=0, how='any', inplace=True)
-    # cleaning indices and columns
-
-    all_df = {'Demand': eud, 'Resources': resources, 'Technologies': technologies,
-              'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out,
-              'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in,
-              'Storage_eff_out': storage_eff_out, 'Time_series': time_series,
-              }
-
-    for key in all_df:
-        if type(all_df[key].index[0]) == str:
-            all_df[key].index = all_df[key].index.str.strip()
-        if type(all_df[key].columns[0]) == str:
-            all_df[key].columns = all_df[key].columns.str.strip()
-
-    all_df['Misc'] = misc
-
-    config['all_data'] = all_df
-
-    return
-
-
 # Function to print the ESTD_data.dat file #
 def print_data(config):
     """
     TODO add doc
     """
-    two_up = Path(__file__).parents[2]
 
-    cs = two_up / 'case_studies'
+    cs = Path(__file__).parents[3] / 'case_studies'
 
     # make dir and parents
     (cs / config['case_study']).mkdir(parents=True, exist_ok=True)
@@ -312,7 +211,7 @@ def print_data(config):
 
         # Printing data #
         # printing signature of data file
-        header_file = (Path(__file__).parents[1] / 'headers' / 'header_data.txt')
+        header_file = (Path(__file__).parent / 'headers' / 'header_data.txt')
         print_header(header_file=header_file, dat_file=out_path)
 
         # printing sets
@@ -543,7 +442,7 @@ def print_data(config):
 
         # PRINTING #
         # printing description of file
-        header_file = (Path(__file__).parents[1] / 'headers' / 'header_12td.txt')
+        header_file = (Path(__file__).parent / 'headers' / 'header_12td.txt')
         print_header(header_file=header_file, dat_file=out_path)
 
         # printing sets and parameters
@@ -628,7 +527,7 @@ def generate_t_h_td(config):
     """
 
     # Reading td_of_days
-    td_of_days = pd.read_csv(config['step1_path'] / 'TD_of_days.out', names=['TD_of_days'])
+    td_of_days = pd.read_csv(config['step1_path'] / 'td_of_days.out', names=['TD_of_days'])
     td_of_days['day'] = np.arange(1, 366, 1)  # putting the days of the year beside
 
     # COMPUTING NUMBER OF DAYS REPRESENTED BY EACH TD AND ASSIGNING A TD NUMBER TO EACH REPRESENTATIVE DAY
@@ -645,59 +544,3 @@ def generate_t_h_td(config):
     t_h_td['H_of_D'] = np.resize(np.arange(1, 25), t_h_td.shape[0])  # 365 times hours from 1 to 24
     t_h_td['H_of_Y'] = np.arange(1, 8761)
     return {'td_of_days': td_of_days, 'td_count': td_count, 't_h_td': t_h_td}
-
-
-# Function to run ES from python
-def run_es(config):
-    two_up = Path(__file__).parents[2]
-
-    cs = two_up / 'case_studies'
-    run_file = 'ESTD_main.run'
-
-    # creating output directory
-    (cs / config['case_study'] / 'output').mkdir(parents=True, exist_ok=True)
-    (cs / config['case_study'] / 'output' / 'hourly_data').mkdir(parents=True, exist_ok=True)
-    (cs / config['case_study'] / 'output' / 'sankey').mkdir(parents=True, exist_ok=True)
-
-    # using AMPL_path if specified. Otherwise, we assume ampl is in environment variables
-    if config['AMPL_path'] is None:
-        ampl_command = 'ampl ' + run_file
-        # call('ampl '+run, shell=True)
-    else:
-        config['AMPL_path'] = Path(config['AMPL_path'])
-        print('AMPL path is', config['AMPL_path'])
-        config['ampl_options']['solver'] = config['AMPL_path'] / config['ampl_options']['solver']
-        ampl_command = str(config['AMPL_path'] / 'ampl ') + run_file
-
-    # copy .mod to case_study directory
-    shutil.copyfile((config['es_path'] / 'ESTD_model.mod'), (cs / config['case_study'] / 'ESTD_model.mod'))
-    # list printing files to consider according to config
-    ampl_utils_dir = Path(__file__).parents[1] / 'STEP_2_Energy_Model' / 'utils'
-    print_files = [str(ampl_utils_dir / 'print_year_summary.run')]
-    if config['print_hourly_data']:
-        print_files.append(str(ampl_utils_dir / 'print_hourly_data.run'))
-    if config['print_sankey']:
-        print_files.append(str(ampl_utils_dir / 'print_sankey.run'))
-    # print .run to case_study directory
-    print_run(run_fn=(cs / config['case_study'] / run_file), mod_fns=[(cs / config['case_study'] / 'ESTD_model.mod')],
-              dat_fns=[(cs / config['case_study'] / 'ESTD_data.dat'),
-                       (cs / config['case_study'] / ('ESTD_' + str(config['nbr_td']) + 'TD.dat'))],
-              options=config['ampl_options'], output_dir=(cs / config['case_study'] / 'output'),
-              print_files=print_files)
-
-    os.chdir((cs / config['case_study']))
-    # running ES
-    logging.info('Running EnergyScope')
-
-    try:
-        run(ampl_command, shell=True, check=True)
-    except CalledProcessError as e:
-        print("The run didn't end normally.")
-        print(e)
-        sys.exit(1)
-
-    os.chdir(config['Working_directory'])
-
-    logging.info('End of run')
-
-    return

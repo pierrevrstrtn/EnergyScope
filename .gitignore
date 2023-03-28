@@ -19,7 +19,9 @@ energyscope/postprocessing/draw_sankey/__pycache__/
 
 .DS_Store
 
-energyscope/preprocessing/STEP_1_TD_selection/__pycache__/
+energyscope/preprocessing/td_selection/__pycache__/
 =======
 
 Docs/_build/
+
+*.pyc

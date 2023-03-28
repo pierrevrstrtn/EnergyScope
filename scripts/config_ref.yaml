@@ -10,9 +10,9 @@
 
 # Relative path from main directory to energyscope subdirectories and files
 'data_dir': 'Data/2050'  # Folders containing the csv data files
-'es_path': 'energyscope/STEP_2_Energy_Model'  # Path to the energy model (.mod and .run files)
+'es_path': 'energyscope/energy_model'  # Path to the energy model (.mod and .run files)
 'cs_path': 'case_studies' # Path to the directory containing the different case studies
-'step1_path': 'energyscope/preprocessing/STEP_1_TD_selection' # Path to the step1 selection of typical days
+'step1_path': 'energyscope/preprocessing/td_selection' # Path to the step1 selection of typical days
 
 # Printing input files for optimisation model
 # printing the data in ETSD_data.dat file for the optimisation problem
