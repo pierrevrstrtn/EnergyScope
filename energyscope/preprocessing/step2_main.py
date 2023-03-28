@@ -99,7 +99,6 @@ def import_data(config: dict):
     storage_eff_in = pd.read_csv(data_dir / 'Storage_eff_in.csv', sep=';', index_col=0)
     storage_eff_out = pd.read_csv(data_dir / 'Storage_eff_out.csv', sep=';', index_col=0)
     time_series = pd.read_csv(data_dir / 'Time_series.csv', sep=';', header=0, index_col=0)
-    uncertainty_ranges = pd.read_csv(data_dir / 'Uncertainty_ranges.csv', sep=';', header=0, index_col=0)
 
     # Reading misc.json
     misc = read_json(data_dir / 'misc.json')
@@ -115,7 +114,7 @@ def import_data(config: dict):
               'End_uses_categories': end_uses_categories, 'Layers_in_out': layers_in_out,
               'Storage_characteristics': storage_characteristics, 'Storage_eff_in': storage_eff_in,
               'Storage_eff_out': storage_eff_out, 'Time_series': time_series,
-              'Uncertainty_ranges': uncertainty_ranges}
+              }
 
     for key in all_df:
         if type(all_df[key].index[0]) == str:

@@ -1330,7 +1330,7 @@ In addition to offering a more realistic representation, this implementation mak
     + \big( \textbf{F}(Dec_{Solar}) + \textbf{F}(DHN_{Solar}) \big)/power\_density_{solar~thermal}  \leq solar_{area}
 
 In this model version, the upper limit for solar based technologies is
-calculated based on the available land area (*solar\ area*) and power
+calculated based on the available land area (:math:`solar_{area}`) and power
 densities of both PV (:math:`power\_density_{pv}`) and solar thermal
 (:math:`power\_density_{solar~thermal}`),
 Eq. :eq:`eq:solarAreaLimited`. The equivalence
