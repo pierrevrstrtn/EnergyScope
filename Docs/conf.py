@@ -31,7 +31,8 @@ release = '2.2'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [ 'sphinxcontrib.bibtex',
-               'nbsphinx'
+               'nbsphinx',
+               'sphinx_design'
 ]
 # Bibliography:
 bibtex_bibfiles = ['refs.bib']
