@@ -199,24 +199,24 @@ These data are put into perspective with the real data for 2015.
    .. [bb]
       Due to land availability, the solar potentials
       are limited to around 1% of total Belgian lands
-      (250km\ \ :math:`^2`). This is equivalent to :math:`\approx`\ \ 60 GW
-      of PV or :math:`\approx`\ \ 70 GW of solar thermal.
+      (250km\ \ :math:`^2`). This is equivalent to :math:`\approx`\ \ 60 GW
+      of PV or :math:`\approx`\ \ 70 GW of solar thermal.
 
    .. [cc]
-      From :cite:`limpens2018electricity`.
-      In line with :cite:`EliaSystemOperator2017` which
-      estimated 9 GW for onshore and 8 GW for offshore.
+      From :cite:`limpens2018electricity`.
+      In line with :cite:`EliaSystemOperator2017` which
+      estimated 9 GW for onshore and 8 GW for offshore.
 
    .. [dd]
       In 2015, the production was
-      360 GWh :cite:`EuropeanCommission2016` with an installed
-      capacity of around 110 MW :cite:`Devogelaer2013`. No
+      360 GWh :cite:`EuropeanCommission2016` with an installed
+      capacity of around 110 MW :cite:`Devogelaer2013`. No
       important development is
-      foreseen :cite:`Devogelaer2013,EliaSystemOperator2017`.
+      foreseen :cite:`Devogelaer2013,EliaSystemOperator2017`.
 
    .. [ee]
       A prototype (Balmatt project) started in 2019 and should produce
-      4-5 MW :cite:`VITO_Website`.
+      4-5 MW :cite:`VITO_Website`.
 
 .. container::
 
@@ -251,39 +251,39 @@ These data are put into perspective with the real data for 2015.
 Wind, solar and biomass are foreseen to be the main resources. The land
 availability for PV is highly speculative, we propose a simple approach
 to estimate an order of magnitude of this limit. Assuming that it exists
-today 250 km\ :math:`^2` of available well oriented
-roof [9]_ :cite:`Devogelaer2013` and that the efficiency in
-2035 will be 23% :cite:`DanishEnergyAgency2019` with an
+today 250 km\ :math:`^2` of available well oriented
+roof [9]_ :cite:`Devogelaer2013` and that the efficiency in
+2035 will be 23% :cite:`DanishEnergyAgency2019` with an
 average daily total irradiation - similar to historical values - of
-2820 Wh/m\ :math:`^2` in
-Belgium :cite:`IRM_Atlas_Irradiation`. The upper limit
-becomes 59.2 GW of installed capacity [10]_. This limit is in line with
+2820 Wh/m\ :math:`^2` in
+Belgium :cite:`IRM_Atlas_Irradiation`. The upper limit
+becomes 59.2 GW of installed capacity [10]_. This limit is in line with
 a study performed by the Belgian TSO which proposes arbitrarily
-40 GW :cite:`EliaSystemOperator2017`. The hydro potential is
+40 GW :cite:`EliaSystemOperator2017`. The hydro potential is
 very limited and almost fully exploited. Even if geothermal heat is used
 for heating through DHN since 1986 at Saint
-Ghislain :cite:`Delmer1997`, research about the geothermal
+Ghislain :cite:`Delmer1997`, research about the geothermal
 potential in Belgium are at their early stages. In 2015, a new project
 started (the Balmatt project). Nowadays, the installation produces
-1.5 MW of electricity (in 2019). The project is expected to scale up to
-5 MW of electricity :cite:`VITO_Website`. However, there is
+1.5 MW of electricity (in 2019). The project is expected to scale up to
+5 MW of electricity :cite:`VITO_Website`. However, there is
 no large facility yet and the potential is not accurately estimated. A
 study performed by the VITO evaluates the potential in Flanders to
-3.1 GWe and they extend it to 4 GWe for the whole Belgian
-potential :cite:`Devogelaer2013`. However, because of a lack
+3.1 GWe and they extend it to 4 GWe for the whole Belgian
+potential :cite:`Devogelaer2013`. However, because of a lack
 of reliable sources about geothermal potential, we consider the
 potential as null in the reference scenario.
 
-The wind potential is estimated to 10 GW onshore and 3.5 GW offshore
+The wind potential is estimated to 10 GW onshore and 3.5 GW offshore
 :cite:`limpens2018electricity`. At the time of collecting
 the data (2011-2020), several potentials can be collected through
 various sources. As an example, the study from
-:cite:t:`Devogelaer2013` proposes to use 9 GW and 8 GW for
+:cite:t:`Devogelaer2013` proposes to use 9 GW and 8 GW for
 onshore and offshore, respectively. As another example,
 :cite:t:`Dupont2017` estimates the wind potential based on
 its energy return on invested energy, in other words, its profitability.
-This study concluded that Belgium has a potential between 7 660 and
-24 500 MW for onshore and between 613 and 774 MW for offshore [11]_. At
+This study concluded that Belgium has a potential between 7 660 and
+24 500 MW for onshore and between 613 and 774 MW for offshore [11]_. At
 the time of writing, the wind energy is in the spotlight with collapsing
 investment costs and a rising potential. Indeed, Europe has one of the
 best potential worldwide and has a leading wind power industry. As an
@@ -592,7 +592,7 @@ and 67.5% of baseload electricity demand.
 demand of electricity is shared over the year according to *%\ elec*,
 which is represented in  :numref:`Figure %s <fig:TS_elec>`. We use the real
 2015 Belgian electricity demand (data provided by ENTSO-E
-https://www.entsoe.eu/). *%\ elec* time series is the normalised value
+https://www.entsoe.eu/). :math:`\%_{elec}` time series is the normalised value
 of the difference between the real time series and its minimum value.
 
 .. container::
@@ -633,7 +633,7 @@ electricity, the ratio between varying electricity and fixed demand are
 the one of Switzerland, presented in
 :cite:`Limpens2019,Moret2017PhDThesis` which are based on
 :cite:`prognos_ag_energieperspektiven_2012`. The varying
-demand of heat is shared over the year according to :math:`%_{sh}`. This time
+demand of heat is shared over the year according to :math:`\%_{sh}`. This time
 series is based on our own calculation. The methodology is the
 following: based on the temperature time series of Uccle 2015 (data from
 IRM :cite:`Reyniers2012`); the HDH are calculated; and then
@@ -653,7 +653,7 @@ temperature is above the reference temperature, no heating is needed.
 with real value collected by Eurostat [38]_. The annual HDD was 2633,
 where we find 2507.
 
-By normalising the HDH, we find :math:`%_{sh}`, which is represented in 
+By normalising the HDH, we find :math:`\%_{sh}`, which is represented in
 
 .. figure:: /images/belgian_data/belgium_HDD_2015.png
    :alt: Comparison of HDD between Eurostat and our own calculation.
@@ -691,25 +691,25 @@ Mobility
 --------
 
 The annual passenger transport demand in Belgium for 2035 is expected
-to be 194 billions :cite:`EuropeanCommission2016`.
+to be 194 billions kilometer-passengers :cite:`EuropeanCommission2016`.
 Passenger transport demand is divided between public and private
-transport. The lower (:math:`%_{public,min}`) and upper bounds
-(:math:`%_{public,max}`) for the use of public transport are 19.9% [40]_ and
+transport. The lower (:math:`\%_{public,min}`) and upper bounds
+(:math:`\%_{public,max}`) for the use of public transport are 19.9% [40]_ and
 50% of the annual passenger transport demand, respectively. The
 passenger mobility demand is shared over the day according to
-:math:`%_{pass}`. We assume a constant passenger mobility demand for every
+:math:`\%_{pass}`. We assume a constant passenger mobility demand for every
 day of the year. This latter is represented in Figure
 :numref:`Figure %s <fig:TS_mobPass>` (data from Figure 12 of
 :cite:`USTransportation`).
 The annual freight transport demand in Belgium for 2035 is expected to
-be 98e09 tons kilometers :cite:`EuropeanCommission2016`.
+be 98 billions tons kilometers :cite:`EuropeanCommission2016`.
 The freight can be supplied by trucks, trains or boats. The lower
-(:math:`%_{fr,rail,min}`) and upper bounds (:math:`%_{fr,rail,max}`) for the use of
+(:math:`\%_{fr,rail,min}`) and upper bounds (:math:`\%_{fr,rail,max}`) for the use of
 freight trains are 10.9% and 25% of the annual freight transport
-demand, respectively. The lower (:math:`%_{fr,boat,min}`) and upper bounds
-(:math:`%_{fr,boat,max}`) for the use of freight inland boats are 15.6% and
+demand, respectively. The lower (:math:`\%_{fr,boat,min}`) and upper bounds
+(:math:`\%_{fr,boat,max}`) for the use of freight inland boats are 15.6% and
 30% of the annual freight transport demand, respectively. The lower
-(:math:`%_{fr,trucks,min}`) and upper bounds (:math:`%_{fr,trucks,max}`) for the use
+(:math:`\%_{fr,trucks,min}`) and upper bounds (:math:`\%_{fr,trucks,max}`) for the use
 of freight trucks are 0% and 100% of the annual freight transport
 demand, respectively. The bounds and technologies information are
 latter summarised in Table
@@ -1074,7 +1074,7 @@ entire demand.
 .. [87]
    1.2 GW\ \ :math:`_{\text{e}}` IGCC power plant
    :cite:`u.s._eia_-_energy_information_administration_updated_2013`.
-   *c\ maint* is fixed cost (48.1 €\ \ :sub:`2015`/kW\ \ :sub:`e`/y) +
+   :math:`c_{maint}` is fixed cost (48.1 €\ \ :sub:`2015`/kW\ \ :sub:`e`/y) +
    variable cost (0.82 €\ \ :sub:`2015`/kW\ \ :sub:`e`/y assuming 7500
    h/y).
 
@@ -1385,7 +1385,7 @@ respectively, i.e. they are not constraining the model.
    resource used and specific emissions given in :numref:` Table %s <tbl:prices_resources>`.
 
 .. [155]
-   Calculated with the equation: *c\ inv* [EUR\ \ :sub:`2011`] =
+   Calculated with the equation: :math:`c_{inv}` [EUR\ \ :sub:`2011`] =
    :math:`3737.6 * E^{0.9}`, where :math:`E` is the electric power
    (kW\ \ :sub:`e`) of the compressor, assumed to be 2150
    kW\ \ :sub:`e`. Equation from
@@ -1597,7 +1597,7 @@ respectively, i.e. they are not constraining the model.
    pump (Vitosorp 200-F) :cite:`viessman_viessman_2016`
 
 .. [211]
-   3% of *c\ inv* (assumption).
+   3% of :math:`c_{inv}` (assumption).
 
 .. [212]
    Assumed same technology as for industrial CHP NG
@@ -1635,7 +1635,7 @@ respectively, i.e. they are not constraining the model.
    Assuming same impact as NG and oil decentralised boilers.
 
 .. [221]
-   6% of *c\ inv*, based on ratio between investment and OM cost of
+   6% of :math:`c_{inv}`, based on ratio between investment and OM cost of
    boiler of similar size
    in :cite:`european_commission_energy_2008`.
 
@@ -1859,7 +1859,7 @@ From data of :numref:`Table %s <tbl:mob_specific_costs_calculation>`,
 specific parameters for the model are deduced. The specific investment
 cost (:math:`c_{inv}`) is calculated from the vehicle cost, its average speed
 and occupancy, Eq. :eq:`eq:c_inv_for_mob_pass_calculation`.
-The capacity factor (*c\ p*) is calculated based on the ratio between
+The capacity factor (:math:`c_{p}`) is calculated based on the ratio between
 yearly distance and average speed, Eq. :eq:`eq:c_p_for_mob_pass_calculation`.
 The vehicle capacity is calculated based on the average occupancy and
 average speed, Eq. . :eq:`eq:veh_capa_for_mob`.
@@ -2087,10 +2087,10 @@ battery pack.
 From :numref:`Table %s <tbl:mob_specific_costs_calculation_freight>`,
 specific parameters for the model are deduced. Except for the technology
 construction specific GHG emissions (:math:`gwp_{constr}`) where no data was
-found. The specific investment cost (*c\ inv*) is calculated from the
+found. The specific investment cost (:math:`c_{inv}`) is calculated from the
 vehicle cost, its average speed and occupancy, Eq.
 :eq:`eq:c_inv_for_mob_calculation_fr`.
-The capacity factor (*c\ p*) is calculated based on the ratio between
+The capacity factor (:math:`c_{p}`) is calculated based on the ratio between
 yearly distance and average speed, Eq.
 :eq:`eq:c_p_for_mob_calculation_fr`. The
 vehicle capacity is calculated based on the average occupancy and
@@ -2798,8 +2798,8 @@ technical performances of each technology.
    Lifetime and maintenance cost based on own calculation.
 
 .. [306]
-   Units: **c\ inv** [€\ \ :sub:`2015`/tCO\ \ :sub:`2`],
-   **c\ op** [€\ \ :sub:`2015`/tCO\ \ :sub:`2`/y]
+   Units: :math:`c_{inv}` [€\ \ :sub:`2015`/tCO\ \ :sub:`2`],
+   :math:`c_{op}` [€\ \ :sub:`2015`/tCO\ \ :sub:`2`/y]
 
 
 The PHS in Belgium can be resumed to the Coo-Trois-Ponts hydroelectric
@@ -2840,7 +2840,7 @@ will be similar to Lille Torup project.
       :name: tab:stodataadvanced
 
       +---------------+---------------+---------------+---------------+---------------+---------------+---------------+
-      |               | :math:`\eta_  | :math:`\eta_  | :math:`t_     | :math:`t_     | :math:`%_     | :math:`%_     |
+      |               | :math:`\eta_  | :math:`\eta_  | :math:`t_     | :math:`t_     | :math:`\%_    | :math:`\%_    |
       |               | {sto,in}`     | {sto,out}`    | {sto,in}`     | {sto,out}`    | {sto_{loss}}` | {sto_{avail}}`|
       +---------------+---------------+---------------+---------------+---------------+---------------+---------------+
       |               | [-]           | [-]           | [h]           | [h]           | [s\ :math:`^  | [-]           |
@@ -3014,7 +3014,7 @@ more or less proportionally to the existing capacities.
    from :cite:`ENTSO-E2019`.
 
 
-Losses (:math:`\%_{\emph{net\textsubscript{loss}}}`) in the electricity
+Losses (:math:`\%_{net,loss}`) in the electricity
 grid are fixed to 4.7%. This is the ratio between the losses in the grid
 and the total annual electricity production in Belgium in
 2016 :cite:`Eurostat2017`.
@@ -3038,7 +3038,7 @@ taken into account in the model*\ ´´
 :cite:`EliaSystemOperator2017`. The same ratio of
 simultaneous import and NTC (66%) is used for the other years.
 
-Losses (:math:`%_{net_{loss}}`) in the electricity
+Losses (:math:`\%_{net_{loss}}`) in the electricity
 grid are fixed to 4.7%. This is the ratio between the losses in the grid
 and the total annual electricity production in Belgium in
 2016 :cite:`Eurostat2017`.
@@ -3063,7 +3063,7 @@ of Switzerland was used. As a consequence, the investment cost
 roadmap study :cite:`Paardekooper2018`, heat provided by DHN
 is “*around 2% of the heating for the built environment (excluding for
 industry) today to at least 37% of the heating market in 2050*”. Hence,
-the lower (*%\ dhn,min*) and upper bounds (*%\ dhn,max*) for the use of
+the lower (:math:`\%_{dhn,min}`) and upper bounds (:math:`\%_{dhn,max}`) for the use of
 DHN are 2% and 37% of the annual low temperature heat demand,
 respectively.
  
@@ -3110,10 +3110,10 @@ Switzerland).
 
 
 .. [9]
-   250 km\ \ :math:`^2` represents almost a hundredth
-   of Belgium’s land area, which is 28635 km\ \ :math:`^2`. The total
+   250 km\ \ :math:`^2` represents almost a hundredth
+   of Belgium’s land area, which is 28635 km\ \ :math:`^2`. The total
    area, accounting for water areas, of Belgium is
-   30528 km\ \ :math:`^2`. From
+   30528 km\ \ :math:`^2`. From
    https://fr.wikipedia.org/wiki/G%C3%A9ographie_de_la_Belgique, visited
    the 10/08/2020.
 
@@ -3123,7 +3123,7 @@ Switzerland).
 
 .. [11]
    In the study, potential are given in PetaJoules of electricity per
-   year (58-185 PJ for onshore and 8-10 PJ for offshore) for EROI of 5
+   year (58-185 PJ for onshore and 8-10 PJ for offshore) for EROI of 5
    and 12 (see Table 13 of :raw-latex:`\cite{Dupont2017}`). To convert
    energy into power capacity, capacity factors of 24% and 41% for
    onshore and offshore, were assumed respectively.
