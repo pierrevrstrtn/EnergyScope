@@ -16,11 +16,11 @@ if __name__ == '__main__':
     # define project path
     project_path = Path(__file__).parents[1]
 
-    # loading the config file into a python dictionnary
+    # loading the config file into a python dictionary
     config = es.load_config(config_fn='config_ref.yaml', project_path=project_path)
-    config['Working_directory'] = os.getcwd() # keeping current working directory into config
+    config['Working_directory'] = os.getcwd()  # keeping current working directory into config
     
-   # Reading the data of the csv
+    # Reading the data of the csv
     es.import_data(config)
 
     if compute_TDs:
@@ -35,11 +35,11 @@ if __name__ == '__main__':
 
     # Example to print the sankey from this script
     if config['print_sankey']:
-        sankey_path = config['cs_path']/ config['case_study'] / 'output' / 'sankey'
+        sankey_path = config['cs_path'] / config['case_study'] / 'output' / 'sankey'
         es.drawSankey(path=sankey_path)
 
     # Reading outputs
-    outputs = es.read_outputs(config['case_study'], hourly_data=True, layers=['layer_ELECTRICITY','layer_HEAT_LOW_T_DECEN'])
+    outputs = es.read_outputs(config['case_study'], hourly_data=True, layers=['layer_ELECTRICITY', 'layer_HEAT_LOW_T_DECEN'])
 
     # Plots (examples)
     # primary resources used
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     # layer_ELECTRICITY for the 12 tds
     elec_layer_plot = es.plot_layer_elec_td(outputs['layer_ELECTRICITY'])
     # layer_HEAT_LOW_T_DECEN for the 12 tds
-    fig,ax = es.hourly_plot(plotdata=outputs['layer_HEAT_LOW_T_DECEN'], nbr_tds=12)
+    fig, ax = es.hourly_plot(plotdata=outputs['layer_HEAT_LOW_T_DECEN'], nbr_tds=12)
     
     
     

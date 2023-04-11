@@ -327,12 +327,8 @@ if sum{t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]}(F_t
     printf "%s,%s,%.2f,%s,%s,%s\n", "Wind" , "Elec", sum{t in PERIODS, h in HOUR_OF_PERIOD[t], td in
         TYPICAL_DAY_OF_PERIOD[t]}(layers_in_out["WIND_ONSHORE","ELECTRICITY"] * F_t ["WIND_ONSHORE", h, td] + layers_in_out["WIND_OFFSHORE","ELECTRICITY"] * F_t ["WIND_OFFSHORE", h, td]  ) / 1000 , "Wind", "#27AE34", "TWh"
         > (PathName & "/sankey/input2sankey.csv");
-if sum{t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]}((F_t ["HYDRO_DAM", h, td])  ) > 10 then
-    printf "%s,%s,%.2f,%s,%s,%s\n", "Hydro dam" , "Elec", sum{t in PERIODS, h in HOUR_OF_PERIOD[t], td in
-        TYPICAL_DAY_OF_PERIOD[t]}(layers_in_out["HYDRO_DAM","ELECTRICITY"] * F_t ["HYDRO_DAM", h, td]   ) / 1000 , "Hydro Dam", "#00CED1",
-        "TWh" > (PathName & "/sankey/input2sankey.csv");
 if sum{t in PERIODS, h in HOUR_OF_PERIOD[t], td in TYPICAL_DAY_OF_PERIOD[t]}((F_t ["HYDRO_RIVER", h, td])  ) > 10 then
-    printf "%s,%s,%.2f,%s,%s,%s\n", "Hydro river" , "Elec", sum{t in PERIODS, h in HOUR_OF_PERIOD[t], td in
+    printf "%s,%s,%.2f,%s,%s,%s\n", "Hydro River" , "Elec", sum{t in PERIODS, h in HOUR_OF_PERIOD[t], td in
         TYPICAL_DAY_OF_PERIOD[t]}(layers_in_out["HYDRO_RIVER","ELECTRICITY"] * F_t ["HYDRO_RIVER", h, td]   ) / 1000 , "Hydro River", "#0000FF",
         "TWh" > (PathName & "/sankey/input2sankey.csv");
 

@@ -1,5 +1,6 @@
 param :;storage_charge_time;storage_discharge_time;storage_availability;storage_losses
-PHS;4.8309;4.2955;1;0
+PHS;203;203;1;0
+DAM_STORAGE;1;1;1;0
 BATT_LI;4;4;1;0.0002
 BEV_BATT;8.33;8.33;0.2;0.0002
 PHEV_BATT;8.33;8.33;0.2;0.0002

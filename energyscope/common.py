@@ -15,7 +15,7 @@ elec_order_graphs = ['IND_COGEN_GAS', 'IND_COGEN_WOOD', 'IND_COGEN_WASTE',
                 'DHN_COGEN_BIO_HYDROLYSIS',
                 'DEC_COGEN_GAS', 'DEC_COGEN_OIL', 'DEC_ADVCOGEN_GAS', 'DEC_ADVCOGEN_H2',
                 'CCGT',
-                'PV', 'WIND_ONSHORE', 'WIND_OFFSHORE', 'HYDRO_RIVER',
+                'PV', 'WIND_ONSHORE', 'WIND_OFFSHORE', 'HYDRO_DAM', 'HYDRO_RIVER',
                 'BIOMASS_TO_METHANOL', 'BIO_HYDROLYSIS', 'PYROLYSIS_TO_LFO', 'PYROLYSIS_TO_FUELS',
                 'ELECTRICITY',
                 'PHS_Pout', 'BATT_LI_Pout', 'BEV_BATT_Pout', 'PHEV_BATT_Pout',
@@ -53,7 +53,7 @@ plotting_names = {'ELECTRICITY': 'Electricity',
                   'CO2_ATM': 'CO2 atm', 'CO2_INDUSTRY': 'CO2 industry', 'CO2_CAPTURED': 'CO2 captured',
                   'NUCLEAR': 'Nuclear', 'CCGT': 'CCGT', 'CCGT_AMMONIA': 'CCGT ammonia',
                   'COAL_US': 'Coal US', 'COAL_IGCC': 'Coal IGCC',
-                  'PV': 'PV', 'WIND_ONSHORE': 'Wind onshore', 'WIND_OFFSHORE': 'Wind offshore', 'HYDRO_RIVER': 'Hydro river',
+                  'PV': 'PV', 'WIND_ONSHORE': 'Wind onshore', 'WIND_OFFSHORE': 'Wind offshore', 'HYDRO_DAM': 'Hydro dam', 'HYDRO_RIVER': 'Hydro river',
                   'GEOTHERMAL': 'Geothermal',
                   'IND_COGEN_GAS': 'Ind. cogen. gas', 'IND_COGEN_WOOD': 'Ind. cogen. wood', 'IND_COGEN_WASTE': 'Ind. cogen. waste',
                   'IND_BOILER_GAS': 'Ind. boiler gas', 'IND_BOILER_WOOD': 'Ind. boiler wood', 'IND_BOILER_OIL': 'Ind. boiler oil',
@@ -115,6 +115,8 @@ colors_elec = {'Ind. cogen. gas': '#DC143C', # Heat HT in sankey
                'PV': '#FFFF00', # Solar in sankey
                'Wind onshore': '#00B050', # Light green
                'Wind offshore': '#548235', # Darker green
+               'Hydro dam': '#00CED1', # Dark blue
+               'Hydro river': '#0000FF', # Light blue
                'Other prod.': '#a85432', # Red-brown
                'Pumped hydro sto. Pout': '#0369AB', # blue
                'Pumped hydro sto. Pin': '#0369AB', # blue

@@ -427,22 +427,6 @@ subject to max_elec_import {h in HOURS, td in TYPICAL_DAYS}:
 subject to solar_area_limited :
 	F["PV"] / power_density_pv + ( F ["DEC_SOLAR"] + F ["DHN_SOLAR"] ) / power_density_solar_thermal <= solar_area;
 
-#Todo: integrate following equations.
-## Hydroelectric dams.
-# In this version applied for the Swiss case, we use Eqs. 40-42 instead of Eqs. 29-31. Hence, the following is commented
-# [Eq. 29] Seasonal storage in hydro dams.
-# When installed power of new dams 0 -> 0.44, maximum storage capacity changes linearly 0 -> 2400 GWh/y
-subject to storage_level_hydro_dams:
-	F ["DAM_STORAGE"] <= f_min ["DAM_STORAGE"] + ( f_max ["DAM_STORAGE"]-f_min ["DAM_STORAGE"] ) * ( F ["HYDRO_DAM"] - f_min ["HYDRO_DAM"] ) / ( f_max ["HYDRO_DAM"] - f_min ["HYDRO_DAM"] ) ;
-
-# [Eq. 30] Hydro dams can stored the input energy and restore it whenever. Hence, inlet is the input river and outlet is bounded by max capacity
-subject to impose_hydro_dams_inflow {h in HOURS, td in TYPICAL_DAYS}:
-	Storage_in ["DAM_STORAGE", "ELECTRICITY", h, td] = F_t ["HYDRO_DAM", h, td];
-
-# [Eq. 31] Hydro dams production is lower than installed F_t capacity:
-subject to limit_hydro_dams_output {h in HOURS, td in TYPICAL_DAYS}:
-	Storage_out ["DAM_STORAGE", "ELECTRICITY", h, td] <= F ["HYDRO_DAM"];
-
 
 ##########################
 ### OBJECTIVE FUNCTION ###
