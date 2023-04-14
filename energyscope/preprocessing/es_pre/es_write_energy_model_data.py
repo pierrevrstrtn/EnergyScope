@@ -79,7 +79,10 @@ def print_data(config):
         i_rate = config['all_data']['Misc']['i_rate']  # [-]
         # Political inputs
         re_share_primary = config['all_data']['Misc']['re_share_primary']  # [-] Minimum RE share in primary consumption
-        solar_area = config['all_data']['Misc']['solar_area']  # [km^2]
+        solar_area_rooftop = config['all_data']['Misc']['solar_area_rooftop']  # [km^2]
+        solar_area_ground = config['all_data']['Misc']['solar_area_ground']  # [km^2]
+        solar_area_ground_high_irr = config['all_data']['Misc']['solar_area_ground_high_irr']  # [km^2]
+
         power_density_pv = config['all_data']['Misc'][
             'power_density_pv']  # PV : 1 kW/4.22m2   => 0.2367 kW/m2 => 0.2367 GW/km2
         power_density_solar_thermal = config['all_data']['Misc'][
@@ -285,7 +288,9 @@ def print_data(config):
         print_param('i_rate', i_rate, 'part [2.7.4]', out_path)
         print_param('re_share_primary', re_share_primary, 'Minimum RE share in primary consumption', out_path)
         print_param('gwp_limit', gwp_limit, 'gwp_limit [ktCO2-eq./year]: maximum GWP emissions', out_path)
-        print_param('solar_area', solar_area, '', out_path)
+        print_param('solar_area_rooftop', solar_area_rooftop, '', out_path)
+        print_param('solar_area_ground', solar_area_ground, '', out_path)
+        print_param('solar_area_ground_high_irr', solar_area_ground_high_irr, '', out_path)
         print_param('power_density_pv', power_density_pv, 'PV : 1 kW/4.22m2   => 0.2367 kW/m2 => 0.2367 GW/km2',
                     out_path)
         print_param('power_density_solar_thermal', power_density_solar_thermal,
@@ -374,6 +379,7 @@ def print_data(config):
         # for EUD timeseries
         eud_params = {'Electricity (%_elec)': 'param electricity_time_series :',
                       'Space Heating (%_sh)': 'param heating_time_series :',
+                      'Space Cooling (%_sc)': 'param cooling_time_series :',
                       'Passanger mobility (%_pass)': 'param mob_pass_time_series :',
                       'Freight mobility (%_freight)': 'param mob_freight_time_series :'}
         # for resources timeseries that have only 1 tech linked to it
@@ -436,9 +442,14 @@ def print_data(config):
         all_td_ts = td_ts.pivot(index='H_of_D', columns='D_of_H')
 
         # COMPUTE peak_sh_factor #
-        max_sh_td = td_ts.loc[:, 'Space Heating (%_sh)'].max()
-        max_sh_all = time_series.loc[:, 'Space Heating (%_sh)'].max()
+        max_sh_td = td_ts.loc[:, 'HEAT_LOW_T_SH'].max() # Check here names
+        max_sh_all = time_series.loc[:, 'HEAT_LOW_T_SH'].max() # Check here names
         peak_sh_factor = max_sh_all / max_sh_td
+
+        # COMPUTE peak_sc_factor #
+        max_sc_td = td_ts.loc[:, 'SPACE_COOLING'].max() # Check here names
+        max_sc_all = time_series.loc[:, 'SPACE_COOLING'].max() # Check here names
+        peak_sc_factor = max_sc_all / max_sc_td
 
         # PRINTING #
         # printing description of file
@@ -455,6 +466,10 @@ def print_data(config):
             td_writer.writerow(['		'])
             # peak_sh_factor
             td_writer.writerow(['param peak_sh_factor	:=	' + str(peak_sh_factor)])
+            td_writer.writerow([';		'])
+            td_writer.writerow(['		'])
+            # peak_sc_factor
+            td_writer.writerow(['param peak_sc_factor	:=	' + str(peak_sc_factor)])
             td_writer.writerow([';		'])
             td_writer.writerow(['		'])
 
@@ -477,6 +492,8 @@ def print_data(config):
 
         # printing EUD timeseries param
         for k in eud_params.keys():
+            print(eud_params.keys())
+            print(all_td_ts)
             ts = all_td_ts[k]
             ts.columns = np.arange(1, nbr_td + 1)
             ts = ts * norm[k] / norm_td[k]

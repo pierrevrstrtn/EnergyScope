@@ -62,7 +62,7 @@ def pivot_ts(ts):
     Normalized and pivoted time series in the daily format (365x(N_ts*24))
     """
     ###### THE FOLLOWING LINE MIGHT NEED TO BE ADAPTED ######
-    ts.rename(columns={'Electricity (%_elec)': 'LIGHTING', 'Space Heating (%_sh)': 'HEAT_LOW_T_SH'}, inplace=True)
+    ts.rename(columns={'Electricity (%_elec)': 'VAR_ELECTRICITY', 'Space Heating (%_sh)': 'HEAT_LOW_T_SH', 'Space Cooling (%_ch)': 'SPACE_COOLING'}, inplace=True)
     ts_names = ts.columns
     # normalize the timeseries
     ts = ts/ts.sum()
@@ -91,10 +91,10 @@ def compute_cell_w(all_data, weights):
     """
     tot_ts = all_data['Time_series'].sum(axis=0)
     ###### THE FOLLOWING 4 LINES MIGHT NEED TO BE ADAPTED ######
-    demand_ts = ['LIGHTING', 'HEAT_LOW_T_SH']
-    prod_ts = ['PV', 'Wind_onshore', 'Wind_offshore', 'Hydro_river']
-    prod_ts2 = ['PV', 'WIND_ONSHORE', 'WIND_OFFSHORE', 'HYDRO_RIVER']
-    tot_ts.rename({'Electricity (%_elec)': 'LIGHTING', 'Space Heating (%_sh)': 'HEAT_LOW_T_SH'}, inplace=True)
+    demand_ts = ['ELECTRICITY_VAR', 'HEAT_LOW_T_SH','SPACE_COOLING']
+    prod_ts = ['PV', 'WIND_ONSHORE', 'WIND_OFFSHORE', 'HYDRO_DAM', 'HYDRO_RIVER', 'TIDAL', 'SOLAR', 'CSP']
+    prod_ts2 = ['PV_ROOFTOP', 'WIND_ONSHORE', 'WIND_OFFSHORE', 'HYDRO_DAM', 'HYDRO_RIVER', 'TIDAL_STREAM', 'DHN_SOLAR', 'ST_POWER_BLOCK']
+    tot_ts.rename({'Electricity (%_elec)': 'VAR_ELECTRICITY', 'Space Heating (%_sh)': 'HEAT_LOW_T_SH', 'Space Cooling (%_sc)': 'SPACE_COOLING'}, inplace=True)
     
     # multiply demand time series sum by the year consumption
     tot_ts[demand_ts] = tot_ts[demand_ts] * all_data['Demand'].loc[demand_ts, :].sum(axis=1, numeric_only=True).values
@@ -106,6 +106,7 @@ def compute_cell_w(all_data, weights):
 
     # multiply the sum of the production time series by the maximum potential
     # (f_max in GW) of the corresponding technologies
+
     tot_ts[prod_ts] = tot_ts[prod_ts] * all_data['Technologies'].loc[prod_ts2, 'f_max'].values
     tot_ts.loc[~tot_ts.index.isin(demand_ts+prod_ts)] = np.nan
     
@@ -120,9 +121,9 @@ def normalize_weights(weights):
     The results are stored in a new column of the weights attribute called 'Weights_n'
     """
     ###### THE FOLLOWING 2 LINES MIGHT NEED TO BE ADAPTED ######
-    demand_ts = ['LIGHTING', 'HEAT_LOW_T_SH']
-    prod_ts = ['PV', 'Wind_onshore', 'Wind_offshore', 'Hydro_river']
-    
+    demand_ts = ['ELECTRICITY_VAR', 'HEAT_LOW_T_SH', 'SPACE_COOLING']
+    prod_ts = ['PV', 'WIND_ONSHORE', 'WIND_OFFSHORE', 'HYDRO_DAM', 'HYDRO_RIVER', 'TIDAL', 'SOLAR', 'CSP']
+
     demand_total = weights.loc[demand_ts, 'Cell_w'].sum()
     prod_total = weights.loc[prod_ts, 'Cell_w'].sum()
     weights['Weights_n'] = weights['Cell_w'] 

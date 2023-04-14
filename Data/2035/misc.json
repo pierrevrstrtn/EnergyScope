@@ -1,9 +1,14 @@
 {
     "i_rate" : 0.015,
+	"gwp_limit": 1e15,
+    "import_capacity" : 0,
     "re_share_primary" : 0,
-    "solar_area" : 250,
-	"power_density_pv" : 0.2367,
-    "power_density_solar_thermal" : 0.2857,
+    "solar_area_rooftop" : 901,
+    "solar_area_ground" : 8777,
+    "solar_area_ground_high_irr" : 89,
+	"power_density_pv" : 0.170,
+    "power_density_solar_thermal" : 0.7,
+	"sm_max" : 4,
 	"share_mobility_public_min" : 0.199,
 	"share_mobility_public_max" : 0.5,
     "share_freight_train_min" : 0.109,
@@ -23,7 +28,7 @@
     "loss_network" : {"ELECTRICITY": 4.7E-02, "HEAT_LOW_T_DHN": 5.0E-02},
     "c_grid_extra" : 367.8,
     "import_capacity" : 9.72,
-    "STORAGE_DAILY" : ["TS_DEC_HP_ELEC","TS_DEC_THHP_GAS","TS_DEC_COGEN_GAS","TS_DEC_COGEN_OIL",
-                    "TS_DEC_ADVCOGEN_GAS","TS_DEC_ADVCOGEN_H2","TS_DEC_BOILER_GAS","TS_DEC_BOILER_WOOD","TS_DEC_BOILER_OIL",
-                    "TS_DEC_DIRECT_ELEC","TS_DHN_DAILY","BATT_LI","TS_HIGH_TEMP"]
+    "STORAGE_DAILY" : ["TS_DEC_HP_ELEC", "TS_DEC_THHP_GAS", "TS_DEC_COGEN_GAS", "TS_DEC_COGEN_OIL",
+                    "TS_DEC_ADVCOGEN_GAS", "TS_DEC_ADVCOGEN_H2", "TS_DEC_BOILER_GAS", "TS_DEC_BOILER_WOOD", "TS_DEC_BOILER_OIL",
+                    "TS_DEC_DIRECT_ELEC", "TS_DHN_DAILY", "BATT_LI", "TS_HIGH_TEMP"]
 }
