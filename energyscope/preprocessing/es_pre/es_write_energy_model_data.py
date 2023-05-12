@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 """
 Created on Sun Dec  6 22:26:29 2020
-
 Contains functions to read data in csv files and print it with AMPL syntax in ESTD_data.dat
 Also contains functions to analyse input data
-
 @author: Paolo Thiran
 """
 import logging
@@ -30,6 +28,7 @@ from energyscope import ampl_syntax, print_set, print_df, newline, print_param, 
 #  fix sto_year print
 
 # Function to print the ESTD_data.dat file #
+
 def print_data(config):
     """
     TODO add doc
@@ -100,8 +99,7 @@ def print_data(config):
         share_heat_dhn_min = config['all_data']['Misc']['share_heat_dhn_min']
         share_heat_dhn_max = config['all_data']['Misc']['share_heat_dhn_max']
 
-        share_ned = pd.DataFrame.from_dict(config['all_data']['Misc']['share_ned'], orient='index',
-                                           columns=['share_ned'])
+        share_ned = pd.DataFrame.from_dict(config['all_data']['Misc']['share_ned'], orient='index',columns=['share_ned'])
 
         # Electric vehicles :
         # km-pass/h/veh. : Gives the equivalence between capacity and number of vehicles.
@@ -377,14 +375,14 @@ def print_data(config):
         # DICTIONARIES TO TRANSLATE NAMES INTO AMPL SYNTAX #
         # TODO automatise
         # for EUD timeseries
-        eud_params = {'Electricity (%_elec)': 'param electricity_time_series :',
-                      'Space Heating (%_sh)': 'param heating_time_series :',
-                      'Space Cooling (%_sc)': 'param cooling_time_series :',
-                      'Passanger mobility (%_pass)': 'param mob_pass_time_series :',
-                      'Freight mobility (%_freight)': 'param mob_freight_time_series :'}
+        eud_params = {'ELECTRICITY_VAR': 'param electricity_time_series :',
+                      'HEAT_LOW_T_SH': 'param heating_time_series :',
+                      'SPACE_COOLING': 'param cooling_time_series :',
+                      'MOBILITY_PASSENGER': 'param mob_pass_time_series :',
+                      'MOBILITY_FREIGHT': 'param mob_freight_time_series :'}
         # for resources timeseries that have only 1 tech linked to it
-        res_params = {'PV': 'PV', 'Wind_onshore': 'WIND_ONSHORE', 'Wind_offshore': 'WIND_OFFSHORE',
-                      'Hydro_river': 'HYDRO_RIVER'}
+        res_params = {'PV_ROOFTOP': 'PV_ROOFTOP', 'PV_UTILITY': 'PV_UTILITY', 'WIND_ONSHORE': 'WIND_ONSHORE', 'WIND_OFFSHORE': 'WIND_OFFSHORE', 'HYDRO_DAM': 'HYDRO_DAM',
+                      'HYDRO_RIVER': 'HYDRO_RIVER', 'TIDAL': 'TIDAL', 'DHN_SOLAR': 'DHN_SOLAR', 'DEC_SOLAR': 'DEC_SOLAR', 'PT_COLLECTOR': 'PT_COLLECTOR', 'ST_COLLECTOR': 'ST_COLLECTOR'}
         # for resources timeseries that have several techs linked to it
         res_mult_params = {'Solar': ['DHN_SOLAR', 'DEC_SOLAR']}
 
@@ -418,8 +416,7 @@ def print_data(config):
         # creating df with 2 columns : day of the year | hour in the day
         d_of_h = np.repeat(np.arange(1, 366, 1), 24, axis=0)  # 24 times each day of the year
         h_of_d = np.resize(np.arange(1, 25), 24 * 365)  # 365 times hours from 1 to 24
-        day_and_hour = pd.DataFrame(np.vstack((d_of_h, h_of_d)).T, index=np.arange(1, 8761, 1),
-                                    columns=['D_of_H', 'H_of_D'])
+        day_and_hour = pd.DataFrame(np.vstack((d_of_h, h_of_d)).T, index=np.arange(1, 8761, 1),columns=['D_of_H', 'H_of_D'])
         day_and_hour = day_and_hour.astype('int64')
         time_series = time_series.merge(day_and_hour, left_index=True, right_index=True)
 
@@ -492,8 +489,8 @@ def print_data(config):
 
         # printing EUD timeseries param
         for k in eud_params.keys():
-            print(eud_params.keys())
-            print(all_td_ts)
+            # print(eud_params.keys())
+            # print(all_td_ts)
             ts = all_td_ts[k]
             ts.columns = np.arange(1, nbr_td + 1)
             ts = ts * norm[k] / norm_td[k]
@@ -520,15 +517,15 @@ def print_data(config):
             newline(out_path)
 
         # printing c_p_t part where 1 ts => more then 1 tech
-        for k in res_mult_params.keys():
-            for j in res_mult_params[k]:
-                ts = all_td_ts[k]
-                ts.columns = np.arange(1, nbr_td + 1)
-                ts = ts * norm[k] / norm_td[k]
-                ts.fillna(0, inplace=True)
-                ts = ampl_syntax(ts, '')
-                s = '["' + j + '",*,*]:'
-                ts.to_csv(out_path, sep='\t', mode='a', header=True, index=True, index_label=s, quoting=csv.QUOTE_NONE)
+        # for k in res_mult_params.keys():
+        #     for j in res_mult_params[k]:
+        #         ts = all_td_ts[k]
+        #         ts.columns = np.arange(1, nbr_td + 1)
+        #         ts = ts * norm[k] / norm_td[k]
+        #         ts.fillna(0, inplace=True)
+        #         ts = ampl_syntax(ts, '')
+        #         s = '["' + j + '",*,*]:'
+        #         ts.to_csv(out_path, sep='\t', mode='a', header=True, index=True, index_label=s, quoting=csv.QUOTE_NONE)
 
     return
 
@@ -538,7 +535,6 @@ def generate_t_h_td(config):
     t_h_td is a pd.DataFrame containing 4 columns:
     hour of the year (H_of_Y), hour of the day (H_of_D), typical day representing this day (TD_of_days)
     and the number assigned to this typical day (TD_number)
-
     td_count is a pd.DataFrame containing 2 columns:
     List of typical days (TD_of_days) and number of days they represent (#days)
     """
@@ -561,3 +557,6 @@ def generate_t_h_td(config):
     t_h_td['H_of_D'] = np.resize(np.arange(1, 25), t_h_td.shape[0])  # 365 times hours from 1 to 24
     t_h_td['H_of_Y'] = np.arange(1, 8761)
     return {'td_of_days': td_of_days, 'td_count': td_count, 't_h_td': t_h_td}
+
+
+

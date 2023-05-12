@@ -70,7 +70,7 @@ set BOILERS within TECHNOLOGIES; # boiler tech
 ## Parameters added to include time series in the model:
 param electricity_time_series {HOURS, TYPICAL_DAYS} >= 0, <= 1; # %_elec [-]: factor for sharing variable electricity across typical days (adding up to 1)
 param heating_time_series {HOURS, TYPICAL_DAYS} >= 0, <= 1; # %_sh [-]: factor for sharing space heating across typical days (adding up to 1)
-param cooling_time_series {HOURS, TYPICAL_DAYS} >= 0, <= 1; # %_sh [-]: factor for sharing space heating across typical days (adding up to 1)
+param cooling_time_series {HOURS, TYPICAL_DAYS} >= 0, <= 1; # %_sc [-]: factor for sharing space cooling across typical days (adding up to 1)
 param mob_pass_time_series {HOURS, TYPICAL_DAYS} >= 0, <= 1; # %_pass [-]: factor for sharing passenger transportation across Typical days (adding up to 1) based on https://www.fhwa.dot.gov/policy/2013cpr/chap1.cfm
 param mob_freight_time_series {HOURS, TYPICAL_DAYS} >= 0, <= 1; # %_fr [-]: factor for sharing freight transportation across Typical days (adding up to 1)
 param c_p_t {TECHNOLOGIES, HOURS, TYPICAL_DAYS} default 1; #Hourly capacity factor [-]. If = 1 (default value) <=> no impact.
@@ -121,9 +121,9 @@ param batt_per_car {V2G} >= 0; # ev_batt_size [GWh]: Battery size per EVs car te
 param state_of_charge_ev {EVs_BATT,HOURS} >= 0, default 0; # Minimum state of charge of the EV during the day.
 param c_grid_extra >=0; # Cost to reinforce the grid due to IRE penetration [Meuros/GW of (PV + Wind)].
 param import_capacity >= 0; # Maximum electricity import capacity [GW]
-param solar_area_rooftop{REGIONS} >= 0; # Maximum land available for solar deployement on rooftops [km2]
-param solar_area_ground{REGIONS} >= 0; # Maximum land available for solar deployement on the ground [km2]
-param solar_area_ground_high_irr{REGIONS} >= 0; # Maximum land available for solar deployement on the ground in locations with high irradiance [km2]
+param solar_area_rooftop >= 0; # Maximum land available for solar deployement on rooftops [km2]
+param solar_area_ground >= 0; # Maximum land available for solar deployement on the ground [km2]
+param solar_area_ground_high_irr >= 0; # Maximum land available for solar deployement on the ground in locations with high irradiance [km2]
 param sm_max >= 0 default 4; # Maximum solar multiple for csp plants
 param power_density_pv >=0 default 0;# Maximum power irradiance for PV.
 param power_density_solar_thermal >=0 default 0;# Maximum power irradiance for solar thermal.
@@ -178,7 +178,7 @@ var Storage_level {STORAGE_TECH, PERIODS} >= 0; # Sto_level [GWh]: Energy stored
 subject to end_uses_t {l in LAYERS, h in HOURS, td in TYPICAL_DAYS}:
 	End_uses [l, h, td] = (if l == "ELECTRICITY"
 		then
-			(end_uses_input[l] / total_time + end_uses_input["VAR_ELECTRICITY"] * electricity_time_series [h, td] / t_op [h, td] ) + Network_losses [l,h,td]
+			(end_uses_input[l] / total_time + end_uses_input["ELECTRICITY_VAR"] * electricity_time_series [h, td] / t_op [h, td] ) + Network_losses [l,h,td]
 		else (if l == "HEAT_LOW_T_DHN" then
 			(end_uses_input["HEAT_LOW_T_HW"] / total_time + end_uses_input["HEAT_LOW_T_SH"] * heating_time_series [h, td] / t_op [h, td] ) * Share_heat_dhn + Network_losses [l,h,td]
 		else (if l == "HEAT_LOW_T_DECEN" then
@@ -331,8 +331,8 @@ subject to network_losses {eut in END_USES_TYPES, h in HOURS, td in TYPICAL_DAYS
 
 # [Eq. 2.21]  Extra grid cost for integrating 1 GW of RE is estimated to 367.8Meuros per GW of intermittent renewable (27beuros to integrate the overall potential)
 subject to extra_grid:
-	F ["GRID"] = 1 +  (c_grid_extra / c_inv["GRID"]) *(    (F ["WIND_ONSHORE"]     + F ["WIND_OFFSHORE"]     + F ["PV"]      )
-					                                     - (f_min ["WIND_ONSHORE"] + f_min ["WIND_OFFSHORE"] + f_min ["PV"]) );
+	F ["GRID"] = 1 +  (c_grid_extra / c_inv["GRID"]) *(    (F ["WIND_ONSHORE"]     + F ["WIND_OFFSHORE"]     + F ["PV_ROOFTOP"] + F ["PV_UTILITY"]      )
+					                                     - (f_min ["WIND_ONSHORE"] + f_min ["WIND_OFFSHORE"] + f_min ["PV_ROOFTOP"] + f_min ["PV_UTILITY"]) );
 
 # [Eq. 2.22] DHN: assigning a cost to the network equal to the power capacity connected to the grid
 subject to extra_dhn:
@@ -406,7 +406,7 @@ subject to peak_lowT_dhn:
 
 # [Eq. TODO] Peak in space cooling
 subject to peak_space_cooling {j in TECHNOLOGIES_OF_END_USES_TYPE["SPACE_COOLING"], h in HOURS, td in TYPICAL_DAYS}:
-	F [j] >= peak_sc_factor[c] * F_t [j, h, td] ;
+	F [j] >= peak_sc_factor * F_t [j, h, td] ;
 
 ## Adaptation for the case study: Constraints needed for the application to Switzerland (not needed in standard LP formulation)
 #-----------------------------------------------------------------------------------------------------------------------
@@ -437,38 +437,38 @@ subject to max_elec_import {h in HOURS, td in TYPICAL_DAYS}:
 
 
 ## Variant equations for hydro dams
-# [Eq. TODO] Seasonal storage in hydro dams.
-# When installed power of new dams 0 -> 0.44, maximum storage capacity changes linearly 0 -> 2400 GWh/y
-subject to storage_level_hydro_dams {c in REGIONS diff RWITHOUTDAM}:
-	F ["DAM_STORAGE"] <= f_min ["DAM_STORAGE"] + (f_max ["DAM_STORAGE"]-f_min ["DAM_STORAGE"]) * (F ["HYDRO_DAM"] - f_min ["HYDRO_DAM"])/(f_max ["HYDRO_DAM"] - f_min ["HYDRO_DAM"]);
+# [Eq. 40] Seasonal storage in hydro dams.
+# Capacity of DAM_STORAGE is proportional to capacity of HYDRO_DAM
+subject to storage_level_hydro_dams:
+	F ["DAM_STORAGE"] <= f_min ["DAM_STORAGE"] + (f_max ["DAM_STORAGE"]-f_min ["DAM_STORAGE"]) * (F ["HYDRO_DAM"] - f_min ["HYDRO_DAM"])/(f_max ["HYDRO_DAM"]-f_min ["HYDRO_DAM"]);
 
-# [Eq. TODO] Hydro dams can stored the input energy and restore it whenever. Hence, inlet is the input river and outlet is bounded by max capacity
-subject to impose_hydro_dams_inflow {c in REGIONS, h in HOURS, td in TYPICAL_DAYS}:
+# [Eq. 41] Hydro dams can store the input energy and restore it at any time. Hence, inlet is the input river and outlet is bounded by max capacity
+subject to impose_hydro_dams_inflow {h in HOURS, td in TYPICAL_DAYS}:
 	Storage_in ["DAM_STORAGE", "ELECTRICITY", h, td] = F_t ["HYDRO_DAM", h, td];
 
-# [Eq. TODO] Hydro dams production is lower than installed F_t capacity:
-subject to limit_hydro_dams_output {c in REGIONS, h in HOURS, td in TYPICAL_DAYS}:
+# [Eq. 42] Hydro dams production is lower than installed F capacity:
+subject to limit_hydro_dams_output {h in HOURS, td in TYPICAL_DAYS}:
 	Storage_out ["DAM_STORAGE", "ELECTRICITY", h, td] <= F ["HYDRO_DAM"];
 
 # [Eq. TODO] Limit surface area for solar
-subject to solar_area_rooftop_limited {c in REGIONS} :
-	(F["PV_ROOFTOP"])/power_density_pv +(F["DEC_SOLAR"]+F["DHN_SOLAR"])/power_density_solar_thermal <= solar_area_rooftop [c];
+subject to solar_area_rooftop_limited:
+	(F["PV_ROOFTOP"])/power_density_pv +(F["DEC_SOLAR"]+F["DHN_SOLAR"])/power_density_solar_thermal <= solar_area_rooftop;
 
-subject to solar_area_ground_limited {c in REGIONS} :
+subject to solar_area_ground_limited:
 	(F["PV_UTILITY"])/power_density_pv
-		+ (layers_in_out ["PT_POWER_BLOCK", "PT_HEAT"]*F["PT_COLLECTOR"]+layers_in_out ["ST_POWER_BLOCK", "ST_HEAT"]*F["ST_COLLECTOR"])/power_density_pv
-<= solar_area_ground [c];
+		+ (layers_in_out ["PT_POWER_BLOCK", "PT_HEAT"]*F["PT_COLLECTOR"]+layers_in_out ["ST_POWER_BLOCK", "ST_HEAT"]*F["ST_COLLECTOR"])/power_density_solar_thermal
+<= solar_area_ground;
 
-subject to solar_area_ground_high_irr_limited {c in REGIONS} :
+subject to solar_area_ground_high_irr_limited:
 	(layers_in_out ["PT_POWER_BLOCK", "PT_HEAT"]*F["PT_COLLECTOR"]
-		+layers_in_out ["ST_POWER_BLOCK", "ST_HEAT"]*F["ST_COLLECTOR"])/power_density_pv
-<= solar_area_ground_high_irr [c];
+		+layers_in_out ["ST_POWER_BLOCK", "ST_HEAT"]*F["ST_COLLECTOR"])/power_density_solar_thermal
+<= solar_area_ground_high_irr;
 
 # Limit on solar multiple of csp plants (by definition, sm = (F_coll*eta_pb)/F_pb
-subject to sm_limit_solar_tower {c in REGIONS}:
+subject to sm_limit_solar_tower:
 	layers_in_out ["ST_POWER_BLOCK", "ST_HEAT"] * F["ST_COLLECTOR"] <= sm_max * F["ST_POWER_BLOCK"];
 
-subject to sm_limit_parabolic_trough {c in REGIONS}:
+subject to sm_limit_parabolic_trough:
 	layers_in_out ["PT_POWER_BLOCK", "ST_HEAT"] * F["PT_COLLECTOR"] <= sm_max * F["PT_POWER_BLOCK"];
 
 ##########################
