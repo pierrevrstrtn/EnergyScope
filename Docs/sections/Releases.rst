@@ -127,9 +127,9 @@ Model extensions (unpublished)
   **Main contributors**: Matija Pavicevic and Thiran Paolo
 
 - **Soft coupling with Macro-economic model** (`GEMMES <https://www.afd.fr/en/ressources/modelling-small-open-developing-economies-financialized-world-stock-flow-consistent-prototype-growth-model>`_):
-  GEMMES (General Monetary and Multisectoral Macrodynamics for the Ecological Shift) is a macro-economic tool that estimates the impact of public decisions on energy transition scenarios.
-  Coupling the models will allow to account for the energy system design on the macro-economic and vice versa.
-  As an example, deploying additional renewable energies, such as solar and wind, might change the trading balance but also the amount of labours.
+  GEMMES (General Monetary and Multisectoral Macrodynamics for the Ecological Shift) is a macro-economic tool that estimates the impact of public decisions on the economy of a given country. Coupling the models will allow to assess how the energy
+  transition affects the economic environment in which it takes place and vice versa. As an example, deploying additional renewable energies, such as solar and wind, might affect the country's balance of payments, with consequences on the
+  exchange rate and thus possibly on inflation and on the interest rate taken as input by EnergyScope.
 
   **Main contributors**: Pierre Jacques, see :cite:`godin2020modelling`
 
