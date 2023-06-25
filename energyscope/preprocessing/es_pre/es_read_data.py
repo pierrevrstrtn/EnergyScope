@@ -29,6 +29,11 @@ from energyscope import ampl_syntax, print_set, print_df, newline, print_param, 
 #  add possibility to run with amplpy
 #  fix sto_year print
 
+# Allows to switch between different Demand files easily
+# If changecsv==True, replace Data/2050/Demand.csv by Personal/Demand/'filename'
+def choose_demand_csv(changecsv: bool, filename: str, project_path: Path):
+    if changecsv:
+        shutil.copyfile(project_path / 'Personal/Demand' / filename, project_path / 'Data/2050/Demand.csv')
 
 def print_json(my_sets, file):  # printing the dictionary containing all the sets into directory/sets.json
     with open(file, 'w') as fp:

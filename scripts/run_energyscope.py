@@ -16,6 +16,10 @@ if __name__ == '__main__':
     # define project path
     project_path = Path(__file__).parents[1]
 
+    # To change the whole Demand matrix of 2050, set changecsv to True and write the name of the new csv (located in
+    # Personal/Demand) as filename
+    es.choose_demand_csv(changecsv=True, filename='Demand_Baudson.csv', project_path=project_path)
+
     # loading the config file into a python dictionnary
     config = es.load_config(config_fn='config_ref.yaml', project_path=project_path)
     config['Working_directory'] = os.getcwd() # keeping current working directory into config
