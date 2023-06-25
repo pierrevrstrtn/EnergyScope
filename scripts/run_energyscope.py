@@ -29,7 +29,15 @@ if __name__ == '__main__':
 
     if compute_TDs:
         es.build_td_of_days(config)
-   
+
+    # Adjust biomass data (from Hugo Baudson) + set emissions to 0
+    config['all_data']['Resources'].loc['WOOD', 'gwp_op'] = 0.0
+    config['all_data']['Resources'].loc['WOOD', 'avail'] = 9450
+    config['all_data']['Resources'].loc['WOOD', 'c_op'] = 0.0213
+    config['all_data']['Resources'].loc['WET_BIOMASS', 'gwp_op'] = 0.0
+    config['all_data']['Resources'].loc['WET_BIOMASS', 'avail'] = 14100
+    config['all_data']['Resources'].loc['WET_BIOMASS', 'c_op'] = 0.0096
+
     if not analysis_only:
         # Printing the .dat files for the optimisation problem       
         es.print_data(config)
