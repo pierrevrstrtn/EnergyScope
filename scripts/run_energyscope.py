@@ -38,6 +38,24 @@ if __name__ == '__main__':
     config['all_data']['Resources'].loc['WET_BIOMASS', 'avail'] = 14100
     config['all_data']['Resources'].loc['WET_BIOMASS', 'c_op'] = 0.0096
 
+    # Adjust public mobility max share
+    # config['all_data']['Misc']['share_mobility_public_max'] = 0.8   # LD: 0.8, Climact-BEH: 0.6, CLEVER: 0.5
+                                                                    # EnergyVille: 0.21, EU-ref: 0.205
+
+
+    # Adjust industry demand
+    # ind_dem = 44517  # Total industry EUD excluding NED (New LD: 44517, BEH: 57899, CLEVER: 70482, EnergyVille: 101643)
+    #
+    # config['all_data']['Demand'].loc['ELECTRICITY', 'INDUSTRY'] = ind_dem * 0.357
+    # config['all_data']['Demand'].loc['LIGHTING', 'INDUSTRY'] = ind_dem * 0.118
+    # config['all_data']['Demand'].loc['HEAT_HIGH_T', 'INDUSTRY'] = ind_dem * 0.395
+    # config['all_data']['Demand'].loc['HEAT_LOW_T_SH', 'INDUSTRY'] = ind_dem * 0.103
+    # config['all_data']['Demand'].loc['HEAT_LOW_T_HW', 'INDUSTRY'] = ind_dem * 0.027
+    # config['all_data']['Demand'].loc['NON_ENERGY', 'INDUSTRY'] = ind_dem * 0.383
+    # config['all_data']['Demand'].loc['NON_ENERGY', 'INDUSTRY'] = 11927  # Don't forget to adjust the shares in
+                # misc.json : 11927 for New LD (.688, .124, .188) - 19313 for SPF-BEH (.923, .077, 0)
+                # 31633 for CLEVER (.736, .047, .217)) - 51094 for Energyville (.779, .029, .192)
+
     if not analysis_only:
         # Printing the .dat files for the optimisation problem       
         es.print_data(config)
